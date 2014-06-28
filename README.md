@@ -1,4 +1,4 @@
 hadoop-ws
 =========
 
-hadoop learning and develop code.
+hadoop learning and developing code.
