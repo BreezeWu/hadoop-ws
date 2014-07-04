@@ -1,0 +1,21 @@
+import
+--connect
+jdbc:oracle:thin:@10.160.8.22:1521/epmpln
+--username
+JTYDFX_SELECT
+--password-file
+/user/hadoop/sqoop.password
+--hive-import
+--warehouse-dir
+/user/hadoop/tmp-for-sqoop-hive
+#--verbose
+#	## 参考命令
+# sqoop --options-file import-oracle.sqoop --table XXXX
+#
+##查看hive warehouse目录下表
+#	hdfs dfs -ls /user/hive/warehouse
+##查看中间目录
+#	hdfs dfs -ls /user/hadoop/tmp-for-sqoop-hive
+## 清空中间目录
+#	hdfs dfs -rm -R /user/hadoop/tmp-for-sqoop-hive
+#

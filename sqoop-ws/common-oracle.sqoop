@@ -1,0 +1,9 @@
+list-tables
+--connect
+jdbc:oracle:thin:@10.160.8.22:1521/epmpln
+--username
+JTYDFX_SELECT
+#--password
+--password-file
+/user/hadoop/sqoop.password
+--verbose
