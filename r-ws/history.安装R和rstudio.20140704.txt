@@ -1,0 +1,708 @@
+[hadoop@dsjsdxm-test1 bin]$ history
+    1  pwd
+    2  id
+    3  cd
+    4  ls
+    5  vi .bashrc
+    6  exi
+    7  exit
+    8  pwd
+    9  ls
+   10  pwd
+   11  ls
+   12  pwd
+   13  ls
+   14  mkdir pkg-bak
+   15  pwd
+   16  ls
+   17  ls -al
+   18  pwd
+   19  cd pkg-bak
+   20  ls
+   21  pwd
+   22  ls
+   23  ls -al
+   24  pwd
+   25  vi hadoop.bashrc 
+   26  pwd
+   27  ls
+   28  cp hadoop.bashrc ~/.bashrc
+   29  pwd
+   30  ls
+   31  pwd
+   32  ls
+   33  cd $HADOOP_HOME 
+   34  ls
+   35  cd etc/hadoop/
+   36  ls
+   37  gedit hdfs-site.xml 
+   38  ls
+   39  rm *~
+   40  ls
+   41  sudo gedit /etc/hosts
+   42  pwd
+   43  ls
+   44  ls -al
+   45  ls -l metastore_db/
+   46  pwd
+   47  ls
+   48  cd metastore_db/
+   49  ls
+   50  cd log
+   51  ls
+   52  cat log.ctrl 
+   53  pwd
+   54  ls
+   55  pwd
+   56  pwd
+   57  cd ..
+   58  pwd
+   59  ls
+   60  ls -al
+   61  vi README_DO_NOT_TOUCH_FILES.txt 
+   62  ls
+   63  pwd
+   64  ls
+   65  ls -al
+   66  ls
+   67  vi service.properties 
+   68  pwd
+   69  ls
+   70  cd ..
+   71  ls
+   72  rm -fR metastore_db/
+   73  pwd
+   74  ls
+   75  cd ..
+   76  pwd
+   77  ls
+   78  pwd
+   79  ls
+   80  java
+   81  java -version
+   82  pwd
+   83  ls
+   84  cd ..
+   85  ls
+   86  pwd
+   87  ls
+   88  cd logs
+   89  ls
+   90  rm *
+   91  ls
+   92  ls -R userlogs/
+   93  pwd
+   94  ls
+   95  pwd
+   96  pwd
+   97  ls
+   98  cd ..
+   99  ls
+  100  pwd
+  101  ls
+  102  rm logs-1.tar.gz 
+  103  ls
+  104  pwd
+  105  ls
+  106  pwd
+  107  ls
+  108  cd ..
+  109  ls
+  110  cd ..
+  111  ls
+  112  cd R/
+  113  ls
+  114  rm -fR R-2.15.3/
+  115  ls
+  116  cd R-3.1.0/
+  117  ls
+  118  ./configure
+  119  pwd
+  120  ls
+  121  env|grep HADOOP
+  122  pwd
+  123  ls
+  124  hostname
+  125  vi /etc/hosts
+  126  sudo vi /etc/hosts
+  127  pwd
+  128  ls
+  129  sudo mkdir /opt
+  130  pwd
+  131  cd /opt
+  132  ls
+  133  pwd
+  134  ls
+  135  pwd
+  136  ls
+  137  pwd
+  138  ls
+  139  cd 
+  140  cd pkg-bak/
+  141  ls
+  142  sudo tar -zxf opt_10.160.2.105.tar.gz /opt/
+  143  cd /opt
+  144  ls
+  145  cd
+  146  ls
+  147  cd pkg-bak/
+  148  ls
+  149  sudo tar -zxf opt_10.160.2.105.tar.gz -C /opt/
+  150  cd /opt
+  151  ls
+  152  ls -al
+  153  cd hadoop/
+  154  ls
+  155  ls -al
+  156  rm hadoop-2.2.0
+  157  rm hadoop-2.2.0.y
+  158  rm hadoop-2.2.0.my.tar.gz 
+  159  ls
+  160  cd hadoop-2.2.0/etc/hadoop/
+  161  ls
+  162  vi core-site.xml 
+  163  ls
+  164  vi hdfs-site.xml 
+  165  ls
+  166  vi mapred-site.xml
+  167  pwd
+  168  ls
+  169  vi yarn-site.xml 
+  170  cd
+  171  ls
+  172  cd workspace_hadoop/
+  173  ls
+  174  tree
+  175  ls -R
+  176  pwd
+  177  ls
+  178  cd 
+  179  ls
+  180  cd pkg-bak/
+  181  ls
+  182  ls -al
+  183  rm *.tar.gz
+  184  ls
+  185  rm *
+  186  ls
+  187  mkdir /opt/java_cp
+  188  sudo mkdir /opt/java_cp
+  189  sudo chown -R hadoop:hadoop /opt/java_cp/
+  190  ls
+  191  cd /opt
+  192  ls
+  193  cd mahout/
+  194  ls
+  195  cd mahout-trunk-1.0-snapshot/
+  196  ls
+  197  pwd
+  198  ls
+  199  cd /opt
+  200  ls
+  201  cd sqoop/
+  202  ls
+  203  cd sqoop-1.4.4.bin__hadoop-2.0.4-alpha/
+  204  ls
+  205  pwd
+  206  cd ..
+  207  ls
+  208  env |grep SQOOP
+  209  ls
+  210  pwd
+  211  ls
+  212  cd sqoop-1.4.4.bin__hadoop-2.0.4-alpha/
+  213  ls
+  214  cd conf
+  215  ls
+  216  vi sqoop-site.xml 
+  217  pwd
+  218  ls
+  219  pwd
+  220  cd /opt
+  221  ls
+  222   ls zookeeper/
+  223  env |grep SPARK
+  224  pwd
+  225  ls
+  226  pwd
+  227  cd
+  228  pwd
+  229  ls
+  230  ls workspace_hadoop/
+  231  pwd
+  232  ls
+  233  pwd
+  234  vi ~/.bashrc
+  235  ls
+  236  mkdir dev-sw
+  237  ls
+  238  pwd
+  239  cd pkg-bak/
+  240  ls
+  241  vi ~/.bashrc
+  242  ls
+  243  sudo mkdir /opt/spark /opt/scala
+  244  sudo chown -R hadoop:hadoop /opt/spark /opt/scala
+  245  ls
+  246  tar -zxf spark-1.0.0-bin-hadoop2.tgz  -C /opt/spark/
+  247  tar -zxf scala-2.11.0.tgz -C /opt/scala/
+  248  pwd
+  249  source ~/.bashrc
+  250  scala
+  251  pwd
+  252  ls
+  253  cp *.jar /opt/java_cp/
+  254  ls
+  255  vi ~/.bashrc
+  256  pwd
+  257  ls
+  258  mysql
+  259  su - root
+  260  pwd
+  261  ls
+  262  cd pkg-bak/
+  263  ls
+  264  cat hosts
+  265  ifconfig
+  266  hostname
+  267  pwd
+  268  ls
+  269  tar -zxf workspace_hadoop.tar.gz
+  270  ls -al
+  271  tar -zxvf workspace_hadoop.tar.gz 
+  272  ls
+  273  mv workspace_hadoop ~/
+  274  ls
+  275  cd
+  276  ls
+  277  ls -al
+  278  cd workspace_hadoop/
+  279  ls
+  280  tree
+  281  ls -R
+  282  pwd
+  283  ls
+  284  pwd
+  285  l
+  286  pwd
+  287  ls
+  288  cd /opt
+  289  ls
+  290  cd java_cp/
+  291  ls
+  292  ls -al /opt/java_cp/*.jar
+  293  cd R_HOME
+  294  vi ~/.bashrc
+  295  cd /opt/R
+  296  ls
+  297  cd R-3.1.0/
+  298  ls
+  299  ./configure
+  300  env |grep $PATH
+  301  source ~/.bashrc
+  302  pwd
+  303  ls
+  304  ./configure
+  305  cd 
+  306  ls
+  307  cd pkg-bak/
+  308  ls
+  309  pwd
+  310  ls
+  311  ls -al
+  312  ls =al
+  313  ls -al
+  314  env |grep LANG
+  315  ls -al
+  316  cd pkg-bak/
+  317  ls
+  318  ls -al
+  319  yum
+  320  cd /etc/
+  321  ls
+  322  cd yum.repos.d/
+  323  ls
+  324  pwd
+  325  ls
+  326  pwd
+  327  mkdir bak.etc_yum.repos.d
+  328  mkdir ~/bak.etc_yum.repos.d
+  329  sudo mv * ~/bak.etc_yum.repos.d/
+  330  cp ~/bak.etc_yum.repos.d/CentOS-Media.repo 
+  331  cp ~/bak.etc_yum.repos.d/CentOS-Media.repo .
+  332  sudo cp ~/bak.etc_yum.repos.d/CentOS-Media.repo .
+  333  ls
+  334  pwd
+  335  vi CentOS-Media.repo 
+  336  cd /media
+  337  ls
+  338  sudo mkdir cdrom
+  339  ls -al
+  340  pwd
+  341  ls
+  342  sudo rm -fR cdrom
+  343  ls
+  344  sudo mkdir CentOS6.5
+  345  pwd
+  346  ls
+  347  sudo mv CentOS6.5/ CentOS
+  348  pwd
+  349  ls
+  350  pwd
+  351  ls
+  352  ls -al
+  353  cd /etc/yum.repos.d/
+  354  ls
+  355  sudo vi CentOS-Media.repo 
+  356  pwd
+  357  ls
+  358  pwd
+  359  ls
+  360  pwd
+  361  ls
+  362  cd
+  363  ls
+  364  cd /opt/R
+  365  ls
+  366  cd R
+  367  ls
+  368  pwd
+  369  cd R-3.1.0/
+  370  ls
+  371  ./configure
+  372  yum install gcc
+  373  sudo yum install gcc
+  374  pwd
+  375  ls
+  376  ./configure
+  377  sudo yum install F77
+  378  sudo yum install gfortran
+  379  ./configure --enable-R-shlib
+  380  yum install F77
+  381  sudo yum install F77
+  382  sudo yum install gfortran
+  383  sudo yum install compat-gcc-34-g77
+  384  ./configure --enable-R-shlib
+  385  sudo yum install compat-libf2c-34
+  386  yum install g++
+  387  sudo yum install g++
+  388  sudo yum install gcc-c++
+  389  ./configure --enable-R-shlib
+  390  sudo yum install X11
+  391  yum info libX11-devel
+  392  sudo yum install libX11-devel
+  393  ./configure --enable-R-shlib
+  394  yum --enablerepo epel info R
+  395  sudo yum install libXt-devel
+  396  ./configure --enable-R-shlib
+  397  sudo yum install libXt-devel
+  398  ./configure --enable-R-shlib
+  399  uname
+  400  uname -a
+  401  ./configure
+  402  sudo yum install libX11-devel.x86_64
+  403  sudo yum install libXt
+  404  sudo yum install libXt-devel
+  405  ./configure --enable-R-shlib --with-readline=no
+  406  sudo yum install readline-devel
+  407  ./configure --enable-R-shlib --with-readline=yes
+  408  make
+  409  env |grep LANG
+  410  R CMD INSTALL Rserve
+  411  make
+  412  ./configure
+  413  make 
+  414  env |grep LANG
+  415  export LANT=zh_HK.UTF-8
+  416  make
+  417  ./configure --enable-R-shlib
+  418  make
+  419  ./configure --enable-R-shlib
+  420  env |grep LANG
+  421  export LANG=zh_us.UTF-8
+  422  env |grep LANG
+  423  make
+  424  ./configure
+  425  make
+  426  env |grep LD_LIB
+  427  vi ~/.bashrc
+  428  source ~/.bashrc
+  429  env |grep LD_LIB
+  430  pwd
+  431  ls
+  432  ls -al /usr/local/lib
+  433  vi ~/.bashrc
+  434  ls -al /usr/local/lib64
+  435  pwd
+  436  ls
+  437  make
+  438  cd ..
+  439  ls
+  440  mv R-rc/ R-rc-20140702
+  441  ls
+  442  cd R-rc-20140702/
+  443  ./configure --enable-R-shlib
+  444  make
+  445  cd ../R-2.15.3/
+  446  ./configure --enable-R-shlib
+  447  make
+  448  sudo yum install R
+  449  sudo yum install gfortran
+  450  gcc
+  451  gcc --version
+  452  yum install devtoopset-2-gcc
+  453  sudo yum install devtoopset-2-gcc
+  454  sudo yum install devtoopset-2-gcc-4.8.1
+  455  gfortran -v
+  456  sudo yum install gcc
+  457  sudo yum install gcc-c++
+  458  sudo yum install gcc-gfortran
+  459  cd ../R-rc-20140702/
+  460  ./configure --enable-R-shlib
+  461  make
+  462  sudo make install
+  463  R
+  464  pwd
+  465  cd
+  466  ls
+  467  cd pkg-bak/
+  468  ls
+  469  sudo rpm ivh rstudio-server-0.98.953-x86_64.rpm 
+  470  sudo rpm -ivh rstudio-server-0.98.953-x86_64.rpm 
+  471  source ~/.bashrc
+  472  sudo rpm -ivh rstudio-server-0.98.953-x86_64.rpm 
+  473  file libR.so
+  474  env |grep LD
+  475  ls /usr/local/lib64/R/lib
+  476  ls -l /usr/local/lib64/R/lib
+  477  pwd
+  478  ls
+  479  sudo yum install libcrypto.so.6 -y
+  480  sudo yum install libgfortran.so.1 -y
+  481  sudo yum install libssl.so -y
+  482  sudo yum install libssl.so.6 -y
+  483  sudo yum install openssl098e-0.9.8e -y
+  484  sudo yum install gcc41-libgfortran-4.1.2 -y
+  485  sudo yum install pango -y
+  486  history
+  487  rpm -ivh rstudio-server-0.98.953-x86_64.rpm 
+  488  rpm -Uvh rstudio-server-0.98.953-x86_64.rpm 
+  489  rpm -Uvh --nodeps rstudio-server-0.98.953-x86_64.rpm 
+  490  sudo rpm -Uvh --nodeps rstudio-server-0.98.953-x86_64.rpm 
+  491  rstudio-server verify-installation
+  492  rstudio-server stop
+  493  rstudio-server start
+  494  ps -ef |grep rstudio-server
+  495  ps -ef |grep rstudio
+  496  sudo rpm -Uvh rstudio-server-0.98.953-x86_64.rpm 
+  497  ls
+  498  sudo rpm -ivh compat-libgfortran-41-4.1.2-39.el6.x86_64.rpm 
+  499  rpm -ivh rstudio-server-0.98.953-x86_64.rpm 
+  500  rstudio-server verify-installation
+  501  env
+  502  env|grep LC
+  503  export LC_ALL="en_US.UTF-8"
+  504  rstudio-server verify-installation
+  505  vi ~/.bashrc
+  506  rstudio-server verify-installation
+  507  rstudio-server stop
+  508  rstudio-server verify-installation
+  509  ps -ef
+  510  ps -ef |grep rstudio
+  511  kill -9 22363
+  512  sudo kill -9 22363
+  513  ps -ef |grep rstudio
+  514  sudo kill -9 2496
+  515  rstudio-server verify-installation
+  516  ps -ef
+  517  ps -ef|grep rstudio
+  518  cd /usr/lib/rstudio-server/
+  519  ls
+  520  cd bin
+  521  ls
+  522  rserver 
+  523  ./rserver stop
+  524  ./rserver 
+  525  ./rserver --help
+  526  ./rserver --testconfig
+  527  ./rserver --test-config
+  528  vi /etc/rstudio/rserver.conf
+  529  ps -ef |grep rse
+  530  sudo rpm -e rsutdio
+  531  sudo rpm -e rsutdio-server
+  532  sudo rpm
+  533  ls
+  534  pwd
+  535  sudo rpm -e rsutdio-server
+  536  netstat
+  537  netstat -axu | grep 8787
+  538  netstat -aux
+  539  netstat -aux | grep 8787
+  540  ps -ef | grep rserver
+  541  pwd
+  542  ls
+  543  pwd
+  544  ls
+  545  cd /usr/local/lib64
+  546  ls
+  547  cd R
+  548  ls
+  549  cd lib
+  550  ls
+  551  ls -al
+  552  cd ..
+  553  ls
+  554  cd lib
+  555  pwd
+  556  ls
+  557  mkdir ~/pkg-bak/bakR.20140702
+  558  mv * ~/pkg-bak/bakR.20140702/
+  559  sudo mv * ~/pkg-bak/bakR.20140702/
+  560  history
+  561  ps -ef |grep rserver
+  562  pwd
+  563  ls -al
+  564  rserver-studio verify-installation
+  565  pwd
+  566  cd
+  567  type rserver
+  568  pwd
+  569  sl
+  570  pwd
+  571  ls
+  572  cd ~/pkg-bak/
+  573  ls
+  574  sudo rmp -ivh rstudio-server-0.98.953-x86_64.rpm 
+  575  sudo rpm -ivh rstudio-server-0.98.953-x86_64.rpm 
+  576  su - root
+  577  pwd
+  578  ls
+  579  rpm -Uvh compat-libgfortran-41-4.1.2-39.el6.x86_64.rpm 
+  580  sudo rpm -Uvh compat-libgfortran-41-4.1.2-39.el6.x86_64.rpm 
+  581  sudo rpm -Uvh pango-1.28.1 -y
+  582  sudo yum install pango-1.28.1 -y
+  583  sudo yum install gcc41-libgfortran-4.1.2 -y
+  584  F77
+  585  g77
+  586  gcc -v
+  587  gfortran -v
+  588  yum search g77
+  589  sudo yum install compat-gcc-34-g77.x86_64
+  590  g77
+  591  g77 -v
+  592  sudo yum install kernel-headers
+  593  sudo yum install glibc-headers
+  594  sudo yum install glibc-devel
+  595  sudo yum install libgomp
+  596  sudo yum install mpfr
+  597  sudo yum install cpp
+  598  sudo yum install ppl
+  599  sudo yum install cloog-ppl
+  600  sudo yum install gcc
+  601  sudo yum install libstdc++
+  602  sudo yum install gcc-c++
+  603  pwd
+  604  ls
+  605  sudo rpm -Uvh rstudio-server-0.97.3
+  606  sudo rpm -Uvh rstudio-server-0.97.336-x86_64.rpm 
+  607  sudo rpm -Uvh rstudio-server-0.98.953-x86_64.rpm 
+  608  sudo rpm -Uvh --nodeps rstudio-server-0.98.953-x86_64.rpm 
+  609  sudo rpm -ivh --nodeps rstudio-server-0.98.953-x86_64.rpm 
+  610  type rstudio-server
+  611  file rstudio-server
+  612  cd /usr/sbin
+  613  ls
+  614  type R
+  615  cd /opt/R/R-rc-20140702/
+  616  sudo make install-libR
+  617  cd ~/pkg-bak/
+  618  ls
+  619  sudo rpm -Uvh rstudio-server-0.98.953-x86_64.rpm 
+  620  R
+  621  sudo yum install rstudio-server-0.98.953-x86_64.rpm 
+  622  sudo rpm -Uvh --nodeps rstudio-server-0.98.953-x86_64.rpm 
+  623  type rstudio-server-0.9
+  624  type rstudio-server
+  625  ls -al /usr/sbin/rstudio-server 
+  626  cd /usr/lib/rstudio-server/bin
+  627  ls
+  628  ls -al
+  629  rstudio-server verify-installation
+  630  sudo rstudio-server verify-installation
+  631  sudo ln -s /usr/local/lib64/R/bin/R /usr/bin/R
+  632  ls -al /usr/bin/R
+  633  ls -al /usr/local/lib64/bin/R
+  634  type R
+  635  sudo rm /usr/bin/R
+  636  ls -al /usr/local/binR
+  637  ls -al /usr/local/bin/R
+  638  . ./usr/local/bin/R
+  639  . /usr/local/lib64/R
+  640  cd /usr/local/lib64
+  641  ls
+  642  cd R
+  643  ls
+  644  cd bin
+  645  ls
+  646  ./R
+  647  pwd
+  648  type R
+  649  /usr/local/bin/R
+  650  ls -al /usr/local/bin/R
+  651  ls -al /usr/bin/R
+  652  sudo ln -s /usr/bin/R /usr/local/bin/R
+  653  sudo ln -s /usr/local/bin/R /usr/bin/R
+  654  ls -al /usr/bin/R
+  655  cd ~/pkg-bak/
+  656  pwd
+  657  sudo rstudio-server verify-installation
+  658  ps -ef |grep rstudio
+  659  rstudio-server stop
+  660  sudo rstudio-server stop
+  661  ps -ef |grep rstudio
+  662  cd /usr/lib/rstudio-server/
+  663  ls
+  664  cd bin
+  665  pwd
+  666  ls
+  667  cd ..
+  668  ls
+  669  ls R
+  670  pwd
+  671  ls
+  672  pwd
+  673  cd R
+  674  ls
+  675  ls library/
+  676  pwd
+  677  ls
+  678  pwd
+  679  cd ..
+  680  pwd
+  681  ls
+  682  pwd
+  683  ls
+  684  cd bin
+  685  ls
+  686  pwd
+  687  ./rserver --verify-installation=1 --server-daemonize=0
+  688  env |grep LC_ALL
+  689  local -a
+  690  locale -a
+  691  locale -a |egrp 'en_US|^C|^PO'
+  692  locale -a |egrep 'en_US|^C|^PO'
+  693  env |grep LANG
+  694  export LANG=C
+  695  ./rserver --verify-installation=1 --server-daemonize=0
+  696  ps -ef |grep rstudio
+  697  pwd
+  698  rstudio-server start
+  699  rstudio-server status
+  700  sudo rstudio-server status
+  701  sudo rstudio-server stop
+  702  ps -ef |grep rstudio
+  703  sudo rstudio-server start
+  704  vi ~/.bashrc
+  705  ps -ef |grep rstudio
+  706  netstat -anp |grep 8787
+  707  history
