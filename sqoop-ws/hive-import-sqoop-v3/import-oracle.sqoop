@@ -1,0 +1,12 @@
+import
+--connect
+jdbc:oracle:thin:@10.160.8.22:1521/epmpln
+--username
+JTYDFX_SELECT
+--password-file
+/user/hadoop/sqoop.password
+--verbose
+
+#	sqoop --options-file import-oracle.sqoop --table XXXX
+#
+#
