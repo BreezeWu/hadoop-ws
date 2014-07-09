@@ -10,8 +10,6 @@ sqoop --options-file list-tables-mysql.sqoop --verbose
 
 # ------------------------------------------------------------------------------
 # 用户信息  [ok]	hive中统计记录数 20289
-#	s01中没有"电压 volt_code_2"，且行业使用了名称，需要进行转换 BIGDATA_USER_INFO_S01_v2
-#sqoop --options-file hive-import-mysql.sqoop --table BIGDATA_USER_INFO_S01 --split-by 行业
 sqoop --options-file hive-import-mysql-forV3.sqoop --query '
     select 
         cons_id,cons_name,prc_code, org_no,
