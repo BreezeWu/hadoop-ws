@@ -1,0 +1,8 @@
+#list-tables
+--connect
+jdbc:mysql://master-hadoop:3306/dm2014
+--username
+wuhz
+--password
+wuhz
+--verbose

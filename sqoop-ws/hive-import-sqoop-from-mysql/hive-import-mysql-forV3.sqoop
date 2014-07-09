@@ -1,0 +1,24 @@
+import
+--connect
+jdbc:mysql://master-hadoop:3306/dm2014
+--username
+wuhz
+--password
+wuhz
+
+--hive-import
+#  Must specify destination with --target-dir.
+#	--target-dir with --warehouse-dir are incompatible options.
+#--warehouse-dir
+#/user/hadoop/tmp-for-sqoop-hive
+--verbose
+#	## 参考命令
+# sqoop --options-file import-oracle.sqoop --table XXXX
+#
+##查看hive warehouse目录下表
+#	hdfs dfs -ls /user/hive/warehouse
+##查看中间目录
+#	hdfs dfs -ls /user/hadoop/tmp-for-sqoop-hive
+## 清空中间目录
+#	hdfs dfs -rm -R /user/hadoop/tmp-for-sqoop-hive
+#
