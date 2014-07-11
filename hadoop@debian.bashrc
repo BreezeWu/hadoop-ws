@@ -109,12 +109,12 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# ------------------------------------------------
-
+# -----------------------------------------------------------------------------
 # ant
 export ANT_HOME=/opt/ant/apache-ant-1.9.4/
 export PATH=${ANT_HOME}/bin:${PATH}
 
+# -----------------------------------------------------------------------------
 # User specific aliases and functions
 export JAVA_HOME=/opt/java/jdk1.7.0_55
 export JRE_HOME=/opt/java/jdk1.7.0_55/jre
@@ -125,6 +125,7 @@ export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
 export JAVACP_HOME=/opt/java_cp
 export CLASSPATH=/opt/java_cp/mongo-java-driver-2.6.3.jar:/opt/java_cp/mysql-connector-java-5.1.27.jar:/opt/java_cp/ojdbc6_g.jar:/opt/java_cp/ojdbc6.jar:${CLASSPATH}
 
+# -----------------------------------------------------------------------------
 # 不同的hadoop版本定义
 #export HADOOP_VERSION=0.20.2
 #export HADOOP_VERSION=1.2.1
@@ -148,30 +149,43 @@ export HADOOP_HDFS_HOME=$HADOOP_INSTALL
 export YARN_HOME=$HADOOP_INSTALL  
 ###end of paste  
 
+# -----------------------------------------------------------------------------
+# zookeeper
+export ZOOKEEPER_HOME=/opt/zookeeper/zookeeper-3.4.6
+export PATH=${ZOOKEEPER_HOME}/bin:${PATH}
+
+# -----------------------------------------------------------------------------
+# hbase
+#export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop1
+export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop2
+export PATH=${HBASE_HOME}/bin:${PATH}
+
+#export HBASE_MANAGES_ZK=false  #不使用HBase自带的Zookeeper,这个必须在hbase-env.sh中配置
+
+# -----------------------------------------------------------------------------
 # hive
 #export HIVE_HOME=/opt/hive/hive-0.7.1
 export HIVE_HOME=/opt/hive/apache-hive-0.13.1-bin
 export PATH=${HIVE_HOME}/bin:${HIVE_HOME}/hcatalog/sbin:${PATH}
 
+# -----------------------------------------------------------------------------
 # pig
 export PIG_HOME=/opt/pig/pig-0.12.1
 export PATH=${PIG_HOME}/bin:${PATH}
 export CLASSPATH=$CLASSPATH:$PIG_HOME/lib
 
+# -----------------------------------------------------------------------------
 # maven
 export M2_HOME=/opt/maven/apache-maven-3.2.1
 export PATH=${M2_HOME}/bin:${PATH}
 export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
-# netbeans
-export NETBEANS_HOME=/usr/local/netbeans-8.0
-export PATH=${NETBEANS_HOME}/bin:$PATH
-export WS_NETBEANS=~/NetBeansProjects
-
+# -----------------------------------------------------------------------------
 # scala
 export SCALA_HOME=/opt/scala/scala-2.11.0
 export PATH=${SCALA_HOME}/bin:${PATH}
 
+# -----------------------------------------------------------------------------
 # spark
 # spark-1.0.0
 #export SPARK_HOME=/opt/spark/spark-1.0.0-bin-hadoop2
@@ -197,6 +211,12 @@ export MASTER=local
 	# 如果不使用MASTER,可以使用类似下面的命令
 	# ${SPARK_HOME}/./bin/spark-shell --master local[2]
 
+# -----------------------------------------------------------------------------
+# mesos
+export MESOS_HOME=/opt/mesos/mesos-0.19.0/build
+export PATH=${MESOS_HOME}/bin:${PATH}
+
+# -----------------------------------------------------------------------------
 # mahout
 #export MAHOUT_HOME=/opt/mahout/mahout-0.5
 #export MAHOUT_HOME=/opt/mahout/mahout-distribution-0.8
@@ -210,11 +230,24 @@ export PATH=${MAHOUT_HOME}/bin:${PATH}
 #export MAHOUT_INPUT=/home/hadoop/workspace_dm/input
 #export MAHOUT_OUTPUT=/home/hadoop/workspace_dm/output
 
+# -----------------------------------------------------------------------------
+# IDE工具
+
+# idea-IC
+export IDEA_IC=/opt/idea-IC/idea-IC-135.909
+export PATH=${IDEA_IC}/bin:${PATH}
+
 # eclipse
 export ECLIPSE_HOME=/opt/eclipse/eclipse-jee-kepler-SR2
 #export ECLIPSE_HOME=/opt/eclipse/eclipse-3.7.2
 export PATH=$ECLIPSE_HOME:$PATH
 
+# netbeans
+export NETBEANS_HOME=/usr/local/netbeans-8.0
+export PATH=${NETBEANS_HOME}/bin:$PATH
+export WS_NETBEANS=~/NetBeansProjects
+
+# -----------------------------------------------------------------------------
 # R语言
 #export R_HOME=/home/hadoop/dev-src-opensource/R-latest-20140528
 #export PATH=${R_HOME}/bin:${PATH}
@@ -234,6 +267,7 @@ export LD_LIBRARY_PATH=/usr/local/lib
 #make
 #make install
 
+# -----------------------------------------------------------------------------
 # sqoop
 #export SQOOP_HOME=/opt/sqoop/sqoop-2.0.0-SNAPSHOT-bin-hadoop200
 #export SQOOP_HOME=/opt/sqoop/sqoop-1.99.3-bin-hadoop200
@@ -243,55 +277,41 @@ export PATH=${SQOOP_HOME}/bin:${PATH}
 export CATALINA_BASE=${SQOOP_HOME}/server
 export LOGDIR=${SQOOP_HOME}/logs/
 
+# -----------------------------------------------------------------------------
 # flume
 export FLUME_HOME=/opt/flume/apache-flume-1.5.0-bin
 export PATH=${FLUME_HOME}/bin:${PATH}
 export FLUME_LOG_DIR=${FLUME_HOME}/logs
 
-# zookeeper
-export ZOOKEEPER_HOME=/opt/zookeeper/zookeeper-3.4.6
-export PATH=${ZOOKEEPER_HOME}/bin:${PATH}
-
-# hbase
-#export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop1
-export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop2
-export PATH=${HBASE_HOME}/bin:${PATH}
-
-#export HBASE_MANAGES_ZK=false  #不使用HBase自带的Zookeeper,这个必须在hbase-env.sh中配置
-
-# mesos
-export MESOS_HOME=/opt/mesos/mesos-0.19.0/build
-export PATH=${MESOS_HOME}/bin:${PATH}
-
+# -----------------------------------------------------------------------------
 # workspace
 export WS_DM=/home/hadoop/workspace_dm
 export EBOOK_HOME=/mnt/win-f/百度云盘/EBooks/EBooks.EBooks.大数据与数据挖掘
 export DM_HOME=/mnt/win-f/dev/sda7/百度云盘/职场之数据挖掘
 export WS_R=~/workspace_R
 
-# 其他工具
-# idea-IC
-export IDEA_IC=/opt/idea-IC/idea-IC-135.909
-export PATH=${IDEA_IC}/bin:${PATH}
-
+# -----------------------------------------------------------------------------
 # oracle sqldeveloper 
 # sqldeveloper.sh
 export SQLDEVELOPER_HOME=/opt/sqldeveloper/sqldeveloper-4.0.2.15.21
 export PATH=${SQLDEVELOPER_HOME}:${PATH}
 
+# -----------------------------------------------------------------------------
 # mongodb
 export MONGO_HOME=/opt/mongodb/mongodb-linux-x86_64-2.6.3
 export PATH=${MONGO_HOME}/bin:${PATH}
 
+# -----------------------------------------------------------------------------
 # h2o
 export H2O_HOME=/opt/h2o/h2o-2.4.4.3
 export PATH=${H2O_HOME}/bin:${PATH}
 
+# -----------------------------------------------------------------------------
 # AWS
-export AWS_ACCESS_KEY_ID=AKIAIAYOMT4DA3PMKLPQ
-export AWS_SECRET_ACCESS_KEY=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
+#export AWS_ACCESS_KEY_ID=
+#export AWS_SECRET_ACCESS_KEY=
 # 
 
-
+# -----------------------------------------------------------------------------
 # 添加当前目录到PATH
 export PATH=.:${PATH}
