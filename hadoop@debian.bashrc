@@ -313,5 +313,25 @@ export PATH=${H2O_HOME}/bin:${PATH}
 # 
 
 # -----------------------------------------------------------------------------
+# git
+# git config --global core.excludesfile ~/.gitignore_global
+# git 的其他配置
+# 	credential.helper=cache --timeout=3600000
+# 	user.name=Breeze Wu
+# 	user.email=dawningbreezee@gmail.com
+# 	core.autocrlf=false
+# 	core.excludesfile=/home/hadoop/.gitignore_global
+# 	color.ui=true
+# 	alias.lg=log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+# 	core.repositoryformatversion=0
+# 	core.filemode=true
+# 	core.bare=false
+# 	core.logallrefupdates=true
+# 	remote.origin.url=git@github.com:BreezeWu/hadoop-ws.git
+# 	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+# 	branch.master.remote=origin
+# 	branch.master.merge=refs/heads/master
+#
+# -----------------------------------------------------------------------------
 # 添加当前目录到PATH
 export PATH=.:${PATH}
