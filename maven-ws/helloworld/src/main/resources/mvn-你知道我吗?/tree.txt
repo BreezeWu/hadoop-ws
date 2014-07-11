@@ -1,0 +1,19 @@
+../../..
+├── main
+│   ├── java
+│   │   └── org
+│   │       └── wuhz
+│   │           └── maven
+│   │               └── App.java
+│   └── resources
+│       └── 你知道我吗
+│           ├── tree
+│           └── tree.txt
+└── test
+    └── java
+        └── org
+            └── wuhz
+                └── maven
+                    └── AppTest.java
+
+12 directories, 4 files
