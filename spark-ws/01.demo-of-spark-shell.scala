@@ -43,4 +43,20 @@ val listOfWords = textFile.flatMap(_.split(fileDelimiter))
 // listOfWords.map(x -> 1)
 val words_counts = listOfWords.map(word => (word,1)).reduceByKey(_ + _)
 
+// ----------------------------------------------------------------------------
+//	http://blog.csdn.net/sunflower_cao/article/details/26708797
+
+val inFile = sc.textFile("dm-data/spark-data/spam.data");  
+/*
+// 或者
+val file = sc.addFile("spam.data")  
+import org.apache.spark.SparkFiles;  
+val inFile = sc.textFile(SparkFiles.get("spam.data"))  
+*/
+
+inFile.first()  
+val nums = inFile.map(x => x.split(' ').map(_.toDouble))  
+nums.first()  
+
+
 
