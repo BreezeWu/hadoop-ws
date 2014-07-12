@@ -197,6 +197,9 @@ export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/spark-examples_2.10-1.0.
 #export SPARK_HOME=/opt/spark/spark-0.9.1-bin-hadoop2
 #export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/spark-examples_2.10-0.9.1.jar
 
+# 
+# ADD_JARS
+
 # 设置了${SPARK_HOME}/sbin这个后,会利用SPARK的脚本启动HDFS
 #export PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
 export PATH=${SPARK_HOME}/bin:${PATH}
