@@ -149,12 +149,12 @@ val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
 // 要成功执行下面语句,需要:
 //	1.将hive的配置文件 ${HIVE_HOME}/conf/hive-site.xml 拷贝到${SPARK_HOME}/conf目录下
 //		ln -s ${HIVE_HOME}/conf/hive-site.xml ${SPARK_HOME}/conf/hive-site.xml
-//	2. 启动hive server, 并尝试用hive连接
+//	2. 启动hive server, 并尝试用hive连接-----［这一步可以不执行！！！］
 //		hive --service hiveserver
 //		hive -h master-hadoop
 //	3.把mysql驱动让spark能够识别到
 //		下面这句不起作用 
-//			ln -s  /opt/java_cp/mysql-connector-java-5.1.27.jar ${SPARK_HOME}/lib_managed/mysql-connector-java-5.1.27.jar
+//			ln -s  /opt/java_cp/mysql-connector-java-5.1.27.jar ${SPARK_HOME}/lib_managed/jars/mysql-connector-java-5.1.27.jar
 //			这一句也失败! export ADD_JARS=/opt/java_cp/mysql-connector-java-5.1.27.jar
 //		下面这样才可以(然后再执行 ./bin/spark-shell)
 //			export SPARK_CLASSPATH=/opt/java_cp/mysql-connector-java-5.1.27.jar
