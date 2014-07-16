@@ -53,30 +53,36 @@ distData.saveAsTextFile(kmeansProfiling)
 
 // hdfs查看结果
 // 	hdfs dfs -ls /user/spark/profiling/k-means
-// 	hdfs dfs -cat /user/spark/profiling/k-means/*
+// 	hdfs dfs -cat /user/spark/profiling/k-means/
 // 清空数据 hdfs dfs -rm -r /user/spark/profiling/k-means/
 
 // end =========================================== k-means 及其评估
 
-
 // ----------------------------------------------------------------------------
-// 将"k-means 及其评估"封装为函数,以便多次运行
+// 将"k-means 及其评估"封装为函数,以便多次运行,以找出最小WSSSE的k值
 // 定义函数
-//def tryKMeans(k: Int, maxIterations: Int = 20, runs: Int = 1, initializationMode: String)
-def tryKMeans(mixK: Int = 2, maxK: Int) = {
+
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vectors
+
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.Vector
+
+//def train(data: org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector], k: Int, maxIterations: Int, runs: Int, initializationMode: String): KMeansModel  
+def tryKMeans(data: RDD[Vector], mixK: Int = 2, maxK: Int, maxIterations: Int = 20) = {
 	// 基础变量
 	var outputDataList = List[String]()
 	outputDataList = Nil
 
 	// Cluster the data into two classes using KMeans
 	val numClusters = 2
-	val numIterations = 20
+	val numIterations = maxIterations	// 默认值为 20
 	
 	// ----------------- 执行K-means算法
 	// val mixK = 2,maxK = 10
 	val range = Range(mixK, maxK)
 	for(k <- range) {
-		val clusters = KMeans.train(parsedData, k, numIterations)
+		val clusters = KMeans.train(data, k, numIterations)
 
 		// Evaluate clustering by computing Within Set Sum of Squared Errors
 		val WSSSE = clusters.computeCost(parsedData)
@@ -87,17 +93,66 @@ def tryKMeans(mixK: Int = 2, maxK: Int) = {
 		outputDataList = outputLine.toString :: outputDataList
 	}
 
-	// ----------------- 写入文件
+	// ----------------- 写入文件 文件名后面有日期
+	import java.util.Date
+	val format = new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")	// "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
+	val dateString = format.format(new java.util.Date())
+	// format.parse("21-03-2011")
+
 	val sparkRoot = "/user/spark/"
 	val dmProfiling = sparkRoot + "profiling/"
-	val kmeansProfiling = dmProfiling + "k-means"
+	val kmeansProfilingPath = dmProfiling + "k-means-" + dateString
 
 	val distData = sc.parallelize(outputDataList)
-	distData.saveAsTextFile(kmeansProfiling)
-	outputDataList
+	distData.saveAsTextFile(kmeansProfilingPath)
+	
+	// 函数返回值
+	Tuple2(kmeansProfilingPath, outputDataList)
 }
 
-tryKMeans(2,10)
+// 应用自定义函数
+val minK = 2
+val maxK = 10
+val numIterations = 20
+tryKMeans(parsedData,minK,maxK, numIterations)
+
+// 从结果中画图,识别出拐点
+// .......
+val perfectK = 4
+// ----------------------------------------------------------------------------
+// 找到最佳k之后,再次执行获得其clusters信息 (或者,从spark缓存中获得)
+// 定义函数
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vectors
+
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.Vector
+
+def perfectKMeans(data: RDD[Vector], perfectK: Int, maxIterations: Int = 20) = {
+	val clusters = KMeans.train(data, perfectK, maxIterations)
+
+	val sparkRoot = "/user/spark/"
+	val dmModel = sparkRoot + "model/"
+
+	val format = new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")	// "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
+	val dateString = format.format(new java.util.Date())
+
+	val kmeansModelPath = dmModel + "k-means-" + dateString + ".perfectK-" + perfectK + ".clusterCenters"
+
+	// 将簇中心转换为RDD,并写入文件
+	val distData = sc.parallelize(clusters.clusterCenters)
+	distData.saveAsTextFile(kmeansModelPath)
+
+	// 函数返回值
+	Tuple2(kmeansModelPath, clusters)
+}
+
+
+// 调用函数
+val perfectK = 4
+val numIterations = 20
+perfectKMeans(parsedData, perfectK, numIterations)
+
 
 
 
