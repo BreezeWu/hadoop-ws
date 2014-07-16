@@ -91,7 +91,7 @@ val dm: Matrix = Matrices.dense(3, 2, Array(1.0, 3.0, 5.0, 2.0, 4.0, 6.0))
 
 //  This is similar to data matrix in the context of multivariate statistics. Since each row is represented by a local vector, the number of columns is limited by the integer range but it should be much smaller in practice.
 
-import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 
 // 从hive取数据

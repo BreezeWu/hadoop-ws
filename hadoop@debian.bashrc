@@ -199,6 +199,7 @@ export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/spark-examples_2.10-1.0.
 
 # 
 # ADD_JARS
+export SPARK_CLASSPATH=/opt/java_cp/mysql-connector-java-5.1.27.jar
 
 # 设置了${SPARK_HOME}/sbin这个后,会利用SPARK的脚本启动HDFS
 #export PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
