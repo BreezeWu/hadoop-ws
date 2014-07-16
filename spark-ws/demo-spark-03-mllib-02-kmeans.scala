@@ -7,8 +7,9 @@
 //val parsedData = data.map(s => Vectors.dense(s.split(' ').map(_.toDouble)))
 
 // begin =========================================== 将用户数据,用电量数据,欠费等信息组合起来
-// 目前
+// 具体脚本请参见 ~/workspace_github/hadoop-ws/hive-ws/ 下的 preprocess-dm2014-userinfoClustering.sql 脚本
 
+// ############################## 不在这里再次描述了!!! ##############################
 
 // begin ------------------------------ 从hive取数据
 import org.apache.spark.mllib.linalg.Vectors
