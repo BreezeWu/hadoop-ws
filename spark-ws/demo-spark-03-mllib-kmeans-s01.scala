@@ -7,11 +7,8 @@
 //val parsedData = data.map(s => Vectors.dense(s.split(' ').map(_.toDouble)))
 
 // begin =========================================== 将用户数据,用电量数据,欠费等信息组合起来
-// 具体脚本请参见 ~/workspace_github/hadoop-ws/hive-ws/ 下的 preprocess-dm2014-userinfoClustering.sql 脚本
 
-// ############################## 不在这里再次描述了!!! ##############################
-
-// begin ------------------------------ 从hive取数据
+// begin ------------------------------ 从hive取数据 ###随便找的数据###
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 
@@ -23,7 +20,27 @@ val parsedData = rddFromHive.map(x => Array(
 		x(0).toString.toDouble,x(1).toString.toDouble,x(2).toString.toDouble)
 	).map(x => Vectors.dense(x)).cache()
 
-// end ------------------------------ 从hive取数据
+// end ------------------------------ 从hive取数据 ###随便找的数据###
+
+// 具体脚本请参见 ~/workspace_github/hadoop-ws/hive-ws/ 下的 preprocess-dm2014-userinfoClustering.sql 脚本
+// ############################## 不在这里再次描述了!!! ##############################
+// 用于聚类的hive数据表是 BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING
+
+// begin ------------------------------ 从hive取数据 ###2万用户的数据###
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+// val rddFromHive = hiveContext.hql("SELECT vpm*,rcved_amt*,rcvbl_amt*,owning_amt*,inspect_count FROM BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING")
+val rddFromHive = hiveContext.hql("SELECT vpm*,rcved_amt*,rcvbl_amt*,owning_amt*,inspect_count FROM BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING")
+
+// 转换为vector,最后变为matrices
+val parsedData = rddFromHive.map(x => Array(
+		x(0).toString.toDouble,x(1).toString.toDouble,x(2).toString.toDouble)
+	).map(x => Vectors.dense(x)).cache()
+
+// end ------------------------------ 从hive取数据 ###2万用户的数据###
+
 // end =========================================== 将用户数据,用电量数据,欠费等信息组合起来
 
 // begin =========================================== k-means 及其评估
