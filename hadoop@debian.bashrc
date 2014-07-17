@@ -168,6 +168,11 @@ export PATH=${HBASE_HOME}/bin:${PATH}
 export HIVE_HOME=/opt/hive/apache-hive-0.13.1-bin
 export PATH=${HIVE_HOME}/bin:${HIVE_HOME}/hcatalog/sbin:${PATH}
 
+# hive web interface
+export ANT_LIB=/opt/ant/apache-ant-1.9.4/lib
+# 启动服务
+# hive --service hwi
+# In order to access the Hive Web Interface, go to <Hive Server Address>:9999/hwi on your web browser.
 # -----------------------------------------------------------------------------
 # pig
 export PIG_HOME=/opt/pig/pig-0.12.1
