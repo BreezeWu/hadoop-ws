@@ -199,6 +199,9 @@ val perfectK = 27
 val numIterations = 20
 perfectKMeans(parsedData, perfectK, numIterations)
 
+// 将原始RDD写入hdfs
+parsedData.saveAsTextFile("/user/spark/model/k-means-2014-07-17-16-16-49.perfectK-27.data")
+
 
 
 
