@@ -210,16 +210,23 @@ export SPARK_CLASSPATH=/opt/java_cp/mysql-connector-java-5.1.27.jar
 #export PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}
 export PATH=${SPARK_HOME}/bin:${PATH}
 
+#export SPARK_MASTER_IP=127.0.0.1
+
 # MASTER 
 # This can be a mesos:// or spark:// URL, "yarn-cluster" or "yarn-client" to run on YARN, and "local" to run locally with one thread, or "local[N]" to run locally with N threads.
-#export SPARK_LOCAL_IP=127.0.0.1
+# 如果设置了master不是local,则需要事先启动对应服务才能够启动${SPARK_HOME}/bin/spark-shell
 
+# 下面设置就不需要执行任何额外的服务
 #export MASTER=local
-#export MASTER=yarn-client
-export MASTER=spark://master-hadoop:7077
-
 	# 如果不使用MASTER,可以使用类似下面的命令
 	# ${SPARK_HOME}/./bin/spark-shell --master local[2]
+
+# 下面配置需要先执行 hadoop的 start-yarn.sh
+#export MASTER=yarn-client
+
+# 下面配置需要先执行 ${SPARK_HOME}/sbin/start-all.sh
+export MASTER=spark://master-hadoop:7077
+
 
 # -----------------------------------------------------------------------------
 # mesos
