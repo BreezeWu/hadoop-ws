@@ -43,4 +43,15 @@
 		<name>mapreduce.jobhistory.webapp.address</name>
 		<value>master-hadoop:19888</value>
 	</property>
+
+    <property>
+	<name>mapreduce.tasktracker.map.tasks.maximum</name>
+	<value>4</value>
+    </property>
+
+    <property>
+	<name>mapreduce.tasktracker.reduce.tasks.maximum</name>
+	<value>2</value>
+    </property>
+
 </configuration>
