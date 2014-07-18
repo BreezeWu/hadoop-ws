@@ -70,7 +70,20 @@ cat /proc/cpuinfo | grep "processor" | wc -l
 
 
 # -----------------------------------------------------------------------------
-# 
+# 检查和关闭防火墙 CentOS
+#	http://os.51cto.com/art/201003/192193.htm
+
+# 防火墙是否打开
+sudo /etc/init.d/iptables status
+
+# 关闭防火墙服务：
+sudo /etc/init.d/iptables stop
+
+# 永久关闭防火墙
+chkconfig –level 35 iptables off
+# 也可以直接修改 /etc/sysconfig/iptables
+#添加一条
+#-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
 
 # -----------------------------------------------------------------------------
 # 
