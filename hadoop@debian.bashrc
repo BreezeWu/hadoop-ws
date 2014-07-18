@@ -213,9 +213,10 @@ export PATH=${SPARK_HOME}/bin:${PATH}
 # MASTER 
 # This can be a mesos:// or spark:// URL, "yarn-cluster" or "yarn-client" to run on YARN, and "local" to run locally with one thread, or "local[N]" to run locally with N threads.
 #export SPARK_LOCAL_IP=127.0.0.1
-export MASTER=local
+
+#export MASTER=local
 #export MASTER=yarn-client
-#export MASTER=spark://master-hadoop:7077
+export MASTER=spark://master-hadoop:7077
 
 	# 如果不使用MASTER,可以使用类似下面的命令
 	# ${SPARK_HOME}/./bin/spark-shell --master local[2]
