@@ -222,10 +222,10 @@ export PATH=${SPARK_HOME}/bin:${PATH}
 	# ${SPARK_HOME}/./bin/spark-shell --master local[2]
 
 # 下面配置需要先执行 hadoop的 start-yarn.sh
-#export MASTER=yarn-client
+export MASTER=yarn-client
 
 # 下面配置需要先执行 ${SPARK_HOME}/sbin/start-all.sh
-export MASTER=spark://master-hadoop:7077
+#export MASTER=spark://master-hadoop:7077
 
 
 # -----------------------------------------------------------------------------
