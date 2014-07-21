@@ -4,7 +4,8 @@
 # To disable the warning massages to be printed
 options(warn=-1)
 
-# -----------------------------       箱线图      ----------------------------- #
+# -----------------------------       Clickme      ----------------------------- #
+#	https://github.com/nachocab/clickme
 
 # 安装包
 install.packages("devtools") # you don't need to run this command if you already have the devtools package installed.

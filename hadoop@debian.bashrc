@@ -271,11 +271,13 @@ export WS_NETBEANS=~/NetBeansProjects
 
 # RHadoop
 export HADOOP_CMD=${HADOOP_HOME}/bin/hadoop
+export HADOOP_STREAMING=${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-streaming-2.2.0.jar
 
-# RHIPE
-export HADOOP_BIN=${HADOOP_HOME}/bin
-export PKG_CONFIG_PATH=/usr/local/lib
-export LD_LIBRARY_PATH=/usr/local/lib
+# RHIPE --begin
+#export HADOOP_BIN=${HADOOP_HOME}/bin
+#export PKG_CONFIG_PATH=/usr/local/lib
+#export LD_LIBRARY_PATH=/usr/local/lib
+
 #export PATH=/opt/protobuf/protobuf-2.4.1/bin:${PATH}
 ### To get in to the extracted protocol buffer directory
 #cd protobuf-2.4.1
@@ -283,7 +285,7 @@ export LD_LIBRARY_PATH=/usr/local/lib
 #./configure # --prefix=...
 #make
 #make install
-
+# RHIPE --end
 # -----------------------------------------------------------------------------
 # sqoop
 #export SQOOP_HOME=/opt/sqoop/sqoop-2.0.0-SNAPSHOT-bin-hadoop200

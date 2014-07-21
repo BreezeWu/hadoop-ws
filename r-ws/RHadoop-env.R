@@ -29,6 +29,9 @@ install.packages("~/Downloads/plyrmr_0.3.0.tar.gz",repos = NULL, type="source")
 #install.packages( c('rJava','RJSONIO', 'itertools', 'digest','Rcpp','httr','functional','devtools', 'plyr','reshape2'))
 install.packages( c('rJava','RJSONIO', 'itertools', 'digest','Rcpp','httr','functional','devtools', 'plyr','reshape2'))
 
+# 在linux命令行中安装
+Rscript -e 'install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest", "functional", "stringr", "plyr", "reshape2", "caTools"))'
+Rscript -e 'install.packages(c("rJava", "Rcpp", "RJSONIO", "bitops", "digest", "functional", "stringr", "plyr", "reshape2", "caTools"))'
 # -----------------------------------------------------------
 # RHadoop hadoop-0.20.2
 Sys.setenv(HADOOP_HOME="/opt/hadoop/hadoop-0.20.2")
