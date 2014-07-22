@@ -2,8 +2,10 @@ sudo ntfs-3g /dev/sda7 /mnt/win-f
 cd ~/link-goagent/local
 python ~/link-goagent/local/proxy.py
 
-# 设置网络
-# sudo ifconfig eth0 inet up 192.0.2.1 netmask 255.255.255.0
+# 手动设置以太网
+# 	sudo ifconfig eth0 inet up 192.0.2.1 netmask 255.255.255.0
+# 手动设置无线网络
+#	sudo ifconfig wlan0 inet up 192.168.0.8 netmask 255.255.255.0
 # 禁用eth0
 # sudo ifconfig eth0 inet down
 

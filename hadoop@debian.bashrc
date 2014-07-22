@@ -227,7 +227,9 @@ export MASTER=yarn-client
 # 下面配置需要先执行 ${SPARK_HOME}/sbin/start-all.sh
 #export MASTER=spark://master-hadoop:7077
 
-
+# sparkR
+export SPARKR_HOME=/home/hadoop/workspace_github/SparkR-pkg
+export PATH=${SPARKR_HOME}:${PATH}
 # -----------------------------------------------------------------------------
 # mesos
 export MESOS_HOME=/opt/mesos/mesos-0.19.0/build
