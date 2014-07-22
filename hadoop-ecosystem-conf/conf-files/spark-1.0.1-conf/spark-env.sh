@@ -27,6 +27,7 @@
 # - SPARK_YARN_QUEUE, The hadoop queue to use for allocation requests (Default: ‘default’)
 # - SPARK_YARN_DIST_FILES, Comma separated list of files to be distributed with the job.
 # - SPARK_YARN_DIST_ARCHIVES, Comma separated list of archives to be distributed with the job.
+#SPARK_EXECUTOR_MEMORY=2G
 
 # Options for the daemons used in the standalone deploy mode:
 # - SPARK_MASTER_IP, to bind the master to a different IP address or hostname
