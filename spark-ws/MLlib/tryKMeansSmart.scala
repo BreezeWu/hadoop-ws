@@ -26,7 +26,7 @@
     writeMetricList2HDFS(resultAccount)
     // sortedType,排序方式	0-默认,即计算k的顺序; 1-按照k从小到大排序
     // k排序
-    // writeMetricList2HDFS(resultAccount)
+    // writeMetricList2HDFS(resultAccount,1)
 */
 
 // ---------------------------------------------------------------------------------------------------------------------------
@@ -381,7 +381,11 @@ def writeMetricList2HDFS(x: Account, sortedType:Int = 0) = {
 
     val sparkRoot = "/user/spark/"
     val dmMetric = sparkRoot + "metric/"
-    val kmeansMetricPath = dmMetric + "k-means-" + dateString +"c_"+ x.counter +"_try"+ x.tryCounter 
+
+    // ------------------------------------------------------------------------
+    // 度量数据
+    // metrics
+    val kmeansMetricPath = dmMetric + "k-means-" + dateString +"_c"+ x.counter +"_try"+ x.tryCounter 
 
     /*
     // 不处理排序方式的语句
@@ -415,8 +419,29 @@ def writeMetricList2HDFS(x: Account, sortedType:Int = 0) = {
         )
         distData.saveAsTextFile(kmeansMetricPath)
     } 
-    
+
+    // ------------------------------------------------------------------------
+    // 最佳K的中心数据
+    // bestK_clusterCenters
+    // Account中的metricList按照WSSSE从小到大排序
+    val sortedMetricList = x.metricList.sorted
+        
+    // 第一个里面就有最优的k
+    val bestK = sortedMetricList(0).k
+    val bestClusters = sortedMetricList(0).clusters
+
+    // 将簇中心转换为RDD,并写入文件
+    val clustersData = sc.parallelize(bestClusters.clusterCenters)
+
+    // 文件路径
+    val dmClusterCenters = sparkRoot + "clustercenters/"
+    val kmeansClusterCentersPath = dmClusterCenters + "k-means-" + dateString +"_bestK" + bestK + "_clusterCenters"
+
+    // 写入文件
+    clustersData.saveAsTextFile(kmeansClusterCentersPath)
+
+    // ------------------------------------------------------------------------
     // 函数返回值
-    kmeansMetricPath
+    Tuple2(kmeansMetricPath, kmeansClusterCentersPath)
 }
 
