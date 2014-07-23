@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // spark-shell的启动
 //		为什么下面语句只启动4个Executor？
-//		SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2g SPARK_DRIVER_MEMORY=1g ../bin/spark-shell
+//		SPARK_EXECUTOR_INSTANCES=7 SPARK_EXECUTOR_MEMORY=2g SPARK_DRIVER_MEMORY=1g ../bin/spark-shell
 //		为什么下面语句只启动7个Executor？
 //		SPARK_EXECUTOR_INSTANCES=14 SPARK_EXECUTOR_MEMORY=1g SPARK_DRIVER_MEMORY=1g ../bin/spark-shell
 // MLlib - Clustering
@@ -119,7 +119,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.Vector
 
 //def train(data: org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector], k: Int, maxIterations: Int, runs: Int, initializationMode: String): KMeansModel  
-def tryKMeans(data: RDD[Vector], mixK: Int = 2, maxK: Int, maxIterations: Int = 20) = {
+def tryKMeans(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: Int = 20) = {
 	// 基础变量
 	var outputDataList = List[String]()
 	outputDataList = Nil
@@ -141,8 +141,8 @@ def tryKMeans(data: RDD[Vector], mixK: Int = 2, maxK: Int, maxIterations: Int = 
 	// 记录任务时间信息
 	var timePairList = List(Tuple3("<<<", timeBegin00Format, "???\t\t"))
 	
-	// val mixK = 2,maxK = 10
-	val range = Range(mixK, maxK)
+	// val minK = 2,maxK = 10
+	val range = Range(minK, maxK)
 	
 	for(k <- range) {
 		val timeBegin = new java.util.Date()
@@ -153,7 +153,7 @@ def tryKMeans(data: RDD[Vector], mixK: Int = 2, maxK: Int, maxIterations: Int = 
 		val clusters = KMeans.train(data, k, numIterations)
 
 		// Evaluate clustering by computing Within Set Sum of Squared Errors
-		val WSSSE = clusters.computeCost(parsedData)
+		val WSSSE = clusters.computeCost(data)
 
 		// Profiling
 		val delimiter:String = 0x01.toChar.toString	// 分隔符 Ctrl+A

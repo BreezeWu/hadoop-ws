@@ -1,0 +1,2 @@
+1, 20, 2.0810335793580857E22, 2014-07-22 22:37:02, 2014-07-22 23:02:26, org.apache.spark.mllib.clustering.KMeansModel@16c1ec80 
+50, 20, 3.5162249252460744E18, 2014-07-22 23:02:26, 2014-07-22 23:57:56, org.apache.spark.mllib.clustering.KMeansModel@384669a5 
