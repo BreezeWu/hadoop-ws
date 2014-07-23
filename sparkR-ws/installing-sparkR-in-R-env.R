@@ -43,16 +43,33 @@ library(SparkR)						# ok
 # 在R环境中运用 sparkR 
 
 # 创建sc
-sc <- sparkR.init(master="local")	// sparkR 只支持local模式
+library(SparkR)
+sc <- sparkR.init(master="local")	# sparkR 只支持local模式
 
-lines <- textFile(sc, "hdfs://master-hadoop:9000/user/hadoop/input/words-data/*")
-initialWeights <- runif(n=D, min = -1, max = 1)
-createMatrix <- function(line) {
-as.numeric(unlist(strsplit(line, " "))) %*% t(initialWeights)
-}
-# initialWeights is automatically serialized
-matrixRDD <- lapply(lines, createMatrix)
+lines <- textFile(sc, "hdfs://master-hadoop:9000/user/spark/metric/k-means-2014-07-23-19-44-16c_8_try8/*")
+wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, ","))) })
+
+# -----------------------------------------------------------------------------
+# Serializing closures
+# SparkR automatically serializes the necessary variables to execute a function on the cluster. For example if you use some global variables in a function passed to lapply, SparkR will automatically capture these variables and copy them to the cluster. An example of using a random weight vector to initialize a matrix is shown below
 
 
-wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, " "))) })
+   lines <- textFile(sc, "hdfs://data.txt")
+   initialWeights <- runif(n=D, min = -1, max = 1)
+   createMatrix <- function(line) {
+     as.numeric(unlist(strsplit(line, " "))) %*% t(initialWeights)
+   }
+   # initialWeights is automatically serialized
+   matrixRDD <- lapply(lines, createMatrix)
 
+# -----------------------------------------------------------------------------
+# Using existing R packages 
+# 在分布式环境中,指出需要加载的包 includePackage
+# SparkR also allows easy use of existing R packages inside closures. The includePackage command can be used to indicate packages that should be loaded before every closure is executed on the cluster. For example to use the Matrix in a closure applied on each partition of an RDD, you could run
+
+  generateSparse <- function(x) {
+    # Use sparseMatrix function from the Matrix package
+    sparseMatrix(i=c(1, 2, 3), j=c(1, 2, 3), x=c(1, 2, 3))
+  }
+  includePackage(sc, Matrix)
+  sparseMat <- lapplyPartition(rdd, generateSparse)
