@@ -392,6 +392,8 @@ def writeMetricList2HDFS(x: Account, sortedType:Int = 0) = {
     )
    
     distData.saveAsTextFile(kmeansMetricPath)
+    // 函数返回值
+    Tuple2(kmeansMetricPath, distData)
     */
     
     // 处理数据
@@ -415,6 +417,6 @@ def writeMetricList2HDFS(x: Account, sortedType:Int = 0) = {
     } 
     
     // 函数返回值
-    Tuple2(kmeansMetricPath, distData)
+    kmeansMetricPath
 }
 
