@@ -5,8 +5,9 @@ Sys.getenv("R_HOME")
 Sys.getenv("HOME")
 getwd()
 .libPaths()	# 包路径
+getOption("repos")
 
 # -----------------------------------------------------------------------------
 # 设置
 
-.libPaths( c( .libPaths(), "~/userLibrary") )
+#.libPaths( c( .libPaths(), "~/userLibrary") )
