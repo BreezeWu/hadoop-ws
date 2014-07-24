@@ -274,6 +274,17 @@ export WS_NETBEANS=~/NetBeansProjects
 # R_WD
 export R_WD=/home/hadoop/workspace_github/hadoop-ws/r-ws
 
+# 解决R画图时warning
+#> plot(1,1)
+#Warning messages:
+#1: In (function (display = "", width, height, pointsize, gamma, bg,  :
+#  locale not supported by Xlib: some X ops will operate in C locale
+#2: In (function (display = "", width, height, pointsize, gamma, bg,  :
+#  X cannot set locale modifiers
+# 解决办法: 设置linux locale
+export LC_CTYPE=en_HK.UTF-8
+export LC_ALL=en_HK.UTF-8
+
 # RHadoop
 export HADOOP_CMD=${HADOOP_HOME}/bin/hadoop
 export HADOOP_STREAMING=${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-streaming-2.2.0.jar

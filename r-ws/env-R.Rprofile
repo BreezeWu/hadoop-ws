@@ -11,29 +11,6 @@
 #	ln -s ~/workspace_github/hadoop-ws/r-ws/env-R.Rprofile ~/.Rprofile
 
 # -----------------------------------------------------------------------------
-options("width"=160)                # wide display with multiple monitors
-options("digits.secs"=3)            # show sub-second time stamps
-
-r <- getOption("repos")             # hard code the US repo for CRAN
-#r["CRAN"] <- "http://cran.us.r-project.org"
-r["CRAN"] <- "http://mirror.bjtu.edu.cn/cran"
-options(repos = r)
-rm(r)
-
-## put something this is your .Rprofile to customize the defaults
-setHook(packageEvent("grDevices", "onLoad"),
-        function(...) grDevices::X11.options(width=8, height=8, 
-                                             xpos=0, pointsize=10, 
-                                             #type="nbcairo"))  # Cairo device
-                                             #type="cairo"))    # other Cairo dev
-                                             type="xlib"))      # old default
-
-## from the AER book by Zeileis and Kleiber
-options(prompt="R> ", digits=4, show.signif.stars=FALSE)
-
-options("pdfviewer"="okular")         # on Linux, use okular as the pdf viewer
-
-# -----------------------------------------------------------------------------
 ## See http://gettinggeneticsdone.blogspot.com/2013/06/customize-rprofile.html
  
 ## Load packages
