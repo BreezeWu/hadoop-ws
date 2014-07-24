@@ -268,8 +268,11 @@ export WS_NETBEANS=~/NetBeansProjects
 
 # -----------------------------------------------------------------------------
 # R语言
+# 不要定义R_HOME
 #export R_HOME=/home/hadoop/dev-src-opensource/R-latest-20140528
 #export PATH=${R_HOME}/bin:${PATH}
+# R_WD
+export R_WD=/home/hadoop/workspace_github/hadoop-ws/r-ws
 
 # RHadoop
 export HADOOP_CMD=${HADOOP_HOME}/bin/hadoop
