@@ -9,6 +9,11 @@ getOption("repos")
 
 getOption("LANG")
 
+# 是否支持某个功能
+capabilities()["tcltk"]
+
+# tcltk2
+
 # -----------------------------------------------------------------------------
 # 常用分析诊断语句
 # 查看session information

@@ -125,6 +125,11 @@ qplot(ym, value, data=vpm.v, geom=c("boxplot", "jitter"),
 
 # 重置图形输出
 dev.off()
+
+ggplot(df.vertical, aes(time,value)) + geom_line(aes(colour = series))
+ggplot(vpm.v, aes(rowid,value)) + geom_line(aes(colour = ym))
+
+ggplot(vpm.v, aes(ym,value)) + geom_line(aes(colour = rowid))
 # ------------------------------------------------
 # *****************************************************************************
 # 图例1
