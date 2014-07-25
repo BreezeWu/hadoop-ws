@@ -11,6 +11,30 @@
 #	ln -s ~/workspace_github/hadoop-ws/r-ws/env-R.Rprofile ~/.Rprofile
 
 # -----------------------------------------------------------------------------
+#	http://stackoverflow.com/questions/1189759/expert-r-users-whats-in-your-rprofile
+
+#options("width"=160)                # wide display with multiple monitors
+#options("digits.secs"=3)            # show sub-second time stamps
+
+#r <- getOption("repos")             # hard code the US repo for CRAN
+#r["CRAN"] <- "http://cran.us.r-project.org"
+#options(repos = r)
+#rm(r)
+#options("repos" = c(CRAN = "http://mirror.bjtu.edu.cn/cran"))
+
+## put something this is your .Rprofile to customize the defaults
+#setHook(packageEvent("grDevices", "onLoad"),
+#        function(...) grDevices::X11.options(width=8, height=8, 
+#                                             xpos=0, pointsize=10, 
+#                                             #type="nbcairo"))  # Cairo device
+#                                             #type="cairo"))    # other Cairo dev
+#                                             type="xlib"))      # old default
+
+## from the AER book by Zeileis and Kleiber
+#options(prompt="R> ", digits=4, show.signif.stars=FALSE)
+
+#options("pdfviewer"="okular")         # on Linux, use okular as the pdf viewer
+# -----------------------------------------------------------------------------
 ## See http://gettinggeneticsdone.blogspot.com/2013/06/customize-rprofile.html
  
 ## Load packages
@@ -35,6 +59,7 @@ options("repos" = c(CRAN = "http://mirror.bjtu.edu.cn/cran"))
 ## .First() run at the start of every R session. 
 ## Use to load commonly used packages? 
 .First <- function() {
+	library(reshape)
 	library(ggplot2)
 	library(SparkR)
 	cat("\nSuccessfully loaded .Rprofile at", date(), "\n")

@@ -19,3 +19,11 @@ sudo yum install gcc-c++
 make
 sudo make install
 
+# -----------------------------------------------------------------------------
+# R Commander
+install.packages("Rcmdr", dependencies = TRUE)
+library(Rcmdr)
+# -----------------------------------------------------------------------------
+# RStudio
+
+

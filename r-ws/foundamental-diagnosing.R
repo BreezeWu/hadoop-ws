@@ -1,15 +1,4 @@
 # -----------------------------------------------------------------------------
-# 查看当前设置
-
-Sys.getenv("R_HOME")
-Sys.getenv("HOME")
-getwd()
-.libPaths()	# 包路径
-getOption("repos")
-
-getOption("LANG")
-
-# -----------------------------------------------------------------------------
 # 常用分析诊断语句
 # 查看session information
 sessionInfo()
@@ -19,7 +8,7 @@ sessionInfo()
 #  It can also be used to print the current stack or arbitrary lists of deparsed calls.
 traceback()
 
-# -----------------------------------------------------------------------------
-# 设置
+# 获得warning消息
+warning()
 
-#.libPaths( c( .libPaths(), "~/userLibrary") )
+

@@ -20,6 +20,8 @@ storage.mode(x)
 # -----------------------------------------------------------------------------
 # 展现对象的统计概要
 
+# --------------------------------
+# 单变量
 # ‘summary’ is a generic function used to produce result summaries of the results of various model fitting functions.
 # The function invokes particular ‘methods’ which depend on the ‘class’ of the first argument.
 summary(mydata)
@@ -27,6 +29,15 @@ summary(mydata)
 
 library(Hmisc)
 describe(mydata)
+
+# --------------------------------
+# 变量间
+table()		#The table() function is useful for summarizing one or more categorical variables
+with(students, table(Sex))  # install.packages(Lock5Data);library(Lock5Data); data(SleepStudy)
+
+heart = read.table("heart-rate", header = TRUE)
+students = read.csv("students.csv")
+
 
 # -----------------------------------------------------------------------------
 # 标签
