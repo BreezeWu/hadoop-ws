@@ -1,5 +1,13 @@
 # -----------------------------------------------------------------------------
-# 
+# 1. 结构与类型识别
+# 2. 展现对象的统计概要
+# 3. Useful Functions
+# 4. 变量标签与值标签
+
+# 5. 常用的包
+
+library(plyr)		# devtools::install_github("hadley/plyr")
+library(reshape)	# install.packages("reshape")
 
 # -----------------------------------------------------------------------------
 # 结构与类型识别
@@ -37,6 +45,32 @@ with(students, table(Sex))  # install.packages(Lock5Data);library(Lock5Data); da
 
 heart = read.table("heart-rate", header = TRUE)
 students = read.csv("students.csv")
+
+# -----------------------------------------------------------------------------
+#  Useful Functions
+
+mydata			# print mydata 
+head(mydata, n=10)	# print first 10 rows of mydata
+tail(mydata, n=5)	# print last 5 rows of mydata
+
+length(object) # number of elements or components
+str(object)    # structure of an object 
+class(object)  # class or type of an object
+names(object)  # names
+
+c(object,object,...)       # combine objects into a vector
+cbind(object, object, ...) # combine objects as columns
+rbind(object, object, ...) # combine objects as rows 
+
+object     # prints the object
+
+ls()       # list current objects
+rm(object) # delete an object
+
+newobject <- edit(object) # edit copy and save as newobject 
+fix(object)               # edit in place
+
+dim(object)		# dimensions of an object
 
 
 # -----------------------------------------------------------------------------
@@ -109,29 +143,4 @@ levels = c(1,3, 5),
 labels = c("Low", "Medium", "High"))
 Use the factor() function for nominal data and the ordered() function for ordinal data. R statistical and graphic functions will then treat the data appriopriately.
 Note: factor and ordered are used the same way, with the same arguments. The former creates factors and the later creates ordered factors.
-# -----------------------------------------------------------------------------
-#  Useful Functions
-
-mydata			# print mydata 
-head(mydata, n=10)	# print first 10 rows of mydata
-tail(mydata, n=5)	# print last 5 rows of mydata
-
-length(object) # number of elements or components
-str(object)    # structure of an object 
-class(object)  # class or type of an object
-names(object)  # names
-
-c(object,object,...)       # combine objects into a vector
-cbind(object, object, ...) # combine objects as columns
-rbind(object, object, ...) # combine objects as rows 
-
-object     # prints the object
-
-ls()       # list current objects
-rm(object) # delete an object
-
-newobject <- edit(object) # edit copy and save as newobject 
-fix(object)               # edit in place
-
-dim(object)		# dimensions of an object
 

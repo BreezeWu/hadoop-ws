@@ -31,35 +31,34 @@ ggplot(D) +
 # 数据准备
 # mydata = read.csv("~/workspace_github/hadoop-ws/sparkR-ws/data/metrics.csv")  # read csv file  ,首行有列名
 #mydata = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
-mydata = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv")  # read table file ,首行无列名(header=FALSE)
-mydata = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
+mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv")  # read table file ,首行无列名(header=FALSE)
+mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
 
-mydata
+mymetrics
 
 # 为mydata设置变量标签
 labels_metrics <- c("k", "maxIterations", "WSSSE", "聚类开始时间", "聚类结束时间", "KMeansModel")
-names(mydata) <- labels_metrics
+names(mymetrics) <- labels_metrics
 
 # 将k转换为factor
-mydata$k.f <- as.factor(mydata$k)
+mymetrics$k.f <- as.factor(mymetrics$k)
 
 # 取第1,3列
-mydata[,1-3]
+mymetrics[,1-3]
 
 # -----------------------------------------------------------------------------
 # 画图
 # -----------------------------------------------
-# Bar Graphs		# mydata 数据画"Bar Graphs"是无意义的,只是为了演示语法
+# Bar Graphs		# mymetrics 数据画"Bar Graphs"是无意义的,只是为了演示语法
 require(ggplot2)
 ## Loading required package: ggplot2
-ggplot(mydata, aes(x = k)) + geom_bar()
-ggplot(mydata, aes(x = WSSSE)) + geom_bar()
+ggplot(mymetrics, aes(x = k)) + geom_bar()
+ggplot(mymetrics, aes(x = WSSSE)) + geom_bar()
 
 # -----------------------------------------------
 # 折线图
 library(ggplot2)
-mtcars$cylinder <- as.factor(mtcars$cyl)
-qplot(k.f, WSSSE, data=mydata, geom=c("boxplot", "jitter"),
+qplot(k.f, WSSSE, data=mymetrics, geom=c("boxplot", "jitter"),
       fill=cylinder, 
       main="K效能图",
       xlab= "K",
@@ -125,6 +124,37 @@ qplot(ym, value, data=vpm.v, geom=c("boxplot", "jitter"),
 
 # 重置图形输出
 dev.off()
+
+#
+vpm.v$value <- as.integer(vpm.v$value)
+
+# --------------------------------------------
+# 方法一
+p <- ggplot(vpm.v, aes(x=ym))		# defaults
+p + geom_boxplot(aes(y=value))			# ok
+p + geom_boxplot(aes(y=value, colour = rowid))	# ok but WRONG?????
+
+p + stat_bin(geom="area")
+p + stat_bin(geom="point")
+p + stat_bin(geom="line")
+
+p + geom_histogram(aes(fill = rowid))
+p + geom_histogram(aes(y = ..density..))
+# --------------------------------------------
+# 方法二:  与方法一等价
+p <- ggplot(vpm.v, aes(x=ym,y=value))	# defaults
+p + geom_boxplot()			# ok
+p + geom_boxplot(aes(colour = rowid))	# ok but WRONG?????
+# --------------------------------------------
+p + geom_histogram()
+p + stat_bin(geom="area")
+p + stat_bin(geom="point")
+p + stat_bin(geom="line")
+
+p + geom_histogram(aes(fill = clarity))
+p + geom_histogram(aes(y = ..density..))
+# ------------------------------------------------
+dev.new()
 
 ggplot(df.vertical, aes(time,value)) + geom_line(aes(colour = series))
 ggplot(vpm.v, aes(rowid,value)) + geom_line(aes(colour = ym))

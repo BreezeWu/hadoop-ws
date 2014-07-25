@@ -1,0 +1,70 @@
+# -----------------------------------------------------------------------------
+# a table or catalog of aesthetics for ggplot2
+#	http://stackoverflow.com/questions/11657380/is-there-a-table-or-catalog-of-aesthetics-for-ggplot2
+
+# -----------------------------------------------------------------------------
+# 打印函数
+library(reshape)
+library(plyr)
+
+find_aes <- function(geom="point"){
+
+  tryCatch({
+  Geom <- getFromNamespace(paste("Geom", ggplot2:::firstUpper(geom), sep=""),
+                           "ggplot2")
+
+  tmp <- unclass(Geom$default_aes())
+  tmp[is.na(tmp)] <- "yes"
+  data.frame(tmp, stringsAsFactors=FALSE)
+  }, error = function(e) {})
+}
+
+funs <- grep("^geom_", ls("package:ggplot2"),val=T)
+
+geoms <- gsub("^geom_", "", funs)
+
+all <- lapply(geoms, find_aes)
+names(all) <- geoms
+relevant <- sapply(all, function(x) !is.null(x) && nrow(x) > 0)
+results = do.call(rbind.fill,all)
+rownames(results) <- names(relevant[relevant])
+results[is.na(results)] <- "--"
+
+options(width=9999)
+capture.output(print(results), file="aes.txt")
+
+# -----------------------------------------------------------------------------
+# 打印结果
+            colour size linetype alpha   fill weight shape width height angle hjust vjust family fontface lineheight
+abline       black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+area           yes  0.5        1   yes grey20     --    --    --     --    --    --    --     --       --         --
+bar            yes  0.5        1   yes grey20      1    --    --     --    --    --    --     --       --         --
+bin2d          yes  0.5        1   yes grey60      1    --    --     --    --    --    --     --       --         --
+boxplot     grey20  0.5    solid   yes  white      1    16    --     --    --    --    --     --       --         --
+contour    #3366FF  0.5        1   yes     --      1    --    --     --    --    --    --     --       --         --
+crossbar     black  0.5        1   yes    yes     --    --    --     --    --    --    --     --       --         --
+density      black  0.5        1   yes    yes      1    --    --     --    --    --    --     --       --         --
+density2d  #3366FF  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+errorbar     black  0.5        1   yes     --     --    --   0.5     --    --    --    --     --       --         --
+errorbarh    black  0.5        1   yes     --     --    --    --    0.5    --    --    --     --       --         --
+freqpoly     black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+hex            yes  0.5       --   yes grey50     --    --    --     --    --    --    --     --       --         --
+hline        black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+linerange    black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+path         black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+point        black    2       --   yes    yes     --    16    --     --    --    --    --     --       --         --
+pointrange   black  0.5        1   yes    yes     --    16    --     --    --    --    --     --       --         --
+polygon         NA  0.5        1   yes grey20     --    --    --     --    --    --    --     --       --         --
+quantile   #3366FF  0.5        1   yes     --      1    --    --     --    --    --    --     --       --         --
+raster          --   --       --   yes grey20     --    --    --     --    --    --    --     --       --         --
+rect           yes  0.5        1   yes grey20     --    --    --     --    --    --    --     --       --         --
+ribbon         yes  0.5        1   yes grey20     --    --    --     --    --    --    --     --       --         --
+rug          black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+segment      black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+smooth     #3366FF  0.5        1   0.4 grey60      1    --    --     --    --    --    --     --       --         --
+step         black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+text         black    5       --   yes     --     --    --    --     --     0   0.5   0.5               1        1.2
+tile           yes  0.1        1   yes grey20     --    --    --     --    --    --    --     --       --         --
+violin      grey20  0.5    solid   yes  white      1    --    --     --    --    --    --     --       --         --
+vline        black  0.5        1   yes     --     --    --    --     --    --    --    --     --       --         --
+
