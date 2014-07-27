@@ -3,23 +3,53 @@
 #	<<ppt.ggplot2.2007-vanderbilt.pdf>> 
 #	http://ggplot2.org/resources/2007-vanderbilt.pdf
 
+# -----------------------------------------------------------------------------
+# Outline
+#	• Intro: installation, documentation, data and qplot
+#	• How make to a plot
+#	• Geoms, stats, scales, facets and coordinate systems
+
+#	• Let me know if you have questions
+
 # *****************************************************************************
 # -----------------------------------------------------------------------------
+# 类plot的函数 qplot
+# -----------------------------------------------------------------------------
+# ● Wraps up all the details of ggplot with a familiar syntax borrowed from plot
+# ● Additional features:
+#	• Automatically scales data
+#	• Can produce any type of plot
+#	• Facetting and margins
+#	• Creates objects that can be saved and modiﬁed
+
 # 下面两个等价
-qplot(diamonds$carat, diamonds$price)
-qplot(carat, price, data = diamonds)
+qplot(diamonds$carat, diamonds$price)	# plot(diamonds$carat, diamonds$price)
+qplot(carat, price, data = diamonds)	# plot中无对应用法
 
-# 下面这个增加了颜色信息 根据另一个列 clarity
-qplot(carat, price, data = diamonds,colour=clarity)
+# -------------------------------------
+# 对比 plot
+attach(diamonds)
+plot(carat, price, data = diamonds)	# plot中没有 data 这个参数, 但语法正确,可以正确画图. 出现warning
+plot(carat, price, data = xfsfdsfsdf)	# 会提示没有 xfsfdsfsdf 这个变量
+plot(carat, price, data = "xfsfdsfsdf")	# plot中没有 data 这个参数, 但语法正确,可以正确画图. 出现warning
+detach(diamonds)
+# -------------------------------------
 
-# 这个干了个啥?  多了一根回归线,同时,图的尺寸也缩小了
-qplot(carat, price, data = diamonds,geom=c("point", "smooth"), method=lm)
+qplot(carat, price, data = diamonds,colour=clarity)	# 下面这个增加了颜色信息 根据另一个列 clarity
+qplot(carat, price, data = diamonds,geom=c("point", "smooth"), method=lm)	# 这个干了个啥?  多了一根回归线,同时,图的尺寸也缩小了
 
 # 下面两个是单变量图形
 qplot(carat, data = diamonds,geom="histogram")
 qplot(carat, data = diamonds,geom="histogram", binwidth = 100)	# 自定义了X轴跨度,于是 全变成一个柱子了!
 
 # *****************************************************************************
+# -----------------------------------------------------------------------------
+# defaults
+# -----------------------------------------------------------------------------
+# • Layers of convenience functions
+# • Multiple levels allow you to trade-off simplicity and control
+# • qplot is the simplest to use, but gives the least control
+# • To understand more sophisticated levels you need a basic understanding of the grammar
 # -----------------------------------------------------------------------------
 # how to make a plot
 
@@ -30,14 +60,20 @@ trt <- c("a","a","b","b")
 
 mydata <- data.frame(length,width, depth,trt)
 
+# -----------------------------------------------------------------------------
 # Want a scatterplot of length vs width
 # What is a scatterplot?
 #	1. geom 	: 	Represent observations with points
 #	2. scales	:	Linear scaling of x and y axes (scales)
-#	3.		:	Cartesian coordinate system
+#	3. 坐标体系	:	Cartesian coordinate system
 
-# data ==> mapping (x,y,colour)
-# mapping ==> physical "drawing" units 	# Scales: Need to convert to physical “drawing” units (and coordinate system)
+# 1. 数据		Data
+# 2. 数据映射到绘图单元	Mapping : Data ==> mapping (x,y,colour)
+#	包括:	Mapping (aes), Geometric object (geom), Statistical transformation (stat)
+# 3. 绘图单元的绘制	Scales 	: Need to convert to physical “drawing” units (and coordinate system)
+#	包括:	Scales, Coordinate system
+# 4. 其他,如参数化
+#	包括:	(+ Position adjustment, facetting)
 
 # Geoms	
 # Guides(from scales and coordinate systems)
@@ -94,7 +130,10 @@ mydata <- data.frame(length,width, depth,trt)
 #-------------------------------------------------
 # qplot 是从 ggplot 而来的
 
-# 下面定义了 "数据"及其相关的layer 
+# *****************************************************************************
+# -----------------------------------------------------------------------------
+# Plot deﬁnition :下面定义了 "数据"及其相关的layer 
+# -----------------------------------------------------------------------------
 # ggplot(data, mapping) +
 #	layer(
 #	stat = "",
@@ -139,10 +178,10 @@ d + geom_histogram()
 # -----------------------------------------------------------------------------
 #	• Data and mappings usually stay the same on a plot, so they are stored as defaults:
 #	• ggplot(data, mapping = aes(x=x, y=y))
-#	• aes function describes relationship, doesn't supply data
+#	• aes function describes relationship, doesn't supply data	描述映射 aes
 
 # -----------------------------------------------------------------------------
-# Geoms ~ 图形几何形状
+# Geoms ~ 图形几何形状		数据的图形化展现 graphical representation
 # -----------------------------------------------------------------------------
 #	• Geoms define the basic "shape" of the elements on the plot
 #	• Basics: point, line, polygon, bar, text
@@ -150,7 +189,7 @@ d + geom_histogram()
 #	• Statistic: histogram, smooth, density
 
 # -----------------------------------------------------------------------------
-# Statistics ~ 数据变形
+# Statistics ~ 数据变形		数据的图形化展现时的trasformation
 # -----------------------------------------------------------------------------
 # ● We haven't used explicitly, but they underlie many of the layers we have been creating 
 #	- some geoms are really statistics in disguise:
@@ -165,18 +204,127 @@ d + geom_histogram()
 # Variations on a histogram
 p <- ggplot(diamonds, aes(x=price))	# defaults
 
-p + geom_histogram()
+p + geom_histogram()		# 等同于 p + stat_bin(geom="bar")
+p + stat_bin(geom="bar")
 p + stat_bin(geom="area")
 p + stat_bin(geom="point")
+
 p + stat_bin(geom="line")
+p + geom_histogram()				# 原始图
+p + geom_histogram(aes(fill = clarity))		# 颜色使用 clarity 取值填充
+p + geom_histogram(aes(y = ..density..))	# y轴是新变量
+p + geom_histogram(aes(colour = ..count..))	# 颜色使用新变量???
 
-p + geom_histogram(aes(fill = clarity))
-p + geom_histogram(aes(y = ..density..))
+# -----------------------------------------------------------------------------
+# Prameters ~ 参数  作用于 Geoms 和 Stats
+# -----------------------------------------------------------------------------
+# ● Parameters modify appearance of geoms and operation of statistics
+# • + geom_smooth(method=lm)
+# • + stat_bin(binwidth = 100)
+# • + stat_summary(fun="mean_cl_boot")
+# • + geom_boxplot(outlier.colour = "red")
+# ● Any aesthetic can also be used as a parameter
+# • + geom_point(colour = "red", size = 5)
+# • + geom_line(linetype = 3)
 
+# [Parameters modify appearance of geoms and operation of statistics]
 
+p <- ggplot(diamonds, aes(x=price))	# 数据和映射
+p + stat_bin()				# 使用默认值
+p + stat_bin(binwidth = 10)		# 改变stat
+dev.new()
+p + stat_bin(binwidth = 1000)		# 改变stat
 
+p <- ggplot(diamonds, aes(x=carat,y=price))	# 数据和映射
+p + geom_point()				# 使用默认值
+p + geom_point() + geom_smooth(method=lm)	# 增加了回归线
 
+# [Any aesthetic can also be used as a parameter]
+p <- ggplot(diamonds, aes(x=carat,y=price))
 
+p + geom_point()				# default: 颜色是黑色的
+p + geom_point(colour = "red", size = 5)	# 颜色是红色的, 点的尺寸是5
+p + geom_point(colour = "red", size = 1)	# 颜色是红色的, 点的尺寸是1
+
+p + geom_point(aes(colour = clarity))		# 颜色根据 clarity列 分别处理	# 所以,aes 是变量映射 	参见后面"Setting vs Mapping"
+p + geom_point(colour = "clarity")		# FAILED! "clarity"不是颜色代码	# 所以 = 是参数赋值	参见后面"Setting vs Mapping"
+
+# -----------------------------------------------------------------------------
+# Setting vs Mapping
+# -----------------------------------------------------------------------------
+
+p <- ggplot(diamonds, aes(x=carat,y=price))
+
+# What will this do?
+p + geom_point()			# 默认配置
+p + geom_point(aes(colour = "green"))	# 点的颜色是绿色? 	# Mapping ?"green"	
+p + geom_point(colour = "green")	# 点的颜色是绿色		# Setting
+p + geom_point(colour = colour)		# 报错! 		# Setting 但没有变量colour
+
+colour <- "orange"
+p + geom_point(colour = colour)		# 点的颜色是桔色		# Setting
+
+p + geom_point(aes(colour = color))	# 点的颜色根据 color 列而取不同的值	# Mapping
+p + geom_point(aes(colour = cut))	# 点的颜色根据 cut 列而取不同的值	# Mapping
+p + geom_point(aes(colour = x))		# 点的颜色根据 x 列而取不同的值	# Mapping
+					# x 变量是num,是连续值,所以颜色是渐变的!!!
+
+# -----------------------------------------------------------------------------
+# Scales ~ 尺度   映射的比例等
+# -----------------------------------------------------------------------------
+# ● Scales control the mapping between data and aesthetics, and control the display of the matching guide (axis or legend)
+# ● ggplot automatically adds default scales as we need them, but we will often need to customise
+
+# -------------------------------------
+# Scales ~ 尺度 [基础]
+# ● Change name and range or limits
+# ● All scales take name as ﬁrst argument
+# 	• axis or legend name
+# 	• can be an expression
+# ● All position scales also take limits argument
+# ●  Any data outside of limits is not plotted (but is still used for computation)
+
+# -------------------------------------
+# Position scales
+# ● Can be used to plot on non-linear scales
+#	• scale_x_log10, scale_x_sqrt, ...
+# ● Can also control exactly where breaks occur (with breaks argument) 
+#  and the amount of extra space on the borders (with the expand argument)
+
+# Scales
+# ● Colour/ﬁll probably most commonly manipulated
+#	• discrete: hue, brewer, grey, manual
+#	• continuous: gradient, gradient2
+#	• identity
+# ● Also see:
+#	• scale_size, scale_area
+#	• scale_linetype
+
+qplot(carat, data=diamonds, geom="histogram", ﬁll=clarity)	# 语句错误 why(?????)
+qplot(carat, cut, data=diamonds, geom="jitter", colour=price)
+
+# -----------------------------------------------------------------------------
+# Facetting ~ 切面?   数据的多个方面
+# -----------------------------------------------------------------------------
+# ● It's often useful to draw small multiple of subsets of your data
+# ● Currently, there is only one way to do this:
+#	• + facet_grid(row ~ col, margins = TRUE)
+#	• (just like in qplot)
+# ● In the future there will be more
+
+# -----------------------------------------------------------------------------
+# Coordinate systems ~ 坐标系
+# -----------------------------------------------------------------------------
+# ● Control how the two positions aesthetics work together (default: Cartesian)
+# ● Others of note:
+#	• coord_ﬂip()
+#	• coord_map()
+#	• coord_polar()
+# ● Occur after statistics and affect the appearance of geoms
+
+qplot(log10(length), data=movies, geom="histogram", binwidth=0.1)
+qplot(length, data=movies, geom="histogram", binwidth=0.1, log="x")
+qplot(length, data=movies, geom="histogram", binwidth=10) + coord_trans(x="log10")	# failed!
 # *****************************************************************************
 # 一个复杂的例子
 #	http://stackoverflow.com/questions/22317455/error-discrete-value-supplied-to-continuous-scale-when-manually-dodgeing-a-p
