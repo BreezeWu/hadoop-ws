@@ -85,7 +85,7 @@
     */    
     implicit def Metric2ordered(x: Metric): Ordered[Metric] = new Ordered[Metric] {
         def compare(y: Metric): Int =
-	    //(x.WSSSE).compare(y.WSSSE)
+	    (x.WSSSE).compare(y.WSSSE)
             /*
             if (x.WSSSE < y.WSSSE) -1
             else if (x.WSSSE > y.WSSSE) 1
