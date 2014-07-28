@@ -21,6 +21,7 @@ m2	双月	BIGDATA_USER_INFO_S01_2013M2_V_FOR_CLUSTERING
 执行步骤(在hive交互环境中):
 
 -- 1. 选择是 s01 还是 s98
+-- 下面的脚本以选择 s01为例.
 
 -- 2. 数据准备
 source /home/hadoop/workspace_github/hadoop-ws/hive-ws/preprocess-dm2014-userinfoClustering-s01.sql;
