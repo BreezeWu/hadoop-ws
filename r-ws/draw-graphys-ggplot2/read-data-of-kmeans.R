@@ -16,9 +16,9 @@
 # -----------------------------------------------------------------------------
 # 数据准备
 # mydata = read.csv("~/workspace_github/hadoop-ws/sparkR-ws/data/metrics.csv")  # read csv file  ,首行有列名
-#mydata = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
-mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv")  # read table file ,首行无列名(header=FALSE)
-mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
+#mydata = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/result-data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
+mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/result-data/metrics.csv")  # read table file ,首行无列名(header=FALSE)
+mymetrics = read.table("~/workspace_github/hadoop-ws/r-ws/result-data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
 
 mymetrics
 
@@ -37,8 +37,8 @@ mymetrics[,1-3]
 ## clusterCenters
 # -----------------------------------------------------------------------------
 # 数据准备
-#mycenters = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/data/clustercenters.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
-myclustercenters = read.table("~/workspace_github/hadoop-ws/r-ws/data/clustercenters.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
+#mycenters = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/result-data/clustercenters.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
+myclustercenters = read.table("~/workspace_github/hadoop-ws/r-ws/result-data/clustercenters.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
 myclustercenters
 
 # -----------------------------------------------------------------------------

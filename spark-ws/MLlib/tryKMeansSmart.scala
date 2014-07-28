@@ -170,14 +170,18 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         val clustersOfK: org.apache.spark.mllib.clustering.KMeansModel = null
         */
         // 执行KMeans算法
-        val clustersOfK = KMeans.train(data, k, maxIterations)
-        val WSSSEOfK = clustersOfK.computeCost(data)
+        val clusteringKM = new KMeans()
+	clusteringKM.setK(k)
+	val model = clusteringKM.run(data)
+	val WSSSEOfK = model.computeCost(data)
+        //val clustersOfK = KMeans.train(data, k, maxIterations)
+        //val WSSSEOfK = clustersOfK.computeCost(data)
         
         // metric信息
         val timeEnd = new java.util.Date()
         
         // metric对象
-        val newMetric = Metric(k, maxIterations, WSSSEOfK, timeBegin, timeEnd, clustersOfK)
+        val newMetric = Metric(k, maxIterations, WSSSEOfK, timeBegin, timeEnd, model)
         // 添加到 metricList
         val newMetricList = newMetric :: x.metricList
         // 函数返回值
@@ -211,7 +215,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
             return false
         }
         
-        // 也不能相等
+        // 也不能只相差1
         if( triangle.low + 1 == triangle.high) {
             return false
         } 
