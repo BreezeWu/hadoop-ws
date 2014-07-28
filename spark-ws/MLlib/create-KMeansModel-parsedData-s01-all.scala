@@ -1,4 +1,6 @@
 // begin ------------------------------ 从hive取数据 ### s01类型的表-用户的数据###
+// 所有用户数据 
+//	数据源: BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 

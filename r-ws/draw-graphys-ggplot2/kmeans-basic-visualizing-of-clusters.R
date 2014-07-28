@@ -34,8 +34,50 @@ qplot(ym, value, data=vpm.v, geom=c("boxplot", "jitter"),
 # 重置图形输出
 dev.off()
 
-#
-vpm.v$value <- as.integer(vpm.v$value)
+#------------------------------------------------------------------------------
+# 平行坐标图
+
+# -------------------------------------
+# 图例
+# 图例-为每一个列画图
+require(ggplot2)
+require(reshape)
+df <- data.frame(time = 1:10,
+                 a = cumsum(rnorm(10)),
+                 b = cumsum(rnorm(10)),
+                 c = cumsum(rnorm(10)))
+df.vertical <- melt(df ,  id = 'time', variable_name = 'series')
+# plot on same grid, each series colored differently -- 
+# good if the series have same scale
+ggplot(df.vertical, aes(time,value)) + geom_line(aes(colour = series))
+
+# or plot on different plots
+ggplot(df.vertical, aes(time,value)) + geom_line() + facet_grid(series ~ .)
+
+# -------------------------------------
+# 我的数据
+vpm.v$time <- as.integer(vpm.v$ym)
+vpm.v$series <- vpm.v$rowid
+
+# 数据比较
+str(df.vertical)
+str(vpm.v)
+
+# 我的图
+ggplot(vpm.v, aes(time,value)) + geom_line(aes(colour = series)) + 
+	main("簇中心的月用电量箱线图") + xlab("年月") + ylab("簇中心的用电量")
+
+ggplot(vpm.v, aes(time,value)) + geom_line(aes(colour = series)) + 
+	xlab("年月") + ylab("簇中心的用电量")
+
+#------------------------------------------------------------------------------
+# 箱线图
+p <- ggplot(mtcars, aes(factor(cyl), mpg))
+p + geom_boxplot()
+
+# 
+p <- ggplot(vpm.t, aes(factor(ym), V1))
+p + geom_boxplot()
 
 # --------------------------------------------
 # 方法一
@@ -129,19 +171,4 @@ library(ggplot2)
 data(singer, package="lattice")
 qplot(height, data=singer, geom=c("density"),
       facets=voice.part~., fill=voice.part)
-
-# 图例-为每一个列画图
-require(ggplot2)
-require(reshape)
-df <- data.frame(time = 1:10,
-                 a = cumsum(rnorm(10)),
-                 b = cumsum(rnorm(10)),
-                 c = cumsum(rnorm(10)))
-df.vertical <- melt(df ,  id = 'time', variable_name = 'series')
-# plot on same grid, each series colored differently -- 
-# good if the series have same scale
-ggplot(df.vertical, aes(time,value)) + geom_line(aes(colour = series))
-
-# or plot on different plots
-ggplot(df.vertical, aes(time,value)) + geom_line() + facet_grid(series ~ .)
 

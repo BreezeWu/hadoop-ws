@@ -95,15 +95,19 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S01_V AS
     left outer join (select cons_no, rcved_amt as rcved_amt201406, rcvbl_amt as rcvbl_amt201406, owning_amt as owning_amt201406 from BIGDATA_RCVBL_FLOW_PM_S01 where ym = '201406') ym201406 on ym201406.cons_no = x.cons_no
 ;
 -- ----------------------------------------------------------------------------
+-- 下面数据在各个 get-userinfoClustering-....sql 脚本中执行
+-- ----------------------------------------------------------------------------
 -- 2. 将多个表合并为一个表, 这里只获取数值型数据(即加/减/乘/除具有含义的列)
 -- 创建唯一cons_id和cons_no
 
 -- 下面语句执行后,会有一行(NULL,NULL), 但在mysql中没有这个值!
 -- hive, 20289	mysql, 20288
+/*
 CREATE TABLE BIGDATA_USER_INFO_S01_IDNO_MAP AS
 select x.cons_id, a.cons_no from (select distinct cons_id from BIGDATA_USER_INFO_S01) x
     left outer join BIGDATA_USER_INFO_S01 a on a.cons_id= x.cons_id
 ;
+*/
 
 /*
 -- 找出那个没有对应的cons_id或cons_no
@@ -111,6 +115,7 @@ select count(distinct cons_id) from BIGDATA_USER_INFO_S01;	// 20288
 select count(distinct cons_no) from BIGDATA_USER_INFO_S01;	// 20187
 */
 
+-- ----------------------------------------------------------------------------
 -- 创建一个大横表
 -- ## 用户信息表 BIGDATA_USER_INFO_S01  一个列也不能取?	x
 -- ## 月用电量(横表) BIGDATA_ARC_VOLUME_PERM_S01_V	a
@@ -119,6 +124,7 @@ select count(distinct cons_no) from BIGDATA_USER_INFO_S01;	// 20187
 -- ## 是否阶梯电价 BIGDATA_TS_OR_PRCSCOPE_S01	d
 --	用户信息表 BIGDATA_USER_INFO_S01			没有可计算数值数据,未从该表取数 x.*,
 --	是否阶梯电价 BIGDATA_TS_OR_PRCSCOPE_S01	d	没有可计算数值数据,未从该表取数 d.*,
+/*
 CREATE TABLE BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING AS
 select a.*,b.*,c.inspect_count from BIGDATA_USER_INFO_S01_IDNO_MAP x 
     left outer join BIGDATA_ARC_VOLUME_PERM_S01_V a on a.cons_id = x.cons_id
@@ -129,3 +135,4 @@ select a.*,b.*,c.inspect_count from BIGDATA_USER_INFO_S01_IDNO_MAP x
 
 -- 查看表结构
 desc BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING;
+*/
