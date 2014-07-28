@@ -16,7 +16,7 @@ val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
 val rddFromHiveM1 = hiveContext.hql("SELECT  vpm201301,vpm201302,vpm201303,vpm201304,vpm201305,vpm201306,vpm201307,vpm201308,vpm201309,vpm201310,vpm201311,vpm201312 FROM BIGDATA_USER_INFO_S01_2013M1_V_FOR_CLUSTERING x")  // 没有 cons_id
 
 // 获取 月用电量(vpm) 年度汇总
-val rddFromHiveM1 = hiveContext.hql("SELECT  vpm201301,vpm201302,vpm201303,vpm201304,vpm201305,vpm201306,vpm201307,vpm201308,vpm201309,vpm201310,vpm201311,vpm201312 FROM BIGDATA_USER_INFO_S01_2013M1_V_FOR_CLUSTERING x")  // 没有 cons_id
+//val rddFromHiveM1 = hiveContext.hql("SELECT sum(vpm201301,vpm201302,vpm201303,vpm201304,vpm201305,vpm201306,vpm201307,vpm201308,vpm201309,vpm201310,vpm201311,vpm201312)  FROM BIGDATA_USER_INFO_S01_2013M1_V_FOR_CLUSTERING x")  // 没有 cons_id
 
 // ----------------------------------------------------------------------------
 // 双月数据 m2
