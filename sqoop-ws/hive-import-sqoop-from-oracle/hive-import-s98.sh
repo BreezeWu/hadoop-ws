@@ -13,7 +13,7 @@ sqoop --options-file list-tables-oracle.sqoop --verbose
 # ------------------------------------------------------------------------------
 # 用户信息  [ok]	hive中统计记录数 21275800
 #sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_USER_INFO_S98 --split-by 行业
-sqoop --options-file hive-import-oracle-forV3.sqoop --query '
+sqoop --options-file hive-import-oracle-sqlquery.sqoop --query '
     select 
         用户ID cons_id,客户名称 cons_name,电价代码 prc_code, 地市局编码 org_no,
         用电类别 elec_type_code,供电电压 volt_code_1,合同容量 contract_cap,
@@ -90,4 +90,4 @@ sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_TS_OR_PRCSCOPE_S98
 sqoop --options-file hive-import-oracle.sqoop --table META_TRADE_TYPE --split-by TRADE_LEVEL
 
 # 编码对照表 EPSA_LN.SA_PROP_LIST	[ok]	13549
-sqoop --options-file hive-import-oracle-forV3.sqoop --query 'SELECT * from EPSA_LN.SA_PROP_LIST WHERE $CONDITIONS' --hive-table META_PROP_LIST --split-by PROP_TYPE_ID --target-dir /user/hadoop/tmp-for-sqoop-hive/META_PROP_LIST
+sqoop --options-file hive-import-oracle-sqlquery.sqoop --query 'SELECT * from EPSA_LN.SA_PROP_LIST WHERE $CONDITIONS' --hive-table META_PROP_LIST --split-by PROP_TYPE_ID --target-dir /user/hadoop/tmp-for-sqoop-hive/META_PROP_LIST

@@ -7,6 +7,6 @@ JTYDFX_SELECT
 /user/hadoop/sqoop.password
 --verbose
 
-#	sqoop --options-file import-oracle.sqoop --table XXXX
+#	sqoop --options-file options-import-oracle.sqoop --table XXXX
 #
 #
