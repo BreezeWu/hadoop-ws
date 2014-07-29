@@ -1,18 +1,32 @@
-﻿===================
+===================
+1. 从hive中创建parsedData
+# 抽样数据
+create-parsedData-userinfo-s01.scala	# 用户信息和购售电信息
+create-parsedData-userinfo-s98.scala	# 用户电价电量信息
+
+# 全量数据
+create-parsedData-uservolume-s01.scala	# 用户信息和购售电信息
+create-parsedData-uservolume-s98.scala	# 用户电价电量信息
+
+2. 对parsedData进行分析
+# 用户信息和购售电信息
+tryKMeansSmart.scala			# 聚类
+
+# 用户电价电量信息
+
+===================
 # 在 spark-shell 中 运行
-	// spark-shell的启动
-	//        SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+    // spark-shell的启动
+    //  [集群]   SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+    //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
 
     // 1. 加载数据 
     // 最后生成 parsedData:org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]
-    //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/create-KMeansModel-parsedData-s01-all.scala
-    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/create-KMeansModel-parsedData-s01-m1m2.scala
-    // 或者
-    // :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/create-KMeansModel-parsedData-s98-all.scala
-    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/create-KMeansModel-parsedData-s98-m1m2.scala
+    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
+    //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98.scala
 
     // 2. 加载函数
-    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/tryKMeansSmart.scala
+    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/tryKMeansSmart.scala
 
     // 3. 使用函数进行分析
     // (1). 实际数据

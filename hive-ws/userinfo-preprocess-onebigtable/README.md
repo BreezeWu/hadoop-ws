@@ -7,16 +7,20 @@
 s01	抽样数据
 s98	全量数据
 
-2. 单月与双月---该阶段不做区分
-单月与双月在同一张表, 然后,使用时进行筛选
+#2. 单月与双月---该阶段不做区分
+#单月与双月在同一张表, 然后,使用时进行筛选
+
+3. 信息类别
+用户信息	 userinfo
+用户电价电量信息  uservolume
 
 ===================
 具体数据处理脚本
-(1) preprocess-dm2014-userinfoClustering-s01.sql		数据初始处理
+(1) 用户信息	BIGDATA_USER_INFO_S01_ONEBIGTABLE 或者 BIGDATA_USER_INFO_S98_ONEBIGTABLE
+preprocess-userinfo-s01.sql
+preprocess-userinfo-s98.sql
 
-(2) get-userinfoClustering-s01-all.sql			获取所有用户数据 (2013年1月~2014年6月, 非销户)
-(3) get-userinfoClustering-s01-m1.sql			获取单月用户数据 (2013年1月~2013年12月, 非销户)
-(4) get-userinfoClustering-s01-m2.sql			获取双月用户数据(沈阳21401,大连21408)  (2013年1月~2013年12月, 非销户)
+(2) 用户用电量信息
 
 ===================
 执行步骤(在hive交互环境中):
@@ -25,11 +29,8 @@ s98	全量数据
 -- 下面的脚本以选择 s01为例.
 
 -- 2. 数据准备
-source /home/hadoop/workspace_github/hadoop-ws/hive-ws/preprocess-userinfo-s01.sql;
---结果输出到 BIGDATA_ARC_VOLUME_PERM_S01_V, BIGDATA_RCVBL_FLOW_PM_S01_V 等横表
+source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s01.sql;
+--source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s98.sql;
+--结果输出到 BIGDATA_USER_INFO_S01_ONEBIGTABLE 或者 BIGDATA_USER_INFO_S98_ONEBIGTABLE
 
--- 3. 获得数据
--- 所有数据
-source /home/hadoop/workspace_github/hadoop-ws/hive-ws/get-userinfo-s01.sql;
---结果输出到 BIGDATA_USER_INFO_S01_V_FOR_CLUSTERING
 
