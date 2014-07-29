@@ -22,7 +22,7 @@ select x.cons_id, a.cons_no from (select distinct cons_id from BIGDATA_USER_INFO
 -- ## 用户逐月缴费欠费信息(横表) BIGDATA_RCVBL_FLOW_PM_S01_V	b
 -- ## 违约用电次数 BIGDATA_POWER_STEAL_PERY_S01	c
 -- ## 是否阶梯电价 BIGDATA_TS_OR_PRCSCOPE_S01	d
---	用户信息表 BIGDATA_USER_INFO_S01			没有可计算数值数据,未从该表取数 x.*,
+-- ## 用户信息表 BIGDATA_USER_INFO_S01			没有可计算数值数据,未从该表取数 x.*,
 --	是否阶梯电价 BIGDATA_TS_OR_PRCSCOPE_S01	d	没有可计算数值数据,未从该表取数 d.*,
 CREATE TABLE BIGDATA_USER_INFO_S01_2013M1_V_FOR_CLUSTERING AS
 select a.*,b.*,c.inspect_count,d.org_no,d.elec_type_code,d.volt_code,d.urban_rural_flag,d.trade_code from BIGDATA_USER_INFO_S01_2013M1_IDNO_MAP x 
