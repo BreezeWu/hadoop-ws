@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 //     智能化寻找最佳k
 //        输入期望最小、最大
 //
@@ -29,10 +29,10 @@
     //writeMetricList2HDFS(resultAccountM2,2)
     
     // 3-4
-	val resultAccountM2 = tryKMeansSmart(parsedDataM2,2,6000,20)
+	val resultAccountM2 = tryKMeansSmart(parsedDataM2,2,600,20)
 	val rr1 = writeMetricList2HDFS(resultAccountM1,2)
 	
-	val resultAccountM1 = tryKMeansSmart(parsedDataM1,2,2000,20)
+	val resultAccountM1 = tryKMeansSmart(parsedDataM1,2,200,20)
 	val rr2 = writeMetricList2HDFS(resultAccountM2,2)
 
 	rr1

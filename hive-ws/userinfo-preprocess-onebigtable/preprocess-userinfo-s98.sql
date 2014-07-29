@@ -90,7 +90,7 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS
 -- 创建唯一cons_id和cons_no
 -- 下面语句执行后, hive会有一行(NULL,NULL), 但在mysql中没有这个值!
 CREATE TABLE BIGDATA_USER_INFO_S98_DISTINCT_ID AS
-select x.cons_id, a.cons_no from (select distinct cons_id from BIGDATA_USER_INFO_S98) x
+select x.cons_id, a.cons_no from (select distinct cons_id from BIGDATA_USER_INFO_S98 where status_code !=9) x
     left outer join BIGDATA_USER_INFO_S98 a on a.cons_id= x.cons_id
 ;
 

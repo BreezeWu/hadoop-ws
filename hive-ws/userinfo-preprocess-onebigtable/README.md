@@ -1,5 +1,3 @@
-单双月在同一张表
-
 ===================
 数据文件命名约定
 
@@ -7,16 +5,17 @@
 s01	抽样数据
 s98	全量数据
 
-#2. 单月与双月---该阶段不做区分
-#单月与双月在同一张表, 然后,使用时进行筛选
-
-3. 信息类别
+2. 信息类别
 用户信息	 userinfo
 用户电价电量信息  uservolume
 
+3. 自定义查询表
+如单月与双月, 在 get-userinfo-s01.sh / get-userinfo-s98.sh 脚本中进行筛选
+
 ===================
 具体数据处理脚本
-(1) 用户信息	BIGDATA_USER_INFO_S01_ONEBIGTABLE 或者 BIGDATA_USER_INFO_S98_ONEBIGTABLE
+(1) 用户信息
+# BIGDATA_USER_INFO_S01_ONEBIGTABLE 或者 BIGDATA_USER_INFO_S98_ONEBIGTABLE
 preprocess-userinfo-s01.sql
 preprocess-userinfo-s98.sql
 
@@ -30,7 +29,10 @@ preprocess-userinfo-s98.sql
 
 -- 2. 数据准备
 source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s01.sql;
+source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/get-userinfo-s01.sql;
+
 --source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s98.sql;
---结果输出到 BIGDATA_USER_INFO_S01_ONEBIGTABLE 或者 BIGDATA_USER_INFO_S98_ONEBIGTABLE
+--source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s98.sql;
+
 
 
