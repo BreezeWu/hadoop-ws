@@ -80,6 +80,9 @@ sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_TS_OR_PRCSCOPE_S98
 # 下面这个速度慢
 #sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_TS_OR_PRCSCOPE_S98 --split-by cons_no
 
+# ------------------------------------------------
+# 分时电价电量 和 阶梯电价电量 的全量表列名为中文,需要转换为英文
+# 	参见 "sql-oracle.sql"
 #分时电价电量 ---表不存在
 # sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_VOLUME_OF_TS_S98 --split-by YM
 #阶梯电价电量  ---表不存在
