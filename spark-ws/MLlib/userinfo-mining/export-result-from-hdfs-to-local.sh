@@ -29,3 +29,16 @@ hdfs dfs -cat hdfs://master-hadoop:9000/${RESULT_FILE_PATH_1}/* > ${RESULT_DATA_
 export RESULT_FILE_PATH=${CLUSTERCENTERS_FILE_NAME}
 hdfs dfs -cat hdfs://master-hadoop:9000/${RESULT_FILE_PATH}/* > ${RESULT_DATA_LOCAL_FILEPATH}/clustersCenter${RESULT_DESC}.csv
 
+# -----------------------------------------------------------------------------
+# 重置变量
+unset METRICS_FILE_NAME
+unset CLUSTERCENTERS_FILE_NAME
+unset RESULT_DESC
+
+unset RESULT_FILE_PATH
+unset RESULT_FILE_PATH_0
+unset RESULT_FILE_PATH_1
+
+unset RESULT_DATA_LOCAL_FILEPATH
+
+
