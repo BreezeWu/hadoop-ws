@@ -1,19 +1,17 @@
 # -----------------------------------------------------------------------------
-# KMeans算法数据
-#	过程度量数据:	mymetrics	
-#	最佳k中心点:	myclustercenters vpm vpm.v	
-
-# 使用我的数据
-#    每次手动选择文件
-#	mydata = read.table(file.choose(), header=FALSE, sep=",")
+# 使用R转换后的数据,写入文件存储
+# -----------------------------------------------------------------------------
 
 # 在R环境中,使用下面语句
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans.R")
+# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-demo.R")
+# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/write-data-of-demo.R")
 
-# *****************************************************************************
 # -----------------------------------------------------------------------------
-## metrics
-# -----------------------------------------------------------------------------
+# FilePath
+
+rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
+rootFilePathOfOut <- stringr::str_c(rootFilePathOfIn,"formated/")
+
 # 数据准备
 # mydata = read.csv("~/workspace_github/hadoop-ws/sparkR-ws/data/metrics.csv")  # read csv file  ,首行有列名
 #mydata = read.table("j:/home/hadoop/workspace_github/hadoop-ws/r-ws/result-data/metrics.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
@@ -41,29 +39,18 @@ mymetrics[,1-3]
 myclustercenters = read.table("~/workspace_github/hadoop-ws/r-ws/result-data/clustercenters.csv", header=FALSE, sep=",")  # read table file ,首行无列名(header=FALSE)
 myclustercenters
 
-# --------------------------------------------------------------
-# 将第一列前面的"["去掉,并转换为 numeric
-#vpm$V1 
-tmpX <- myclustercenters$V1		# 注意:此时的tmpX是向量
-tmpX.substr <- substr(tmpX, 2, nchar(as.character(tmpX)))	# 从第二个字符截取
-myclustercenters$V1 <- as.numeric(tmpX.substr)
-rm(tmpX)
-
-# 将最后一列后面的"["去掉,并转换为 numeric
-tmpLen <- length(names(myclustercenters))
-tmpY <- myclustercenters[tmpLen]		# 注意: 此时的tmpY是data.frame(只有一列)
-names(tmpY) <- c("tmpColID")		# 重命名列名
-tmpZ <- tmpY$tmpColID			# 应用新列名获取数据: 此时的tmpZ是向量
-tmpZ.substr <- substr(tmpZ, 1, nchar(as.character(tmpZ)) -1 )	# 截取到倒数第二个字符
-myclustercenters[tmpLen] <- as.numeric(tmpZ.substr)
-rm(tmpY)
-rm(tmpZ)
-
 # -----------------------------------------------------------------------------
 # vpm vpm201301,vpm201302,vpm201303,vpm201304,vpm201305,vpm201306,vpm201307,vpm201308,vpm201309,vpm201310,vpm201311,vpm201312,vpm201401,vpm201402,vpm201403,vpm201404,vpm201405,vpm201406
 # 取前面18列,即从 201301~201406这18个月的月用点量
 # 取前面18列,即从 201301~201312这12个月的月用点量
 vpm <- myclustercenters[, c(1:12)]
+
+# 将第一列前面的"["并转换为 numeric
+#vpm$V1 
+x <- vpm$V1
+x.substr <- substr(x, 2, nchar(as.character(x)))	# 从第二个字符截取
+vpm$V1 <- as.numeric(x.substr)
+rm(x)
 
 # 为vpm设置变量标签
 # newcolnames <- c("201301", "201302", "201303", "201304", "201305", "201306", "201307", "201308", "201309", "201310", "201311", "201312", "201401", "201402", "201403", "201404", "201405", "201406")
