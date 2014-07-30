@@ -8,7 +8,7 @@
 #	mydata = read.table(file.choose(), header=FALSE, sep=",")
 
 # 在R环境中,使用下面语句
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/data-kmeans.R")
+# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans.R")
 
 # *****************************************************************************
 # -----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ vpm <- myclustercenters[, c(1:18)]
 # 将第一列前面的"["并转换为 numeric
 #vpm$V1 
 x <- vpm$V1
-x.substr <- substr(x, 2, nchar(x))	# 从第二个字符截取
+x.substr <- substr(x, 2, nchar(as.character(x)))	# 从第二个字符截取
 vpm$V1 <- as.numeric(x.substr)
 rm(x)
 
