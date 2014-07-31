@@ -6,7 +6,8 @@
 # 下面三个每次都要调整
 export METRICS_FILE_NAME=/user/spark/metric/k-means-2014-07-28-15-57-39_c15_try15
 export CLUSTERCENTERS_FILE_NAME=/user/spark/clustercenters/k-means-2014-07-28-15-57-39_bestK992_clusterCenters
-export RESULT_DESC= S01_M1_VPM_AMT	# 抽样/全量_单月/双月_用电量/购售电信息
+# 抽样/全量_单月/双月_用电量/购售电信息
+export RESULT_DESC=S01_M1_VPM_AMT
 # 下面这个保持不变
 export RESULT_DATA_LOCAL_FILEPATH=/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/
 
