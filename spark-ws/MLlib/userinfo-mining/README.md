@@ -40,19 +40,19 @@ tryKMeansSmart.scala			# 聚类
 
     // 4. 将结果写入HDFS
     // 参数: sortedType,排序方式	0-默认,即计算k的顺序; 1-按照k从小到大排序; 2-两种排序方式都写入
-    //writeMetricList2HDFS(resultAccount,2)
-    //writeMetricList2HDFS(resultAccountM1,2)
-    //writeMetricList2HDFS(resultAccountM2,2)
+    //writeAccount2HDFS(resultAccount,2)
+    //writeAccount2HDFS(resultAccountM1,2)
+    //writeAccount2HDFS(resultAccountM2,2)
     
     // 3-4
 	val minK = 2
 	val maxK = 60
 	val maxIterations = 20 // 当前没有生效
 	val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
-	val rr2 = writeMetricList2HDFS(resultAccountM2,2)
+	val rr2 = writeAccount2HDFS(resultAccountM2,2)
 	
 	val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
-	val rr1 = writeMetricList2HDFS(resultAccountM1,2)
+	val rr1 = writeAccount2HDFS(resultAccountM1,2)
 
 	rr2
 	rr1
