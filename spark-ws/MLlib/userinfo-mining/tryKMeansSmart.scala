@@ -49,10 +49,10 @@
         WSSSE: Double, 
         begin: java.util.Date, 
         end: java.util.Date,
-        clusters: org.apache.spark.mllib.clustering.KMeansModel
+        model: org.apache.spark.mllib.clustering.KMeansModel
     ) {
         val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")    // "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
-        def toRecord = k +","+ maxIterations +","+ WSSSE +","+ dateFormat.format(begin) +","+ dateFormat.format(end) +","+ clusters
+        def toRecord = k +","+ maxIterations +","+ WSSSE +","+ dateFormat.format(begin) +","+ dateFormat.format(end) +","+ model
     }
  
     // 统计信息
@@ -163,15 +163,15 @@ import org.apache.spark.mllib.linalg.Vector
         /* 
         // 随机数模拟
         val WSSSEOfK = scala.util.Random.nextDouble //% 9999    // 模拟随机数
-        val clustersOfK: org.apache.spark.mllib.clustering.KMeansModel = null
+        val modelOfK: org.apache.spark.mllib.clustering.KMeansModel = null
         */
         // 执行KMeans算法
         val clusteringKM = new KMeans()
 	clusteringKM.setK(k)
 	val model = clusteringKM.run(data)
 	val WSSSEOfK = model.computeCost(data)
-        //val clustersOfK = KMeans.train(data, k, maxIterations)
-        //val WSSSEOfK = clustersOfK.computeCost(data)
+        //val modelOfK = KMeans.train(data, k, maxIterations)
+        //val WSSSEOfK = modelOfK.computeCost(data)
         
         // metric信息
         val timeEnd = new java.util.Date()
@@ -422,7 +422,7 @@ def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
     if (sortedType == 0 ) {
         val distData = sc.parallelize(
             x.metricList.reverse.
-                map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.clusters}")
+                map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
         distData.saveAsTextFile(kmeansMetricPath + "_0")
     } 
@@ -430,7 +430,7 @@ def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
     if (sortedType == 1 )  {
         val distData = sc.parallelize(
             x.metricList.map(x => x.k -> x).sorted.map(x => x._2).
-            map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.clusters}")
+            map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
         distData.saveAsTextFile(kmeansMetricPath + "_1")
     } 
@@ -439,14 +439,14 @@ def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
 	// 默认排序
         val distData = sc.parallelize(
             x.metricList.reverse.
-                map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.clusters}")
+                map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
         distData.saveAsTextFile(kmeansMetricPath + "_0")
 
 	// 按照k排序
         val distData2 = sc.parallelize(
             x.metricList.map(x => x.k -> x).sorted.map(x => x._2).
-            map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.clusters}")
+            map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
         distData2.saveAsTextFile(kmeansMetricPath + "_1")
     }
@@ -459,17 +459,17 @@ def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
         
     // 第一个里面就有最优的k
     val bestK = sortedMetricList(0).k
-    val bestClusters = sortedMetricList(0).clusters
+    val bestModel = sortedMetricList(0).model
 
     // 将簇中心转换为RDD,并写入文件
-    val clustersData = sc.parallelize(bestClusters.clusterCenters)
+    val modelData = sc.parallelize(bestModel.clusterCenters)
 
     // 文件路径
     val dmClusterCenters = sparkRoot + "clustercenters/"
     val kmeansClusterCentersPath = dmClusterCenters + "k-means-" + dateString +"_bestK" + bestK + "_clusterCenters"
 
     // 写入文件
-    clustersData.saveAsTextFile(kmeansClusterCentersPath)
+    modelData.saveAsTextFile(kmeansClusterCentersPath)
 
     // ------------------------------------------------------------------------
     // 函数返回值
