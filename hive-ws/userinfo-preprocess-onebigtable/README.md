@@ -32,7 +32,7 @@ source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebi
 source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/get-userinfo-s01.sql;
 
 --source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s98.sql;
---source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/preprocess-userinfo-s98.sql;
+--source /home/hadoop/workspace_github/hadoop-ws/hive-ws/userinfo-preprocess-onebigtable/get-userinfo-s98.sql;
 
 
 
