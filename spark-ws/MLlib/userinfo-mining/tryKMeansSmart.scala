@@ -42,7 +42,6 @@
 	rr1
 
 */
-
 // ---------------------------------------------------------------------------------------------------------------------------
     // 聚类Metric信息
     case class Metric(k:Int, 
@@ -149,26 +148,9 @@
 
     */
 // ---------------------------------------------------------------------------------------------------------------------------
-
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.linalg.distributed.RowMatrix
-
-import org.apache.spark.mllib.clustering.KMeans
-import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.linalg.Vector
-
-// 我们的 smart函数
-def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: Int = 20):Account = {
-    // 用于debug的print
-    def DEBUGprint(s:String) = {
-        println(s"\n----------------------------------------------------------------------------------\n"
-            + s
-            + "\n----------------------------------------------------------------------------------\n"
-        )
-    }
     // ****************************************************************************
     // 对某个K进行KMeans聚类
-    def evalWSSSEOfK(k:Int, x:Account) = {
+    def evalWSSSEOfK(data: RDD[Vector], k:Int, x:Account) = {
         // metric信息
         val timeBegin = new java.util.Date()
         
@@ -194,6 +176,25 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         val newMetricList = newMetric :: x.metricList
         // 函数返回值
         new Account(x.counter + 1, x.tryCounter + 1, newMetricList)
+    }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.Vector
+
+// 我们的 smart函数
+def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: Int = 20):Account = {
+    // 用于debug的print
+    def DEBUGprint(s:String) = {
+        println(s"\n----------------------------------------------------------------------------------\n"
+            + s
+            + "\n----------------------------------------------------------------------------------\n"
+        )
     }
     
     // ****************************************************************************
@@ -247,8 +248,8 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         // ----------------------------------------------------------------------------
         // 第一层
         // 两头的在runHelper之前单独调用了！
-        //val iAccount = evalWSSSEOfK(triangle.low, x)
-        //val jAccount = evalWSSSEOfK(triangle.high, iAccount)
+        //val iAccount = evalWSSSEOfK(data, triangle.low, x)
+        //val jAccount = evalWSSSEOfK(data, triangle.high, iAccount)
         
         // 消除重复, 若有重复计算，也不允许继续执行
         val tmpKList = x.metricList.map(x => x.k).sorted
@@ -262,7 +263,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         // 对中间值进行计算        
         var kAccount:Account = null
         if (triangle.low +1 < triangle.high) {
-             kAccount = evalWSSSEOfK(triangle.median, x)
+             kAccount = evalWSSSEOfK(data, triangle.median, x)
          } else {
              // 尝试也进行计数 
              kAccount = Account(x.counter, x.tryCounter+ 1, x.metricList)
@@ -377,8 +378,8 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
             // ----------------------------------------------------------------------------
             // 3. 要运行多次
             // 计算两头的
-            val iFirstAccount = evalWSSSEOfK(parKTriangle.low, Account(0,0,Nil))
-            val iLastAccount = evalWSSSEOfK(parKTriangle.high, iFirstAccount)
+            val iFirstAccount = evalWSSSEOfK(data, parKTriangle.low, Account(0,0,Nil))
+            val iLastAccount = evalWSSSEOfK(data, parKTriangle.high, iFirstAccount)
             
             runHelper(parKTriangle, iLastAccount)        
         }
