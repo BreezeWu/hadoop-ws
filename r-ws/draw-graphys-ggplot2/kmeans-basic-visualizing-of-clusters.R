@@ -10,11 +10,21 @@
 library(ggplot2)
 
 # ---------------------------
+# 各个簇的数量比较
+p <- ggplot(vpm, aes(as.factor(clusterID), counter))
+p + geom_histogram()
+
+p <- p + xlab("年月") + ylab("簇中心的用电量")
+p + geom_histogram()
+
+p + geom_histogram(aes(fill = rowid))
+# ---------------------------
 # 簇中心的月用电量折线图
 dev.new()
 p <- ggplot(vpm.v, aes(as.integer(ym),value))
 p <- p + xlab("年月") + ylab("簇中心的用电量")
-p + geom_line(aes(colour = clusterID))
+#p + geom_line(aes(colour = clusterID))
+p + geom_line(aes(colour = as.factor(clusterID)))
 
 # ---------------------------
 # 簇中心的月用电量箱线图
