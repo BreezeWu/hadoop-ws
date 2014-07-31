@@ -15,7 +15,7 @@
     // 3. 使用函数进行分析
     // (1). 实际数据
     // 数据, 起始k, 最大k, KMeans.train中的maxIterations
-    //val resultAccount = tryKMeansSmart(parsedData,1,50,20)	//所有用户数据
+    //val resultAccount = tryKMeansSmart(parsedData,1,50,20)    //所有用户数据
     //val resultAccountM1 = tryKMeansSmart(parsedDataM1,1,100,20)
     //val resultAccountM2 = tryKMeansSmart(parsedDataM2,1,100,20)
     // (2). 随机数模拟
@@ -23,24 +23,28 @@
     // val resultAccount = tryKMeansSmart(null,1,50,20)
 
     // 4. 将结果写入HDFS
-    // 参数: sortedType,排序方式	0-默认,即计算k的顺序; 1-按照k从小到大排序; 2-两种排序方式都写入
+    // 参数: sortedType,排序方式    0-默认,即计算k的顺序; 1-按照k从小到大排序; 2-两种排序方式都写入
     //writeAccount2HDFS(resultAccount,2)
     //writeAccount2HDFS(resultAccountM1,2)
     //writeAccount2HDFS(resultAccountM2,2)
     
     // 3-4
-	val minK = 2
-	val maxK = 60
-	val maxIterations = 20 // 当前没有生效
-	val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
-	val rr2 = writeAccount2HDFS(resultAccountM2,2)
-	
-	val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
-	val rr1 = writeAccount2HDFS(resultAccountM1,2)
+    val minK = 2
+    val maxK = 20
+    val maxIterations = 20 // 当前没有生效
+    val taskName = "S01_M2"
+    val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
+    val rr2 = writeAccount2HDFS(resultAccountM2,2,taskName)
+    
+    val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
+    val rr1 = writeAccount2HDFS(resultAccountM1,2,taskName)
 
-	rr2
-	rr1
+    rr2
+    rr1
 
+	// 最佳K 和 最佳K的model
+	val account = resultAccountM2
+	val perfect = account.getPerfectKandModel()
 */
 // ---------------------------------------------------------------------------------------------------------------------------
     // 聚类Metric信息
@@ -54,19 +58,62 @@
         val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")    // "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
         def toRecord = k +","+ maxIterations +","+ WSSSE +","+ dateFormat.format(begin) +","+ dateFormat.format(end) +","+ model
     }
+
+    // Metric对象的比较函数-- 隐含比较函数, 根据WSSSE排序
+    /*  参考: <<ScalaByExample.2014.pdf>> p121
+        // Here is an example of an implicit conversion function that converts integers into instances of class scala.Ordered:
+        implicit def int2ordered(x: Int): Ordered[Int] = new Ordered[Int] {
+            def compare(y: Int): Int =
+            if (x < y) -1
+            else if (x > y) 1
+            else 0
+        }
+    */    
+    implicit def Metric2ordered(x: Metric): Ordered[Metric] = new Ordered[Metric] {
+        def compare(y: Metric): Int =
+        (x.WSSSE).compare(y.WSSSE)
+            /*
+            if (x.WSSSE < y.WSSSE) -1
+            else if (x.WSSSE > y.WSSSE) 1
+            else 0*/
+    }
  
     // 统计信息
     // counter: 实际执行次数; tryCounter:尝试次数; metricList:实际执行的metric信息
     case class Account(counter: Int = 0, tryCounter:Int = 0, metricList: List[Metric]) {
         //def toRecordLine = s"${counter},${tryCounter},${metricList}"   // 这样的语句是错误的! s"xxx" 是一种编译时的糖果!
-    def toRecordOfMetricList = metricList.map(x=>x.toRecord).foldLeft("")((x,y) => x + "\n" + y)
-    def toRecord() = { 
-        // 注意: 下面语句, 加号必须放在每行尾部,不能放在每行的首部
-        val str = "counter:\t" + counter + "\n" + 
-            "tryCounter:\t" + tryCounter + "\n" + 
-            "metricList:\t" + toRecordOfMetricList
-        str
-    }
+        def toRecordOfMetricList = metricList.map(x=>x.toRecord).foldLeft("")((x,y) => x + "\n" + y)
+        def toRecord() = { 
+            // 注意: 下面语句, 加号必须放在每行尾部,不能放在每行的首部
+            val str = "counter:\t" + counter + "\n" + 
+                    "tryCounter:\t" + tryCounter + "\n" + 
+                    "metricList:\t" + toRecordOfMetricList
+            str
+        }
+
+        def getBeginDateString():String = {
+ 	    if (0==this.metricList.size) return ""
+            val beginDate = this.metricList(this.metricList.size - 1).begin
+
+            import java.util.Date
+            val fileFormat = new java.text.SimpleDateFormat("yyyy-MM-dd") // "yyyy-MM-dd-HH-mm-ss"
+            val dateString = fileFormat.format(beginDate) 
+            dateString
+        }
+
+        def getPerfectKandModel():(Int,org.apache.spark.mllib.clustering.KMeansModel) = {
+            if (0==this.metricList.size) return Tuple2(0, null)
+
+            // Account中的metricList按照WSSSE从小到大排序
+            val sortedMetricList = this.metricList.sorted
+
+	    // 第一个里面就有最优的k
+	    val perfectK = sortedMetricList(0).k
+	    val perfectModel = sortedMetricList(0).model
+
+	    // 返回
+	    Tuple2(perfectK, perfectModel)
+        }
 
         // 下面定义错误: error: value unary_+ is not a member of String  // 因为加号在首,会翻译为 unary_+ 函数调用!!!
         //    http://stackoverflow.com/questions/1991240/scala-method-operator-overloading
@@ -80,24 +127,7 @@
         */
     }
     
-    // Metric对象的比较函数-- 隐含比较函数, 根据WSSSE排序
-    /*  参考: <<ScalaByExample.2014.pdf>> p121
-        // Here is an example of an implicit conversion function that converts integers into instances of class scala.Ordered:
-        implicit def int2ordered(x: Int): Ordered[Int] = new Ordered[Int] {
-            def compare(y: Int): Int =
-            if (x < y) -1
-            else if (x > y) 1
-            else 0
-        }
-    */    
-    implicit def Metric2ordered(x: Metric): Ordered[Metric] = new Ordered[Metric] {
-        def compare(y: Metric): Int =
-	    (x.WSSSE).compare(y.WSSSE)
-            /*
-            if (x.WSSSE < y.WSSSE) -1
-            else if (x.WSSSE > y.WSSSE) 1
-            else 0*/
-    }
+
 
     // ----------------------------------------------------------------------------
     // 三元组辅助函数
@@ -167,9 +197,9 @@ import org.apache.spark.mllib.linalg.Vector
         */
         // 执行KMeans算法
         val clusteringKM = new KMeans()
-	clusteringKM.setK(k)
-	val model = clusteringKM.run(data)
-	val WSSSEOfK = model.computeCost(data)
+    clusteringKM.setK(k)
+    val model = clusteringKM.run(data)
+    val WSSSEOfK = model.computeCost(data)
         //val modelOfK = KMeans.train(data, k, maxIterations)
         //val WSSSEOfK = modelOfK.computeCost(data)
         
@@ -262,7 +292,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         val indexOfMedian = tmpKList.indexOf(triangle.median)
         if (indexOfMedian >= 0 ) {    // 若有正确索引，表示已经计算过
             DEBUGprint("[runHelper] 中值k[" + triangle.median + "]已经被计算过, 索引为" + indexOfMedian + 
-		"  \n\t KTriangle = " + triangle + "\n \t Account = " + x.toRecord)
+        "  \n\t KTriangle = " + triangle + "\n \t Account = " + x.toRecord)
             return x
         }
         
@@ -296,7 +326,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         val index_MinWSSSE = sortedKList.indexOf(kValueOfMinWSSSE)    // 找到index (WSSSE最小的那个)
         
         DEBUGprint("[runHelper] 即将尝试再次分裂" + 
-	    "\n\n\t curMetricList：  \n " + Account(0,0,curMetricList).toRecordOfMetricList +
+        "\n\n\t curMetricList：  \n " + Account(0,0,curMetricList).toRecordOfMetricList +
             "\n\n\t sortedMetricList(by WSSSE)：  \n " + Account(0,0,sortedMetricList).toRecordOfMetricList +
             "\n\n\t sortedKList(by K)：  \n" + sortedKList)
         
@@ -395,25 +425,27 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
 
 // ---------------------------------------------------------------------------------------------------------------------------
 // 写入HDFS
-// 	sortedType,排序方式	0-默认,即计算k的顺序; 1-按照k从小到大排序
-def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
+//     sortedType,排序方式    0-默认,即计算k的顺序; 1-按照k从小到大排序
+def writeAccount2HDFS(account: Account, sortedType:Int = 0, taskName:String = "feelingLucky") = {
     // 取得任务的开始日期
-    val beginDate = x.metricList(x.counter - 1).begin
-    
-    // ----------------- 写入文件 文件名后面有日期
-    import java.util.Date
-    val fileFormat = new java.text.SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")    // "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
-    val dateString = fileFormat.format(beginDate) 
+    val dateString = account.getBeginDateString()
+    val perfectK = account.getPerfectKandModel._1
+    val perfectModel = account.getPerfectKandModel._2
 
-    val sparkRoot = "/user/spark/"
-    val dmMetric = sparkRoot + "metric/"
+    // 文件路径
+    val filepath = "/user/spark/clustering/" + dateString
+
+    val filenameMetric = taskName + "_kmeans_" + perfectK + "_metrics"
+    val hdfsMetricInfoPath = filepath + "/" + filenameMetric
+
+    val filenameClusterCenters = taskName + "_kmeans_" + perfectK + "_clusterCenters"
+    val hdfsClusterCentersInfoPath = filepath + "/" + filenameClusterCenters
 
     // ------------------------------------------------------------------------
     // 度量数据
     // metrics
-    val kmeansMetricPath = dmMetric + "k-means-" + dateString +"_c"+ x.counter +"_try"+ x.tryCounter // + "_" + sortedType
-  
-    // 处理数据
+    val hdfsPathsOfMetric = Tuple2(hdfsMetricInfoPath + "_unsorted", hdfsMetricInfoPath + "_sorted")
+
     // 日期格式化
     val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")    // "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"       
 
@@ -421,58 +453,46 @@ def writeAccount2HDFS(x: Account, sortedType:Int = 0) = {
     // (1) 默认排序
     if (sortedType == 0 ) {
         val distData = sc.parallelize(
-            x.metricList.reverse.
+            account.metricList.reverse.
                 map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
-        distData.saveAsTextFile(kmeansMetricPath + "_0")
+        distData.saveAsTextFile(hdfsPathsOfMetric._1)
     } 
     // (2) 按照k大小排序
     if (sortedType == 1 )  {
         val distData = sc.parallelize(
-            x.metricList.map(x => x.k -> x).sorted.map(x => x._2).
+            account.metricList.map(x => x.k -> x).sorted.map(x => x._2).
             map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
-        distData.saveAsTextFile(kmeansMetricPath + "_1")
+        distData.saveAsTextFile(hdfsPathsOfMetric._2)
     } 
     // (3) 处理排序方式 两种都写入
     if (sortedType == 2 ) {
-	// 默认排序
+    // 默认排序
         val distData = sc.parallelize(
-            x.metricList.reverse.
+            account.metricList.reverse.
                 map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
-        distData.saveAsTextFile(kmeansMetricPath + "_0")
+        distData.saveAsTextFile(hdfsPathsOfMetric._1)
 
-	// 按照k排序
+    // 按照k排序
         val distData2 = sc.parallelize(
-            x.metricList.map(x => x.k -> x).sorted.map(x => x._2).
-            map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
+            account.metricList.map(x => x.k -> x).sorted.map(x => x._2).
+                map(y => s"${y.k}, ${y.maxIterations}, ${y.WSSSE}, ${dateFormat.format(y.begin)}, ${dateFormat.format(y.end)}, ${y.model}")
         )
-        distData2.saveAsTextFile(kmeansMetricPath + "_1")
+        distData.saveAsTextFile(hdfsPathsOfMetric._2)
     }
 
     // ------------------------------------------------------------------------
-    // 最佳K的中心数据
-    // bestK_clusterCenters
-    // Account中的metricList按照WSSSE从小到大排序
-    val sortedMetricList = x.metricList.sorted
-        
-    // 第一个里面就有最优的k
-    val bestK = sortedMetricList(0).k
-    val bestModel = sortedMetricList(0).model
-
+    // 最佳K的中心数据      
     // 将簇中心转换为RDD,并写入文件
-    val modelData = sc.parallelize(bestModel.clusterCenters)
-
-    // 文件路径
-    val dmClusterCenters = sparkRoot + "clustercenters/"
-    val kmeansClusterCentersPath = dmClusterCenters + "k-means-" + dateString +"_bestK" + bestK + "_clusterCenters"
+    val distData = sc.parallelize(perfectModel.clusterCenters)
 
     // 写入文件
-    modelData.saveAsTextFile(kmeansClusterCentersPath)
+    distData.saveAsTextFile(hdfsClusterCentersInfoPath)
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    Tuple2(kmeansMetricPath + "_" + sortedType, kmeansClusterCentersPath)
+    Tuple2(hdfsPathsOfMetric, hdfsClusterCentersInfoPath)
 }
 

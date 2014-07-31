@@ -45,17 +45,23 @@ tryKMeansSmart.scala			# 聚类
     //writeAccount2HDFS(resultAccountM2,2)
     
     // 3-4
-	val minK = 2
-	val maxK = 60
-	val maxIterations = 20 // 当前没有生效
-	val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
-	val rr2 = writeAccount2HDFS(resultAccountM2,2)
-	
-	val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
-	val rr1 = writeAccount2HDFS(resultAccountM1,2)
+    val minK = 2
+    val maxK = 60
+    val maxIterations = 20 // 当前没有生效
+    val taskName = "S01_M2"
 
-	rr2
-	rr1
+    val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
+    val rr2 = writeAccount2HDFS(resultAccountM2,2,taskName)
+    
+    val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
+    val rr1 = writeAccount2HDFS(resultAccountM1,2,taskName)
+
+    rr2
+    rr1
+
+	// 最佳K 和 最佳K的model
+	val account = resultAccountM2
+	val perfect = account.getPerfectKandModel()
 
 ===================
 # -----------------------------------------------------------------------------
