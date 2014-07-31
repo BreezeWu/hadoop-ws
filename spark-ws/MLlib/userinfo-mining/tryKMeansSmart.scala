@@ -148,9 +148,15 @@
 
     */
 // ---------------------------------------------------------------------------------------------------------------------------
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.Vector
     // ****************************************************************************
     // 对某个K进行KMeans聚类
-    def evalWSSSEOfK(data: RDD[Vector], k:Int, x:Account) = {
+    def evalWSSSEOfK(data: RDD[Vector], k:Int, maxIterations: Int = 20, x:Account) = {
         // metric信息
         val timeBegin = new java.util.Date()
         
@@ -248,8 +254,8 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         // ----------------------------------------------------------------------------
         // 第一层
         // 两头的在runHelper之前单独调用了！
-        //val iAccount = evalWSSSEOfK(data, triangle.low, x)
-        //val jAccount = evalWSSSEOfK(data, triangle.high, iAccount)
+        //val iAccount = evalWSSSEOfK(data, triangle.low, maxIterations, x)
+        //val jAccount = evalWSSSEOfK(data, triangle.high, maxIterations, iAccount)
         
         // 消除重复, 若有重复计算，也不允许继续执行
         val tmpKList = x.metricList.map(x => x.k).sorted
@@ -263,7 +269,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         // 对中间值进行计算        
         var kAccount:Account = null
         if (triangle.low +1 < triangle.high) {
-             kAccount = evalWSSSEOfK(data, triangle.median, x)
+             kAccount = evalWSSSEOfK(data, triangle.median, maxIterations, x)
          } else {
              // 尝试也进行计数 
              kAccount = Account(x.counter, x.tryCounter+ 1, x.metricList)
@@ -373,13 +379,13 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
         // 2. 运行一次
         // 如果 high = low + 1, 则只需要计算low即可
         if (parKTriangle.low + 1 == parKTriangle.high ) {
-            evalWSSSEOfK(parKTriangle.low, Account(0,0,Nil))
+            evalWSSSEOfK(data, parKTriangle.low, maxIterations, Account(0,0,Nil))
         } else {
             // ----------------------------------------------------------------------------
             // 3. 要运行多次
             // 计算两头的
-            val iFirstAccount = evalWSSSEOfK(data, parKTriangle.low, Account(0,0,Nil))
-            val iLastAccount = evalWSSSEOfK(data, parKTriangle.high, iFirstAccount)
+            val iFirstAccount = evalWSSSEOfK(data, parKTriangle.low, maxIterations, Account(0,0,Nil))
+            val iLastAccount = evalWSSSEOfK(data, parKTriangle.high, maxIterations, iFirstAccount)
             
             runHelper(parKTriangle, iLastAccount)        
         }
