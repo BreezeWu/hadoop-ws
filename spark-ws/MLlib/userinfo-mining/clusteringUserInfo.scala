@@ -73,8 +73,8 @@ def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLuc
     // ------------------------------------------------------------------------
     // 写入文件
     // 取得任务的开始日期
-    val dateString = account.getBeginDateString()
-    val perfectK = account.getPerfectKandModel._1
+    val dateString = clusterInfo.account.getBeginDateString()
+    val perfectK = clusterInfo.account.getPerfectKandModel._1
 
     // 文件路径
     val filepath = "/user/spark/clustering/" + dateString
