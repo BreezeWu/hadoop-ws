@@ -17,7 +17,7 @@ sqoop --options-file list-tables-oracle.sqoop --verbose
 sqoop --options-file hive-import-oracle-sqlquery.sqoop --query '
     select 
         用户ID cons_id,客户名称 cons_name,电价代码 prc_code, 地市局编码 org_no,
-        用电类别 elec_type_code,供电电压 volt_code_1,合同容量 contract_cap,
+        用电类别 elec_type_code,供电电压 volt_code,合同容量 contract_cap,
         负荷类型 lode_attr_code,当前是否销户 status_code,城镇用户农村用户 urban_rural_flag,
         行业编码 trade_code,高压低压 cust_type_code,用户号 cons_no
     from BIGDATA_USER_INFO_S01_v2
