@@ -22,7 +22,7 @@ val minK = 2
 val maxK = 200
 val maxIterations = 20 // 当前没有生效
 
-val dataType = "S98"
+val dataType = "S01"
 // --------------------------
 // 1. 有效数据
 // (1) 单月数据

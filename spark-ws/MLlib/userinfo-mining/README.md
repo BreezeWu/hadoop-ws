@@ -6,6 +6,8 @@
 
 # 执行方法请参见脚本
 execute-s98-v1.scala
+或者
+execute-s01-v1.scala
 
 ===================
 1. 从hive中创建parsedData
