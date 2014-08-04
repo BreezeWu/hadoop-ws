@@ -20,6 +20,8 @@ storage.mode(x)
 # ‘mode(x) <- "newmode"’ changes the ‘mode’ of object ‘x’ to ‘newmode’. 
 # This is only supported if there is an appropriate ‘as.newmode’ function
 
+attributes(mydata)
+
 # --------------------------------------
 # 数据结构信息
 # shows the structure of an object.

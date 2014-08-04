@@ -427,7 +427,7 @@ def tryKMeansSmart(data: RDD[Vector], minK: Int = 2, maxK: Int, maxIterations: I
 // 写入HDFS
 //     sortedType,排序方式    0-默认,即计算k的顺序; 1-按照k从小到大排序
 def writeAccount2HDFS(account: Account, sortedType:Int = 0, taskName:String = "feelingLucky") = {
-    // 取得任务的开始日期
+    // 取得任务的开始日期,最佳K，最佳K对应的模型
     val dateString = account.getBeginDateString()
     val perfectK = account.getPerfectKandModel._1
     val perfectModel = account.getPerfectKandModel._2

@@ -20,6 +20,7 @@ preprocess-userinfo-s01.sql
 preprocess-userinfo-s98.sql
 
 (2) 用户用电量信息
+# 根据能够取到用户分时/阶梯电价电量(部分用户数据)， 得到这些用户的ID，然后再创建一个 ONEBIGTABLE
 
 ===================
 执行步骤(在hive交互环境中):

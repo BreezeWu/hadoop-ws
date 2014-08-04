@@ -10,6 +10,72 @@
 -- ## 分时电价电量 BIGDATA_VOLUME_OF_TS_S98
 -- ## 阶梯电价电量 BIGDATA_VOLUME_OF_PRC_S98
 
+-- 因为 BIGDATA_USER_INFO_S98 表中 一个 cons_id 可能有多个 cons_no!
+-- 找到 BIGDATA_USER_INFO_S98 表中 cons_id 出现多次的记录
+--CREATE TABLE BIGDATA_USER_INFO_S98_COUNTER_ID AS
+--select cons_id, count(cons_id) as counter from BIGDATA_USER_INFO_S98_ALIVE_DISTINCT_ID_ONLYID group by cons_id;
+-- 记录数大于等于2的就是重复的
+-- 0
+--select count(cons_id) from BIGDATA_USER_INFO_S98_COUNTER_ID where counter >= 2;
+
+-- --------------------------
+-- 找出 用户信息表中 cons_id 出现多次的记录
+-- 20940685
+CREATE TABLE COUNTER_OF_BIGDATA_USER_INFO_S98 AS
+select cons_id, count(cons_id) as counter from BIGDATA_USER_INFO_S98 where status_code !=9  group by cons_id ;
+-- 记录数大于等于2的就是重复的
+--select count(cons_id) from COUNTER_OF_BIGDATA_USER_INFO_S98 where counter >= 2;
+-- 所有状态的用户数 	310279
+-- 非销户用户数		288328
+
+-- 当前处理办法是删除所有重复的数据
+-- hive中不能删除，办法是重建数据
+-- 不重复的 20006363
+--select cons_id from COUNTER_OF_BIGDATA_USER_INFO_S98 where counter = 1;
+-- 有重复的 288328
+--select cons_id from COUNTER_OF_BIGDATA_USER_INFO_S98 where counter > 1;
+-- 当前处理办法是删除所有重复的数据 20006363
+CREATE TABLE BIGDATA_USER_INFO_S98_UNIQUE AS
+select a.* from BIGDATA_USER_INFO_S98 a  LEFT SEMI JOIN COUNTER_OF_BIGDATA_USER_INFO_S98 b on a.cons_id = b.cons_id and b.counter = 1
+;
+
+-- --------------------------
+-- 找出 BIGDATA_TS_OR_PRCSCOPE_S98 表中 cons_no 出现多次的记录
+-- 21153252
+CREATE TABLE COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 AS
+select cons_no, count(cons_no) as counter from BIGDATA_TS_OR_PRCSCOPE_S98 group by cons_no ;
+-- 记录数大于等于2的就是重复的
+--select count(cons_no) from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter >= 2;
+-- 所有状态的用户数 	
+-- 非销户用户数		
+
+-- 当前处理办法是删除所有重复的数据
+-- hive中不能删除，办法是重建数据
+-- 不重复的 
+--CREATE TABLE BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE_DISTINCT_NO AS
+--select cons_id from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter = 1;
+CREATE TABLE BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE AS
+select x.cons_no, d.prc_code, d.ts_flag,d.ladder_flag,d.ts_flag_i,d.ladder_flag_i from (select cons_no from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter = 1) x 
+    left outer join BIGDATA_TS_OR_PRCSCOPE_S98 d on d.cons_no = x.cons_no
+;
+
+-- --------------------------
+-- 找出 BIGDATA_POWER_STEAL_PERY_S98 表中 cons_id 出现多次的记录
+CREATE TABLE COUNTER_OF_BIGDATA_POWER_STEAL_PERY_S98_Y2013 AS
+select cons_id, count(cons_id) as counter from BIGDATA_POWER_STEAL_PERY_S98 where y = '2013' group by cons_id ;
+-- 记录数大于等于2的就是重复的
+--select count(cons_id) from COUNTER_OF_BIGDATA_POWER_STEAL_PERY_S98_Y2013 where counter >= 2;
+-- 所有状态的用户数 	
+-- 非销户用户数		
+
+-- 当前处理办法是删除所有重复的数据
+-- hive中不能删除，办法是重建数据
+-- 不重复的 
+CREATE TABLE BIGDATA_POWER_STEAL_PERY_S98_Y2013_UNIQUE AS
+select a.* from BIGDATA_POWER_STEAL_PERY_S98 a  LEFT SEMI JOIN COUNTER_OF_BIGDATA_POWER_STEAL_PERY_S98_Y2013 b on a.cons_id = b.cons_id and b.counter = 1
+;
+
+
 -- ----------------------------------------------------------------------------
 -- 1. 将 "月用电量" 从纵表变为横表
 -- 将 "月用电量" 从纵表变为横表, 创建了一张新表 BIGDATA_ARC_VOLUME_PERM_S98_H 
@@ -87,38 +153,29 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS
 --select * from BIGDATA_USER_INFO_S98 where (org_no like "21401%" or org_no like "21408%") and status_code !=9 limit 10;
 
 -- ----------------------------------------------------------------------------
--- 创建唯一cons_id和cons_no
--- 下面语句执行后, hive会有一行(NULL,NULL), 但在mysql中没有这个值!
-CREATE TABLE BIGDATA_USER_INFO_S98_DISTINCT_ID AS
-select x.cons_id, a.cons_no from (select distinct cons_id from BIGDATA_USER_INFO_S98 where status_code !=9) x
-    left outer join BIGDATA_USER_INFO_S98 a on a.cons_id= x.cons_id
-;
+-- 创建一个大横表:	一次多个 left out join
 
--- ----------------------------------------------------------------------------
--- 创建一个大横表 
-
--- ## 唯一标识表	BIGDATA_USER_INFO_S98_DISTINCT_ID	x
+-- ## 唯一标识表	BIGDATA_USER_INFO_S98_UNIQUE	x
+--			电价代码 prc_code, 地市局编码 org_no, 用电类别 elec_type_code,供电电压 volt_code,合同容量 contract_cap,
+--			负荷类型 lode_attr_code,当前是否销户 status_code,城镇用户农村用户 urban_rural_flag,  行业编码 trade_code,高压低压 cust_type_code
+--  		[选择] 地市局编码 org_no, 用电类别 elec_type_code,供电电压 volt_code,城镇用户农村用户 urban_rural_flag,  行业编码 trade_code
 -- ## 月用电量(横表) 	BIGDATA_ARC_VOLUME_PERM_S98_H	a
 -- ## 月缴费欠费(横表)	BIGDATA_RCVBL_FLOW_PM_S98_H	b
--- ## 违约用电次数	BIGDATA_POWER_STEAL_PERY_S98	c
--- ## 是否阶梯电价	BIGDATA_TS_OR_PRCSCOPE_S98	d
+-- ## 违约用电次数	BIGDATA_POWER_STEAL_PERY_S98 --> BIGDATA_POWER_STEAL_PERY_S98_Y2013_UNIQUE	c
+-- ## 是否阶梯电价	BIGDATA_TS_OR_PRCSCOPE_S98 --> BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE	d
 -- ## 分时电价电量	BIGDATA_VOLUME_OF_TS_S98	e	这个表也是个纵表,另外单独处理
 -- ## 阶梯电价电量	BIGDATA_VOLUME_OF_PRC_S98	f	这个表也是个纵表,另外单独处理
--- ## 用户信息表 BIGDATA_USER_INFO_S98			z
---	电价代码 prc_code, 地市局编码 org_no, 用电类别 elec_type_code,供电电压 volt_code,合同容量 contract_cap,
---	负荷类型 lode_attr_code,当前是否销户 status_code,城镇用户农村用户 urban_rural_flag,  行业编码 trade_code,高压低压 cust_type_code
---  [选择] 地市局编码 org_no, 用电类别 elec_type_code,供电电压 volt_code,城镇用户农村用户 urban_rural_flag,  行业编码 trade_code
 
 CREATE TABLE BIGDATA_USER_INFO_S98_ONEBIGTABLE AS
-select a.*,b.*,c.inspect_count,d.prc_code,d.ts_flag,d.ladder_flag,z.org_no,z.elec_type_code,z.volt_code,z.urban_rural_flag,z.trade_code from BIGDATA_USER_INFO_S98_DISTINCT_ID x 
+select x.cons_id, x.cons_no, x.org_no, x.elec_type_code, x.volt_code, x.urban_rural_flag, x.trade_code, a.vpm201301, a.vpm201302, a.vpm201303, a.vpm201304, a.vpm201305, a.vpm201306, a.vpm201307, a.vpm201308, a.vpm201309, a.vpm201310, a.vpm201311, a.vpm201312, b.rcved_amt201301, b.rcved_amt201302, b.rcved_amt201303, b.rcved_amt201304, b.rcved_amt201305, b.rcved_amt201306, b.rcved_amt201307, b.rcved_amt201308, b.rcved_amt201309, b.rcved_amt201310, b.rcved_amt201311, b.rcved_amt201312, b.rcvbl_amt201301, b.rcvbl_amt201302, b.rcvbl_amt201303, b.rcvbl_amt201304, b.rcvbl_amt201305, b.rcvbl_amt201306, b.rcvbl_amt201307, b.rcvbl_amt201308, b.rcvbl_amt201309, b.rcvbl_amt201310, b.rcvbl_amt201311, b.rcvbl_amt201312, b.owning_amt201301, b.owning_amt201302, b.owning_amt201303, b.owning_amt201304, b.owning_amt201305, b.owning_amt201306, b.owning_amt201307, b.owning_amt201308, b.owning_amt201309, b.owning_amt201310, b.owning_amt201311, b.owning_amt201312, d.prc_code, d.ts_flag,d.ladder_flag from BIGDATA_USER_INFO_S98_UNIQUE x 
     left outer join BIGDATA_ARC_VOLUME_PERM_S98_H a on a.cons_id = x.cons_id
     left outer join BIGDATA_RCVBL_FLOW_PM_S98_H b on trim(b.cons_no) = trim(x.cons_no)
-    left outer join (select * from BIGDATA_POWER_STEAL_PERY_S98 where y = '2013') c on c.cons_id = x.cons_id
 
-    left outer join BIGDATA_TS_OR_PRCSCOPE_S98 d on trim(d.cons_no) = trim(x.cons_no)
-
-    left outer join BIGDATA_USER_INFO_S98 z on z.cons_id = x.cons_id
+    left outer join BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE d on trim(d.cons_no) = trim(x.cons_no)
 ;
+
+-- c.inspect_count, 
+--     left outer join BIGDATA_POWER_STEAL_PERY_S98_Y2013_UNIQUE c on c.cons_id = x.cons_id
 
 --    left outer join BIGDATA_VOLUME_OF_TS_S98 e on trim(d.cons_no) = trim(x.cons_no)
 --    left outer join BIGDATA_VOLUME_OF_PRC_S98 f on trim(f.cons_no) = trim(x.cons_no)
@@ -126,9 +183,11 @@ select a.*,b.*,c.inspect_count,d.prc_code,d.ts_flag,d.ladder_flag,z.org_no,z.ele
 -- 查看表结构
 desc BIGDATA_USER_INFO_S98_ONEBIGTABLE;
 
+-- ----------------------------------------------------------------------------
 -- 重新执行时删除表
--- drop table BIGDATA_ARC_VOLUME_PERM_S98_H;	--20102
--- drop table BIGDATA_RCVBL_FLOW_PM_S98_H;	--43
--- drop table BIGDATA_USER_INFO_S98_DISTINCT_ID;	--20289
--- drop table BIGDATA_USER_INFO_S98_ONEBIGTABLE;	--20290
+-- drop table BIGDATA_ARC_VOLUME_PERM_S98_H;	
+-- drop table BIGDATA_RCVBL_FLOW_PM_S98_H;	
+-- drop table BIGDATA_USER_INFO_S98_ALIVE_UNIQUE;	
+-- drop table BIGDATA_USER_INFO_S98_ALIVE_DISTINCT_ID;	
+-- drop table BIGDATA_USER_INFO_S98_ONEBIGTABLE;
 

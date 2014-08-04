@@ -10,27 +10,41 @@
 #查看一下表列表
 sqoop --options-file list-tables-oracle.sqoop --verbose
 
+# "  --map-column-java CONS_ID=String" 对 hive-import 不起作用！！！
 # ------------------------------------------------------------------------------
 # 用户信息  [ok]	hive中统计记录数 21275800
-#sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_USER_INFO_S98 --split-by 行业
+#sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_USER_INFO_S98  --map-column-java CONS_ID=String --split-by trade_code
+
 sqoop --options-file hive-import-oracle-sqlquery.sqoop --query '
-    select 
-        用户ID cons_id,客户名称 cons_name,电价代码 prc_code, 地市局编码 org_no,
-        用电类别 elec_type_code,供电电压 volt_code_1,合同容量 contract_cap,
-        负荷类型 lode_attr_code,当前是否销户 status_code,城镇用户农村用户 urban_rural_flag,
-        行业 trade_code,高压低压 cust_type_code,用户号 cons_no,电压 volt_code_2
+    select CONS_ID, PRC_CODE, ORG_NO,
+    	ELEC_TYPE_CODE, VOLT_CODE,CONTRACT_CAP,
+    	LODE_ATTR_CODE,STATUS_CODE,URBAN_RURAL_FLAG,
+    	TRADE_CODE,CUST_TYPE_CODE,CONS_NO,
+    	MR_SECT_NO,PAY_MODE
     from BIGDATA_USER_INFO_S98
- WHERE $CONDITIONS ' --split-by 行业 --boundary-query "
-    select min(trade_code),max(trade_code) from META_TRADE_TYPE
+    WHERE $CONDITIONS ' --split-by TRADE_CODE --boundary-query "
+    select min(TRADE_CODE),max(TRADE_CODE) from META_TRADE_TYPE
 " --target-dir /user/hadoop/tmp-for-sqoop-hive/BIGDATA_USER_INFO_S98 --hive-table BIGDATA_USER_INFO_S98 --mapreduce-job-name BIGDATA_USER_INFO_S98
+
+#sqoop --options-file hive-import-oracle-sqlquery.sqoop --query '
+#    select 
+#        用户ID cons_id,客户名称 cons_name,电价代码 prc_code, 地市局编码 org_no,
+#        用电类别 elec_type_code,供电电压 volt_code_1,合同容量 contract_cap,
+#        负荷类型 lode_attr_code,当前是否销户 status_code,城镇用户农村用户 urban_rural_flag,
+#        行业 trade_code,高压低压 cust_type_code,用户号 cons_no,电压 volt_code_2
+#    from BIGDATA_USER_INFO_S98
+# WHERE $CONDITIONS ' --split-by 行业 --boundary-query "
+#    select min(trade_code),max(trade_code) from META_TRADE_TYPE
+#" --target-dir /user/hadoop/tmp-for-sqoop-hive/BIGDATA_USER_INFO_S98 --hive-table BIGDATA_USER_INFO_S98 --mapreduce-job-name BIGDATA_USER_INFO_S98
+
 
 # ------------------------------------------------------------------------------
 # 月用电量   [ok]	hive中统计记录数 283132624
 # 修改列名
 # 	alter table BIGDATA_ARC_VOLUME_PERM_S98 rename column 用户ID  to cons_id;
 # 	alter table BIGDATA_ARC_VOLUME_PERM_S98 rename column 月用电量  to volume_per_month;
-#sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_ARC_VOLUME_PERM_S98 --split-by 年月
-sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_ARC_VOLUME_PERM_S98 --split-by YM --boundary-query "
+#sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_ARC_VOLUME_PERM_S98 --split-by YM
+sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_ARC_VOLUME_PERM_S98  --map-column-java CONS_ID=String --split-by YM --boundary-query "
     select '201301','201406' from dual
 "  --mapreduce-job-name BIGDATA_ARC_VOLUME_PERM_S98
 
@@ -51,7 +65,7 @@ sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_RCVBL_FLOW_PM_S98 
 #		alter table BIGDATA_POWER_STEAL_PERY_S98 rename column 年份  to Y;
 #		alter table BIGDATA_POWER_STEAL_PERY_S98 rename column 违约用电次数  to inspect_count;
 #sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_POWER_STEAL_PERY_S98 --split-by 年份
-sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_POWER_STEAL_PERY_S98 --split-by Y
+sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_POWER_STEAL_PERY_S98 --map-column-java CONS_ID=String --split-by Y
 
 # 用户逐年缴费方式变更次数 [ok]	227788
 # 修改列名
@@ -59,7 +73,7 @@ sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_POWER_STEAL_PERY_S
 #		alter table BIGDATA_CHANGE_PAYTYPE_PY_S98 rename column 年份  to Y;
 #		alter table BIGDATA_CHANGE_PAYTYPE_PY_S98 rename column 缴费方式变更次数  to change_payType_count;
 #sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_CHANGE_PAYTYPE_PY_S98 --split-by 年份
-sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_CHANGE_PAYTYPE_PY_S98 --split-by Y
+sqoop --options-file hive-import-oracle.sqoop --table BIGDATA_CHANGE_PAYTYPE_PY_S98 --map-column-java CONS_ID=String --split-by Y
 
 # ------------------------------------------------------------------------------
 #是否阶梯电价   [ok]	hive中统计记录数 21498140

@@ -1,4 +1,13 @@
 ===================
+# 在 spark-shell 中 运行
+    // spark-shell的启动
+    //  [集群]   SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+    //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
+
+# 执行方法请参见脚本
+execute-s98-v1.scala
+
+===================
 1. 从hive中创建parsedData
 # 抽样数据
 create-parsedData-userinfo-s01.scala	# 用户信息和购售电信息
@@ -13,55 +22,6 @@ create-parsedData-uservolume-s98.scala	# 用户电价电量信息
 tryKMeansSmart.scala			# 聚类
 
 # 用户电价电量信息
-
-===================
-# 在 spark-shell 中 运行
-    // spark-shell的启动
-    //  [集群]   SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
-    //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
-
-    // 1. 加载数据 
-    // 最后生成 parsedData:org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]
-    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
-    //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98.scala
-
-    // 2. 加载函数
-    :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/tryKMeansSmart.scala
-
-    // 3. 使用函数进行分析
-    // (1). 实际数据
-    // 数据, 起始k, 最大k, KMeans.train中的maxIterations
-    //val resultAccount = tryKMeansSmart(parsedData,1,50,20)	//所有用户数据
-    //val resultAccountM1 = tryKMeansSmart(parsedDataM1,1,100,20)
-    //val resultAccountM2 = tryKMeansSmart(parsedDataM2,1,100,20)
-    // (2). 随机数模拟
-    // 若evalWSSSEOfK是随即数模拟
-    // val resultAccount = tryKMeansSmart(null,1,50,20)
-
-    // 4. 将结果写入HDFS
-    // 参数: sortedType,排序方式	0-默认,即计算k的顺序; 1-按照k从小到大排序; 2-两种排序方式都写入
-    //writeAccount2HDFS(resultAccount,2)
-    //writeAccount2HDFS(resultAccountM1,2)
-    //writeAccount2HDFS(resultAccountM2,2)
-    
-    // 3-4
-    val minK = 2
-    val maxK = 60
-    val maxIterations = 20 // 当前没有生效
-    val taskName = "S01_M2"
-
-    val resultAccountM2 = tryKMeansSmart(parsedDataM2,minK,maxK,maxIterations)
-    val rr2 = writeAccount2HDFS(resultAccountM2,2,taskName)
-    
-    val resultAccountM1 = tryKMeansSmart(parsedDataM1,minK,maxK,maxIterations)
-    val rr1 = writeAccount2HDFS(resultAccountM1,2,taskName)
-
-    rr2
-    rr1
-
-	// 最佳K 和 最佳K的model
-	val account = resultAccountM2
-	val perfect = account.getPerfectKandModel()
 
 ===================
 # -----------------------------------------------------------------------------

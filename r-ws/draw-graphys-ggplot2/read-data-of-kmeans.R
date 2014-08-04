@@ -19,10 +19,13 @@ rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
 rootFilePathOfOut <- stringr::str_c(rootFilePathOfIn,"formated/")
 
 # 行: 数据集+单月/双月
-dimRows <- c("S01_M2")
+dimRows <- c("S01_M2", "S98_M1_k19")
 dimCols <- c("unsorted", "sorted", "cluster")
 # 文件名
-filesVector <- c("S01_M2_kmeans_20_metrics_unsorted.csv", "S01_M2_kmeans_20_metrics_sorted.csv", "S01_M2_kmeans_19_cluster.csv")
+filesVector <- c(
+	"S01_M2_kmeans_20_metrics_unsorted.csv", "S01_M2_kmeans_20_metrics_sorted.csv", "S01_M2_kmeans_19_cluster.csv",
+	"", "", "S98_M1_kmeans_19_cluster.csv"
+	)
 # 构建矩阵
 filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length(dimCols),dimnames=list(dimRows, dimCols))
 str(filesMatrix)
@@ -56,7 +59,7 @@ mymetrics$maxIterations <- as.factor(mymetrics$maxIterations)
 # clusterCenters
 # *****************************************************************************
 # 本次要读取的文件名
-filenameOfClusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[1,3])	# [1,3]
+filenameOfClusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,3])	# [1,3]
 filenameOfClusterCenters
 
 # 读取文件

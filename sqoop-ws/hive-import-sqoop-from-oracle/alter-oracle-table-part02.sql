@@ -2,7 +2,6 @@
 -- 其他表的处理参见 ~/workspace_github/hadoop-ws/oracle-ws/01.data-exploration.sql
 
 -- 分时电价电量 和 阶梯电价电量 的全量表列名为中文,需要转换为英文
-
 -- 分时电价电量 BIGDATA_VOLUME_OF_TS_S98
 alter table BIGDATA_VOLUME_OF_TS_S98 rename column 尖峰电量  to kwh_volume_top;
 alter table BIGDATA_VOLUME_OF_TS_S98 rename column 尖峰电价  to kwh_prc_top;
@@ -14,6 +13,15 @@ alter table BIGDATA_VOLUME_OF_TS_S98 rename column 二阶电量  to u_pq_2;
 alter table BIGDATA_VOLUME_OF_TS_S98 rename column 二阶电价  to u_pq_2_prc;
 alter table BIGDATA_VOLUME_OF_TS_S98 rename column 三阶电量  to u_pq_3;
 alter table BIGDATA_VOLUME_OF_TS_S98 rename column 三阶电价  to u_pq_3_prc;
+
+-- ----------------------------------------------------------------------------
+-- 修改 cons_id 为 string
+-- 执行不成功! oracle 中修改列属性要求列为空
+ALTER TABLE BIGDATA_USER_INFO_S98 MODIFY(CONS_ID VARCHAR2(16));
+ALTER TABLE BIGDATA_ARC_VOLUME_PERM_S98 MODIFY(CONS_ID VARCHAR2(16));
+ALTER TABLE BIGDATA_POWER_STEAL_PERY_S98 MODIFY(CONS_ID VARCHAR2(16));
+ALTER TABLE BIGDATA_CHANGE_PAYTYPE_PY_S98 MODIFY(CONS_ID VARCHAR2(16));
+
 
 -- hive中修改列名
 /*

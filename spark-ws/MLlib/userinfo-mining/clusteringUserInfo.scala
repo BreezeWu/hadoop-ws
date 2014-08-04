@@ -92,7 +92,7 @@ def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLuc
 // ---------------------------------------------------------------------------------------------------------------------------
 // 函数: 聚类并分配簇标号
 //    // maxIterations :    当前没有生效
-def ClusteringUserInfo(data: RDD[Vector], k:Int, maxIterations: Int = 20, taskName:String = "feelingLucky") = {
+def ClusteringUserInfo(data: RDD[Vector], k:Int, maxIterations: Int = 20) = {
     // ------------------------------------------------------------------------
     // 执行聚类
     val parKTriangle = new KTriangle(k,k+1)
@@ -111,6 +111,27 @@ def ClusteringUserInfo(data: RDD[Vector], k:Int, maxIterations: Int = 20, taskNa
     // ------------------------------------------------------------------------
     // 函数返回值
     new ClusterInfo(resultAccount, clusterCount)
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// 函数: 从Account中获得最佳模型
+def getClusteringUserInfoFromAccount(data: RDD[Vector], account:Account) = {
+    // ------------------------------------------------------------------------
+    // 取得任务的开始日期,最佳K，最佳K对应的模型
+    val dateString = account.getBeginDateString()
+    val perfectK = account.getPerfectKandModel._1
+    val perfectModel = account.getPerfectKandModel._2
+    // ------------------------------------------------------------------------
+    // 分类统计
+    val model = perfectModel
+    // 数据所属的簇
+    val predict = model.predict(data)
+    // 类wordcount: 得到各个簇的成员数量
+    val clusterCount = predict.map(x=>(x,1)).reduceByKey(_+_).collect().sorted
+
+    // ------------------------------------------------------------------------
+    // 函数返回值
+    new ClusterInfo(account, clusterCount)
 }
 
 
