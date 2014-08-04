@@ -86,7 +86,7 @@ def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLuc
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    Tuple2(clusterInfo, hdfsClusterInfoPath)
+    Tuple2(hdfsClusterInfoPath, clusterInfo)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------

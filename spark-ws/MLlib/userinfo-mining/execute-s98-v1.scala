@@ -5,7 +5,7 @@
 
 // 1. 加载数据 
 // (1)样本数据
-// :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01-v1.scala
+//:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01-v1.scala
 // (2)全量数据
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98-v1.scala
 
@@ -22,7 +22,7 @@ val minK = 2
 val maxK = 200
 val maxIterations = 20 // 当前没有生效
 
-val dataType = "S98"
+val dataType = "S01"
 // --------------------------
 // 1. 有效数据
 // (1) 单月数据
@@ -49,28 +49,51 @@ val resultW2HDFS_BadF2ExcludeF3 = writeAccount2HDFS(resultAccount_BadF2ExcludeF3
 // --------------------------
 // 1. 有效数据
 // (1) 单月数据
-val resultClusterInfo_GoodM1 = getClusteringUserInfoFromAccount(parsedData_GoodM1, resultW2HDFS_GoodM1) 
+val resultClusterInfo_GoodM1 = getClusteringUserInfoFromAccount(parsedData_GoodM1, resultAccount_GoodM1) 
 val resultWClusterInfo2HDFS_GoodM1 = writeClusterInfo2HDFS(resultClusterInfo_GoodM1, taskName_GoodM1)  
 // (2) 双月数据
-val resultClusterInfo_GoodM2 = getClusteringUserInfoFromAccount(parsedData_GoodM2, resultW2HDFS_GoodM2) 
+val resultClusterInfo_GoodM2 = getClusteringUserInfoFromAccount(parsedData_GoodM2, resultAccount_GoodM2) 
 val resultWClusterInfo2HDFS_GoodM2 = writeClusterInfo2HDFS(resultClusterInfo_GoodM2, taskName_GoodM2)  	
 // --------------------------
 // 2. 无效数据
 // (1) 前三个月都是 0或NULL
-val resultClusterInfo_BadF3 = getClusteringUserInfoFromAccount(parsedData_BadF3, resultW2HDFS_BadF3) 
+val resultClusterInfo_BadF3 = getClusteringUserInfoFromAccount(parsedData_BadF3, resultAccount_BadF3) 
 val resultWClusterInfo2HDFS_BadF3 = writeClusterInfo2HDFS(resultClusterInfo_BadF3, taskName_BadF3)
 // (2) 仅前两个月都是 0或NULL
-val resultClusterInfo_BadF2ExcludeF3 = getClusteringUserInfoFromAccount(parsedData_BadF2ExcludeF3, resultW2HDFS_BadF2ExcludeF3)
+val resultClusterInfo_BadF2ExcludeF3 = getClusteringUserInfoFromAccount(parsedData_BadF2ExcludeF3, resultAccount_BadF2ExcludeF3)
 val resultWClusterInfo2HDFS_BadF2ExcludeF3 = writeClusterInfo2HDFS(resultClusterInfo_BadF2ExcludeF3, taskName_BadF2ExcludeF3)
 
 // 统一显示一下结果变量
+resultAccount_GoodM1
+resultAccount_GoodM2
+resultAccount_BadF3
+resultAccount_BadF2ExcludeF3
+/*
+println(resultAccount_GoodM1.toRecordOfMetricList)
+println(resultAccount_GoodM.toRecordOfMetricList)
+println(resultAccount_BadF3.toRecordOfMetricList)
+println(resultAccount_BadF2ExcludeF3.toRecordOfMetricList)
+*/
+
+resultClusterInfo_GoodM1.clusterCount
+resultClusterInfo_GoodM2.clusterCount
+resultClusterInfo_BadF3.clusterCount
+resultClusterInfo_BadF2ExcludeF3.clusterCount
+/*
+resultClusterInfo_GoodM1.account
+resultClusterInfo_GoodM2.account
+resultClusterInfo_BadF3.account
+resultClusterInfo_BadF2ExcludeF3.account
+*/
+
+// 统一回显一下HDFS路径
 resultW2HDFS_GoodM1
 resultW2HDFS_GoodM2
 resultW2HDFS_BadF3
 resultW2HDFS_BadF2ExcludeF3
 
-resultWClusterInfo2HDFS_GoodM1
-resultWClusterInfo2HDFS_GoodM2
-resultWClusterInfo2HDFS_BadF3
-resultWClusterInfo2HDFS_BadF2ExcludeF3
+resultWClusterInfo2HDFS_GoodM1._2
+resultWClusterInfo2HDFS_GoodM2._2
+resultWClusterInfo2HDFS_BadF3._2
+resultWClusterInfo2HDFS_BadF2ExcludeF3._2
 

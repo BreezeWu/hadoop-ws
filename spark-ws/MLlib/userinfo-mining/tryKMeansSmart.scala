@@ -92,7 +92,8 @@
         }
 
         def getBeginDateString():String = {
- 	    if (0==this.metricList.size) return ""
+            if (0==this.metricList.size) return ""
+
             val beginDate = this.metricList(this.metricList.size - 1).begin
 
             import java.util.Date
@@ -107,12 +108,12 @@
             // Account中的metricList按照WSSSE从小到大排序
             val sortedMetricList = this.metricList.sorted
 
-	    // 第一个里面就有最优的k
-	    val perfectK = sortedMetricList(0).k
-	    val perfectModel = sortedMetricList(0).model
+            // 第一个里面就有最优的k
+            val perfectK = sortedMetricList(0).k
+            val perfectModel = sortedMetricList(0).model
 
-	    // 返回
-	    Tuple2(perfectK, perfectModel)
+            // 返回
+            Tuple2(perfectK, perfectModel)
         }
 
         // 下面定义错误: error: value unary_+ is not a member of String  // 因为加号在首,会翻译为 unary_+ 函数调用!!!
