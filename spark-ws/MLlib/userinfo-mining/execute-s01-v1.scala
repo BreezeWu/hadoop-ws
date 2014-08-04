@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------
 // 使用方法
 //	在spark-shell中执行  (注意"1.加载数据"的语句即可)
-//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-s98-v1.scala
+//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-s01-v1.scala
 
 // 1. 加载数据 
 // (1)样本数据
-// :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01-v1.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01-v1.scala
 // (2)全量数据
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98-v1.scala
+//:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98-v1.scala
 
 // 2. 加载函数
 // 聚类函数
