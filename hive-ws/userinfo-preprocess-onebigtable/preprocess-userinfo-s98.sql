@@ -10,17 +10,10 @@
 -- ## 分时电价电量 BIGDATA_VOLUME_OF_TS_S98
 -- ## 阶梯电价电量 BIGDATA_VOLUME_OF_PRC_S98
 
--- 因为 BIGDATA_USER_INFO_S98 表中 一个 cons_id 可能有多个 cons_no!
--- 找到 BIGDATA_USER_INFO_S98 表中 cons_id 出现多次的记录
---CREATE TABLE BIGDATA_USER_INFO_S98_COUNTER_ID AS
---select cons_id, count(cons_id) as counter from BIGDATA_USER_INFO_S98_ALIVE_DISTINCT_ID_ONLYID group by cons_id;
--- 记录数大于等于2的就是重复的
--- 0
---select count(cons_id) from BIGDATA_USER_INFO_S98_COUNTER_ID where counter >= 2;
-
 -- --------------------------
 -- 找出 用户信息表中 cons_id 出现多次的记录
 -- 20940685
+--;
 CREATE TABLE COUNTER_OF_BIGDATA_USER_INFO_S98 AS
 select cons_id, count(cons_id) as counter from BIGDATA_USER_INFO_S98 where status_code !=9  group by cons_id ;
 -- 记录数大于等于2的就是重复的
@@ -35,6 +28,7 @@ select cons_id, count(cons_id) as counter from BIGDATA_USER_INFO_S98 where statu
 -- 有重复的 288328
 --select cons_id from COUNTER_OF_BIGDATA_USER_INFO_S98 where counter > 1;
 -- 当前处理办法是删除所有重复的数据 20006363
+--;
 CREATE TABLE BIGDATA_USER_INFO_S98_UNIQUE AS
 select a.* from BIGDATA_USER_INFO_S98 a  LEFT SEMI JOIN COUNTER_OF_BIGDATA_USER_INFO_S98 b on a.cons_id = b.cons_id and b.counter = 1
 ;
@@ -55,9 +49,11 @@ select cons_no, count(cons_no) as counter from BIGDATA_TS_OR_PRCSCOPE_S98 group 
 --CREATE TABLE BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE_DISTINCT_NO AS
 --select cons_id from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter = 1;
 CREATE TABLE BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE AS
-select x.cons_no, d.prc_code, d.ts_flag,d.ladder_flag,d.ts_flag_i,d.ladder_flag_i from (select cons_no from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter = 1) x 
+select x.cons_no, d.prc_code, d.ts_flag,d.ladder_flag from (select cons_no from COUNTER_OF_BIGDATA_TS_OR_PRCSCOPE_S98 where counter = 1) x 
     left outer join BIGDATA_TS_OR_PRCSCOPE_S98 d on d.cons_no = x.cons_no
 ;
+-- d.prc_code, d.ts_flag,d.ladder_flag,d.ts_flag_i,d.ladder_flag_i
+-- d.prc_code, d.ts_flag,d.ladder_flag
 
 -- --------------------------
 -- 找出 BIGDATA_POWER_STEAL_PERY_S98 表中 cons_id 出现多次的记录
@@ -75,7 +71,6 @@ CREATE TABLE BIGDATA_POWER_STEAL_PERY_S98_Y2013_UNIQUE AS
 select a.* from BIGDATA_POWER_STEAL_PERY_S98 a  LEFT SEMI JOIN COUNTER_OF_BIGDATA_POWER_STEAL_PERY_S98_Y2013 b on a.cons_id = b.cons_id and b.counter = 1
 ;
 
-
 -- ----------------------------------------------------------------------------
 -- 1. 将 "月用电量" 从纵表变为横表
 -- 将 "月用电量" 从纵表变为横表, 创建了一张新表 BIGDATA_ARC_VOLUME_PERM_S98_H 
@@ -85,7 +80,7 @@ select a.* from BIGDATA_POWER_STEAL_PERY_S98 a  LEFT SEMI JOIN COUNTER_OF_BIGDAT
 --x.cons_id,ym1301.vpm201301,ym1302.vpm201302,ym1303.vpm201303,ym1304.vpm201304,ym1305.vpm201305,ym1306.vpm201306,ym1307.vpm201307,ym1308.vpm201308,ym1309.vpm201309,ym1310.vpm201310,ym1311.vpm201311,ym1312.vpm201312,ym1401.vpm201401,ym1402.vpm201402,ym1403.vpm201403,ym1404.vpm201404,ym1405.vpm201405,ym1406.vpm201406
 --部分字段 不含201401~201406
 --x.cons_id,ym1301.vpm201301,ym1302.vpm201302,ym1303.vpm201303,ym1304.vpm201304,ym1305.vpm201305,ym1306.vpm201306,ym1307.vpm201307,ym1308.vpm201308,ym1309.vpm201309,ym1310.vpm201310,ym1311.vpm201311,ym1312.vpm201312 
-
+--;
 CREATE TABLE BIGDATA_ARC_VOLUME_PERM_S98_H AS
 select x.cons_id,ym1301.vpm201301,ym1302.vpm201302,ym1303.vpm201303,ym1304.vpm201304,ym1305.vpm201305,ym1306.vpm201306,ym1307.vpm201307,ym1308.vpm201308,ym1309.vpm201309,ym1310.vpm201310,ym1311.vpm201311,ym1312.vpm201312 from (select distinct(cons_id) from BIGDATA_ARC_VOLUME_PERM_S98) x
     left outer join (select cons_id, volume_per_month as vpm201301 from BIGDATA_ARC_VOLUME_PERM_S98 where ym = '201301') ym1301 on ym1301.cons_id = x.cons_id
@@ -109,6 +104,7 @@ select x.cons_id,ym1301.vpm201301,ym1302.vpm201302,ym1303.vpm201303,ym1304.vpm20
 --    left outer join (select cons_id, volume_per_month as vpm201404 from BIGDATA_ARC_VOLUME_PERM_S98 where ym = '201404') ym1404 on ym1404.cons_id = x.cons_id
 --    left outer join (select cons_id, volume_per_month as vpm201405 from BIGDATA_ARC_VOLUME_PERM_S98 where ym = '201405') ym1405 on ym1405.cons_id = x.cons_id
 --    left outer join (select cons_id, volume_per_month as vpm201406 from BIGDATA_ARC_VOLUME_PERM_S98 where ym = '201406') ym1406 on ym1406.cons_id = x.cons_id
+--;
 --------------------------
 
 -- ----------------------------------------------------------------------------
@@ -119,7 +115,7 @@ select x.cons_id,ym1301.vpm201301,ym1302.vpm201302,ym1303.vpm201303,ym1304.vpm20
 --x.cons_no ,ym201301.rcved_amt201301,ym201302.rcved_amt201302,ym201303.rcved_amt201303,ym201304.rcved_amt201304,ym201305.rcved_amt201305,ym201306.rcved_amt201306,ym201307.rcved_amt201307,ym201308.rcved_amt201308,ym201309.rcved_amt201309,ym201310.rcved_amt201310,ym201311.rcved_amt201311,ym201312.rcved_amt201312,ym201401.rcved_amt201401,ym201402.rcved_amt201402,ym201403.rcved_amt201403,ym201404.rcved_amt201404,ym201405.rcved_amt201405,ym201406.rcved_amt201406  ,ym201301.rcvbl_amt201301,ym201302.rcvbl_amt201302,ym201303.rcvbl_amt201303,ym201304.rcvbl_amt201304,ym201305.rcvbl_amt201305,ym201306.rcvbl_amt201306,ym201307.rcvbl_amt201307,ym201308.rcvbl_amt201308,ym201309.rcvbl_amt201309,ym201310.rcvbl_amt201310,ym201311.rcvbl_amt201311,ym201312.rcvbl_amt201312,ym201401.rcvbl_amt201401,ym201402.rcvbl_amt201402,ym201403.rcvbl_amt201403,ym201404.rcvbl_amt201404,ym201405.rcvbl_amt201405,ym201406.rcvbl_amt201406  ,ym201301.owning_amt201301,ym201302.owning_amt201302,ym201303.owning_amt201303,ym201304.owning_amt201304,ym201305.owning_amt201305,ym201306.owning_amt201306,ym201307.owning_amt201307,ym201308.owning_amt201308,ym201309.owning_amt201309,ym201310.owning_amt201310,ym201311.owning_amt201311,ym201312.owning_amt201312,ym201401.owning_amt201401,ym201402.owning_amt201402,ym201403.owning_amt201403,ym201404.owning_amt201404,ym201405.owning_amt201405,ym201406.owning_amt201406 
 --部分字段 不含201401~201406
 --x.cons_no ,ym201301.rcved_amt201301,ym201302.rcved_amt201302,ym201303.rcved_amt201303,ym201304.rcved_amt201304,ym201305.rcved_amt201305,ym201306.rcved_amt201306,ym201307.rcved_amt201307,ym201308.rcved_amt201308,ym201309.rcved_amt201309,ym201310.rcved_amt201310,ym201311.rcved_amt201311,ym201312.rcved_amt201312,ym201301.rcvbl_amt201301,ym201302.rcvbl_amt201302,ym201303.rcvbl_amt201303,ym201304.rcvbl_amt201304,ym201305.rcvbl_amt201305,ym201306.rcvbl_amt201306,ym201307.rcvbl_amt201307,ym201308.rcvbl_amt201308,ym201309.rcvbl_amt201309,ym201310.rcvbl_amt201310,ym201311.rcvbl_amt201311,ym201312.rcvbl_amt201312,ym201301.owning_amt201301,ym201302.owning_amt201302,ym201303.owning_amt201303,ym201304.owning_amt201304,ym201305.owning_amt201305,ym201306.owning_amt201306,ym201307.owning_amt201307,ym201308.owning_amt201308,ym201309.owning_amt201309,ym201310.owning_amt201310,ym201311.owning_amt201311,ym201312.owning_amt201312
-
+--;
 CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS 
  select x.cons_no, ym201301.rcved_amt201301,ym201302.rcved_amt201302,ym201303.rcved_amt201303,ym201304.rcved_amt201304,ym201305.rcved_amt201305,ym201306.rcved_amt201306,ym201307.rcved_amt201307,ym201308.rcved_amt201308,ym201309.rcved_amt201309,ym201310.rcved_amt201310,ym201311.rcved_amt201311,ym201312.rcved_amt201312,ym201301.rcvbl_amt201301,ym201302.rcvbl_amt201302,ym201303.rcvbl_amt201303,ym201304.rcvbl_amt201304,ym201305.rcvbl_amt201305,ym201306.rcvbl_amt201306,ym201307.rcvbl_amt201307,ym201308.rcvbl_amt201308,ym201309.rcvbl_amt201309,ym201310.rcvbl_amt201310,ym201311.rcvbl_amt201311,ym201312.rcvbl_amt201312,ym201301.owning_amt201301,ym201302.owning_amt201302,ym201303.owning_amt201303,ym201304.owning_amt201304,ym201305.owning_amt201305,ym201306.owning_amt201306,ym201307.owning_amt201307,ym201308.owning_amt201308,ym201309.owning_amt201309,ym201310.owning_amt201310,ym201311.owning_amt201311,ym201312.owning_amt201312 from (select distinct(cons_no) from BIGDATA_RCVBL_FLOW_PM_S98) x 
      left outer join (select cons_no, rcved_amt as rcved_amt201301, rcvbl_amt as rcvbl_amt201301, owning_amt as owning_amt201301 from BIGDATA_RCVBL_FLOW_PM_S98 where ym = '201301') ym201301 on ym201301.cons_no = x.cons_no
@@ -142,7 +138,7 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS
 --    left outer join (select cons_no, rcved_amt as rcved_amt201404, rcvbl_amt as rcvbl_amt201404, owning_amt as owning_amt201404 from BIGDATA_RCVBL_FLOW_PM_S98 where ym = '201404') ym201404 on ym201404.cons_no = x.cons_no
 --    left outer join (select cons_no, rcved_amt as rcved_amt201405, rcvbl_amt as rcvbl_amt201405, owning_amt as owning_amt201405 from BIGDATA_RCVBL_FLOW_PM_S98 where ym = '201405') ym201405 on ym201405.cons_no = x.cons_no
 --    left outer join (select cons_no, rcved_amt as rcved_amt201406, rcvbl_amt as rcvbl_amt201406, owning_amt as owning_amt201406 from BIGDATA_RCVBL_FLOW_PM_S98 where ym = '201406') ym201406 on ym201406.cons_no = x.cons_no
-
+--;
 -- ----------------------------------------------------------------------------
 -- 合并为一张大横表
 -- ----------------------------------------------------------------------------
@@ -151,7 +147,7 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS
 --select * from BIGDATA_USER_INFO_S98 where (org_no !like "21401%" and org_no !like "21408%") and status_code !=9 limit 10;
 -- 双月数据  (沈阳21401,大连21408)
 --select * from BIGDATA_USER_INFO_S98 where (org_no like "21401%" or org_no like "21408%") and status_code !=9 limit 10;
-
+--;
 -- ----------------------------------------------------------------------------
 -- 创建一个大横表:	一次多个 left out join
 
@@ -165,7 +161,7 @@ CREATE TABLE BIGDATA_RCVBL_FLOW_PM_S98_H AS
 -- ## 是否阶梯电价	BIGDATA_TS_OR_PRCSCOPE_S98 --> BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE	d
 -- ## 分时电价电量	BIGDATA_VOLUME_OF_TS_S98	e	这个表也是个纵表,另外单独处理
 -- ## 阶梯电价电量	BIGDATA_VOLUME_OF_PRC_S98	f	这个表也是个纵表,另外单独处理
-
+--;
 CREATE TABLE BIGDATA_USER_INFO_S98_ONEBIGTABLE AS
 select x.cons_id, x.cons_no, x.org_no, x.elec_type_code, x.volt_code, x.urban_rural_flag, x.trade_code, a.vpm201301, a.vpm201302, a.vpm201303, a.vpm201304, a.vpm201305, a.vpm201306, a.vpm201307, a.vpm201308, a.vpm201309, a.vpm201310, a.vpm201311, a.vpm201312, b.rcved_amt201301, b.rcved_amt201302, b.rcved_amt201303, b.rcved_amt201304, b.rcved_amt201305, b.rcved_amt201306, b.rcved_amt201307, b.rcved_amt201308, b.rcved_amt201309, b.rcved_amt201310, b.rcved_amt201311, b.rcved_amt201312, b.rcvbl_amt201301, b.rcvbl_amt201302, b.rcvbl_amt201303, b.rcvbl_amt201304, b.rcvbl_amt201305, b.rcvbl_amt201306, b.rcvbl_amt201307, b.rcvbl_amt201308, b.rcvbl_amt201309, b.rcvbl_amt201310, b.rcvbl_amt201311, b.rcvbl_amt201312, b.owning_amt201301, b.owning_amt201302, b.owning_amt201303, b.owning_amt201304, b.owning_amt201305, b.owning_amt201306, b.owning_amt201307, b.owning_amt201308, b.owning_amt201309, b.owning_amt201310, b.owning_amt201311, b.owning_amt201312, d.prc_code, d.ts_flag,d.ladder_flag from BIGDATA_USER_INFO_S98_UNIQUE x 
     left outer join BIGDATA_ARC_VOLUME_PERM_S98_H a on a.cons_id = x.cons_id
@@ -179,15 +175,21 @@ select x.cons_id, x.cons_no, x.org_no, x.elec_type_code, x.volt_code, x.urban_ru
 
 --    left outer join BIGDATA_VOLUME_OF_TS_S98 e on trim(d.cons_no) = trim(x.cons_no)
 --    left outer join BIGDATA_VOLUME_OF_PRC_S98 f on trim(f.cons_no) = trim(x.cons_no)
-
+--;
 -- 查看表结构
 desc BIGDATA_USER_INFO_S98_ONEBIGTABLE;
 
 -- ----------------------------------------------------------------------------
 -- 重新执行时删除表
+-- drop table BIGDATA_USER_INFO_S98_UNIQUE;
 -- drop table BIGDATA_ARC_VOLUME_PERM_S98_H;	
 -- drop table BIGDATA_RCVBL_FLOW_PM_S98_H;	
--- drop table BIGDATA_USER_INFO_S98_ALIVE_UNIQUE;	
--- drop table BIGDATA_USER_INFO_S98_ALIVE_DISTINCT_ID;	
+-- drop table BIGDATA_USER_INFO_S98_ALIVE_UNIQUE;		
+-- drop table BIGDATA_TS_OR_PRCSCOPE_S98_UNIQUE;
 -- drop table BIGDATA_USER_INFO_S98_ONEBIGTABLE;
+-- drop table COUNTER_OF_BIGDATA_USER_INFO_S98;
+-- drop table counter_of_bigdata_ts_or_prcscope_S98;
+-- drop table counter_of_bigdata_power_steal_pery_S98_y2013;
+-- drop table BIGDATA_POWER_STEAL_PERY_S98_Y2013_UNIQUE;
 
+--;
