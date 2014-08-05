@@ -114,18 +114,18 @@ var taskNamePre = "S98_perfectK" + perfectK
 // 1. 有效数据
 // (1) 单月数据
 val resultClusterInfoSpecial_GoodM1 = ClusteringUserInfo(parsedData_GoodM1, perfectK, maxIterations) 
-val resultWClusterInfoSpecial2HDFS_GoodM1 = writeClusterInfoSpecial2HDFS(resultClusterInfoSpecial_GoodM1, taskName_GoodM1(taskNamePre))  
+val resultWClusterInfoSpecial2HDFS_GoodM1 = writeClusterInfo2HDFS(resultClusterInfoSpecial_GoodM1, taskName_GoodM1(taskNamePre))  
 // (2) 双月数据
 val resultClusterInfoSpecial_GoodM2 = ClusteringUserInfo(parsedData_GoodM2, perfectK, maxIterations)  
-val resultWClusterInfoSpecial2HDFS_GoodM2 = writeClusterInfoSpecial2HDFS(resultClusterInfoSpecial_GoodM2, taskName_GoodM2(taskNamePre))  	
+val resultWClusterInfoSpecial2HDFS_GoodM2 = writeClusterInfo2HDFS(resultClusterInfoSpecial_GoodM2, taskName_GoodM2(taskNamePre))  	
 // --------------------------
 // 2. 无效数据
 // (1) 前三个月都是 0或NULL
 val resultClusterInfoSpecial_BadF3 = ClusteringUserInfo(parsedData_BadF3, perfectK, maxIterations) 
-val resultWClusterInfoSpecial2HDFS_BadF3 = writeClusterInfoSpecial2HDFS(resultClusterInfoSpecial_BadF3, taskName_BadF3(taskNamePre))
+val resultWClusterInfoSpecial2HDFS_BadF3 = writeClusterInfo2HDFS(resultClusterInfoSpecial_BadF3, taskName_BadF3(taskNamePre))
 // (2) 仅前两个月都是 0或NULL
 val resultClusterInfoSpecial_BadF2ExcludeF3 = ClusteringUserInfo(parsedData_BadF2ExcludeF3, perfectK, maxIterations) 
-val resultWClusterInfoSpecial2HDFS_BadF2ExcludeF3 = writeClusterInfoSpecial2HDFS(resultClusterInfoSpecial_BadF2ExcludeF3, taskName_BadF2ExcludeF3(taskNamePre))
+val resultWClusterInfoSpecial2HDFS_BadF2ExcludeF3 = writeClusterInfo2HDFS(resultClusterInfoSpecial_BadF2ExcludeF3, taskName_BadF2ExcludeF3(taskNamePre))
 
 // 统一显示一下结果变量
 resultClusterInfoSpecial_GoodM1.clusterCount

@@ -39,7 +39,8 @@
 // 辅助函数
 case class ClusterInfo(
     account:Account,
-    clusterCount: Array[(Int, Int)]
+    clusterCount: Array[(Int, Int)],
+    predict:RDD[Int]
 )
 
 def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLucky") = {
@@ -110,7 +111,7 @@ def ClusteringUserInfo(data: RDD[Vector], k:Int, maxIterations: Int = 20) = {
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusterInfo(resultAccount, clusterCount)
+    new ClusterInfo(resultAccount, clusterCount, predict)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------
@@ -131,7 +132,7 @@ def getClusteringUserInfoFromAccount(data: RDD[Vector], account:Account) = {
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusterInfo(account, clusterCount)
+    new ClusterInfo(account, clusterCount,predict)
 }
 
 
