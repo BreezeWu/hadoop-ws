@@ -25,7 +25,7 @@ val k = 4
 val maxIterations = 20 // 当前没有生效
 */
 // ----------------------------------------------------------------------------
-// 任务1： 
+// 方式1： ClusteringUserInfo_Standalone 模式
 
 val perfectK = 4;
 val maxIterations = 20 // 当前没有生效
@@ -45,6 +45,27 @@ val clusterSet_BadF3 = ComputeClusterSet(clusteredInfo_BadF3)
 // (2) 仅前两个月都是 0或NULL   BadF2ExcludeF3
 val clusteredInfo_BadF2ExcludeF3 = ClusteringUserInfo_Standalone(parsedData_BadF2ExcludeF3, parsedDataIndexed_BadF2ExcludeF3, perfectK, maxIterations, sc) 
 val clusterSet_BadF2ExcludeF3 = ComputeClusterSet(clusteredInfo_BadF2ExcludeF3)
+
+// ----------------------------------------------------------------------------
+// 方式2： ClusteringUserInfo_Standalone 模式
+//      在 execute-s01-v1.scala 或 execute-s98-v1.scala 执行之后执行
+/*
+// 1. 有效数据
+// (1) 单月数据 GoodM1
+val clusteredInfo_GoodM1 = ClusteringUserInfo_FromAccount(parsedDataIndexed_GoodM1, resultAccount_GoodM1, sc) 
+val clusterSet_GoodM1 = ComputeClusterSet(clusteredInfo_GoodM1)
+// (2) 双月数据 GoodM2
+val clusteredInfo_GoodM2 = ClusteringUserInfo_Standalone(parsedDataIndexed_GoodM2, resultAccount_GoodM2, sc) 
+val clusterSet_GoodM2 = ComputeClusterSet(clusteredInfo_GoodM2)
+// --------------------------
+// 2. 无效数据
+// (1) 前三个月都是 0或NULL    BadF3
+val clusteredInfo_BadF3 = ClusteringUserInfo_Standalone(parsedDataIndexed_BadF3, resultAccount_BadF3, sc) 
+val clusterSet_BadF3 = ComputeClusterSet(clusteredInfo_BadF3)
+// (2) 仅前两个月都是 0或NULL   BadF2ExcludeF3
+val clusteredInfo_BadF2ExcludeF3 = ClusteringUserInfo_Standalone(parsedDataIndexed_BadF2ExcludeF3, resultAccount_BadF2ExcludeF3, sc) 
+val clusterSet_BadF2ExcludeF3 = ComputeClusterSet(clusteredInfo_BadF2ExcludeF3)
+*/
 // ----------------------------------------------------------------------------
 // 交互式查询样本
 val x = clusterSet_GoodM1
