@@ -135,8 +135,31 @@ def VPM2Array(x:VPM):Array[Double] = {
     Array(x.v1, x.v2, x.v3, x.v4, x.v5, x.v6, x.v7, x.v8, x.v9, x.v10, x.v11, x.v12)
 }
 */
-case class ConsVPM(index:Index, vpm:Array[Double])
-case class ConsVPMClustered(consVpm: ConsVPM, clusterID:Int)
+case class ConsVPM(index:Index, vpm:Array[Double]) {
+    def getPrintLine():String = {
+        val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ||"
+        val line = this.vpm.foldLeft(headStr)((x,y) => x + ", " + y)
+        return line     
+    }
+    def print() = {
+        println(this.getPrintLine())        
+    }
+}
+// 测试语句: 
+//val x = ConsVPM(Index("cons_id","cons_no"), Array(0,1,2,4.3))
+//x.print
+case class ConsVPMClustered(consVpm: ConsVPM, clusterID:Int) {
+    def getPrintLine():String = {
+        val line = this.consVpm.getPrintLine() + s", ||,  ${this.clusterID}"
+        return line     
+    }
+    def print() = {
+        println(this.getPrintLine())        
+    }
+}
+// 测试语句
+//val y = ConsVPMClustered(x, 10)
+//y.print
 
 // 转换函数
 // row --> ConsVPM :	使用了前面的 g(x)

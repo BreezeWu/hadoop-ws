@@ -27,6 +27,7 @@ case class ClusteredInfo(
         return range.toArray
     }
     
+    /*
     // 获得 clusterCount
     private var mHasCounted = false
     private var mClusterCount:Array[(Int, Int)] = null
@@ -45,6 +46,7 @@ case class ClusteredInfo(
         // 2.99 返回值
         return this.mClusterCount
     }
+    */
 }
 // -----------------------------------------------------------------------
 // 某一个簇
@@ -106,6 +108,11 @@ case class ClusterSet(
 //}
 
 // -----------------------------------------------------------------------
+// 打印簇样本
+def printSampleData(sampleData:Array[ConsVPMClustered]) = {
+    sampleData.foreach(x => x.print)
+}
+
 // 获得某个簇的样本
 def getSampleFromClusterSet(clusterSet:ClusterSet, clusterID:Int, num:Int):Array[ConsVPMClustered] = {
     // 参数检查 
