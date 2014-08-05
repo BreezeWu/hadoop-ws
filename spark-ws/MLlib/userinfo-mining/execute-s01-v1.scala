@@ -13,7 +13,7 @@
 // 聚类函数
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/tryKMeansSmart.scala
 // 根据聚类模型分配clusterID
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/clusteringUserInfo.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/clusteringUserInfo-v1.scala
 
 // ----------------------------------------------------------------------------
 // 任务1： 寻找最佳K
