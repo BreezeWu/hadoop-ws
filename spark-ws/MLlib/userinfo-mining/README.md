@@ -5,9 +5,15 @@
     //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
 
 # 执行方法请参见脚本
+方法一: 不能获得样本数据
 execute-s98-v1.scala
 或者
 execute-s01-v1.scala
+
+方法二: 可以获得样本数据
+execute-s98-v2.scala
+或者
+execute-s01-v2.scala
 
 # 执行导出的命令
 printlnHdfsExportCmd.scala

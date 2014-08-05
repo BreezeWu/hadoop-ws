@@ -7,57 +7,138 @@
 // ****************************************************************************
 // 辅助函数
 // ****************************************************************************
-case class ClusterInfo(
+// -----------------------------------------------------------------------
+// ClusteredInfo
+case class ClusteredInfo(
     account:Account,
-    clusterCount: Array[(Int, Int)],
-    predict:RDD[Int]
+    dataClustered: RDD[ConsVPMClustered]
+) {
+    def getPerfectK():Int = {
+        val perfectK = this.account.getPerfectKandModel._1
+        return perfectK
+    }    
+    def getPerfectModel():org.apache.spark.mllib.clustering.KMeansModel = {
+        val perfectModel = this.account.getPerfectKandModel._2
+        return perfectModel
+    }
+    // 获得 clusterID数组
+    def getClusterIDArray():Array[Int] = {
+        val range = Range(0, this.getPerfectK())
+        return range.toArray
+    }
+    
+    // 获得 clusterCount
+    private var mHasCounted = false
+    private var mClusterCount:Array[(Int, Int)] = null
+    def getClusterCount():Array[(Int, Int)] = {
+        // 1.已经计算过
+        if (mHasCounted) return mClusterCount;
+        
+        // 2.尚未计算过     
+        //val clusterCount = ComputeClusterCount(this.dataClustered, this.getClusterIDArray())    
+        val clusterCount = Array((0,0))
+        
+        // 2.98 打上计算标记
+        mHasCounted = true
+        this.mClusterCount = clusterCount
+        
+        // 2.99 返回值
+        return this.mClusterCount
+    }
+}
+// -----------------------------------------------------------------------
+// 某一个簇
+case class OneCluster(
+    clusterID:Int,
+    counter:Long,
+    clusterCenter:org.apache.spark.mllib.linalg.Vector,
+    points: RDD[ConsVPMClustered]
+)
+// 簇集合
+case class ClusterSet(
+    k:Int,
+    clusterCenters:Array[org.apache.spark.mllib.linalg.Vector],
+    clusterArray:Array[OneCluster]
 )
 
-def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLucky") = {
-    // ------------------------------------------------------------------------
-    // 簇ID:     从0开始计数, 就是簇中心的indices
-    // 簇中心:     account.getPerfectKandModel._2.clusterCenters
-    // 族成员数量:    clusterCount
-
-    // 参数导入
-    val clusterCount = clusterInfo.clusterCount
-    val clusterCenters = clusterInfo.account.getPerfectKandModel._2.clusterCenters
-
-    // 数据变换
-    val zip = clusterCount.zip(clusterCenters.map(_.toArray))
-
-    // RDD化
-    val zipRDD = sc.parallelize(zip)
-
-    // 转换函数
-    //  val y= zipRDD.first
-    //  f(y)
-    def f(y: ((Int, Int), Array[Double])) = {
-         val part1 = s"${(y._1)._1},${(y._1)._2}"
-         val part2 = (y._2).foldLeft(part1)(_+","+_)
-
-         part2    
+//object ClusterSet {
+    // -----------------------------------------------------------------------
+    // 计算 ClusterSet 的辅助函数, 为 getClusterCount函数所使用
+    def ComputeClusterSet(clusteredInfo:ClusteredInfo):ClusterSet = {
+        // 簇个数
+        val k = clusteredInfo.getPerfectK()
+        // 簇中心点集合
+        val clusterCenters = clusteredInfo.getPerfectModel().clusterCenters
+        
+        // ------------------------------------------------------------------------
+        // 构建 clusterList
+        // ------------------------------------------------------------------------
+        // 辅助函数: 某个 ConsVPMClustered 是该簇吗?
+        def isThisCluster(point:ConsVPMClustered, clusterID:Int):Boolean = {
+            if (point.clusterID == clusterID) return true
+            else return false
+        }
+        
+        // 簇ID集合
+        val clusterIDArray = clusteredInfo.getClusterIDArray()
+        // 已分簇的数据
+        val dataClustered = clusteredInfo.dataClustered
+        
+        val clusterArray = new Array[OneCluster](k)
+        for (i <- clusterIDArray) {
+            val clusterID = i
+            val clusterCenter = clusterCenters(i)
+            
+            // 下面这个语句能够在分布式环境中成功执行吗? 
+            val points = dataClustered.filter(x => isThisCluster(x,i))
+            val counter = points.count
+            
+            val oneCluster = new OneCluster(clusterID, counter, clusterCenter, points)
+            clusterArray(i) = oneCluster
+        }
+        
+        // 簇集合对象
+        val clusterSet = new ClusterSet(k, clusterCenters, clusterArray)
+        
+        // 返回值
+        return clusterSet
     }
-    // 执行转换函数
-    val distData = zipRDD.map(y => f(y))
+//}
 
-    // ------------------------------------------------------------------------
-    // 写入文件
-    // 取得任务的开始日期
-    val dateString = clusterInfo.account.getBeginDateString()
-    val perfectK = clusterInfo.account.getPerfectKandModel._1
-
-    // 文件路径
-    val filepath = "/user/spark/clustering/" + dateString
-    val filename = taskName + "_kmeans_" + perfectK + "_cluster"
-    val hdfsClusterInfoPath = filepath + "/" + filename
-
-    // 写入文件
-    distData.saveAsTextFile(hdfsClusterInfoPath)
-
-    // ------------------------------------------------------------------------
-    // 函数返回值
-    Tuple2(hdfsClusterInfoPath, clusterInfo)
+// -----------------------------------------------------------------------
+// 获得某个簇的样本
+def getSampleFromClusterSet(clusterSet:ClusterSet, clusterID:Int, num:Int):Array[ConsVPMClustered] = {
+    // 参数检查 
+    // <console>:49: error: type mismatch;
+    /*
+    if (null == clusterSet) {
+        println("// ----------------------------------------------------------------------------")
+        println("\t\t 坑谁呢? null == clusterSet")
+        println("// ----------------------------------------------------------------------------")
+        return null
+    }
+    */
+    if (clusterID < 0 || num < 0) {
+        println("// ----------------------------------------------------------------------------")
+        println(s"\t\t clusterID:${clusterID} 与 num:${num} 都不能小于 0")
+        println("// ----------------------------------------------------------------------------")
+        return null
+    } 
+    if (clusterID > clusterSet.k) {
+        println("// ----------------------------------------------------------------------------")
+        println(s"\t\t clusterID:${clusterID} 不能大于 clusterSet.k ${clusterSet.k}")
+        println("// ----------------------------------------------------------------------------")
+        return null
+    } 
+    if (num > 1000) {
+        println("// ----------------------------------------------------------------------------")
+        println(s"\t\t num:${num} 不能大于 1000")
+        println("// ----------------------------------------------------------------------------")
+        return null
+    } 
+    
+     val sampleData = clusterSet.clusterArray(clusterID).points.take(num)
+     return sampleData
 }
 
 // ****************************************************************************
@@ -65,7 +146,7 @@ def writeClusterInfo2HDFS(clusterInfo:ClusterInfo, taskName:String = "feelingLuc
 // ****************************************************************************
 //  独立进行聚类并分群
 //    // maxIterations :    当前没有生效
-def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[Vector], k:Int, maxIterations: Int = 20) = {
+def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[ConsVPM], k:Int, maxIterations: Int = 20, sc:org.apache.spark.SparkContext) = {
     // ------------------------------------------------------------------------
     // 执行聚类
     val parKTriangle = new KTriangle(k,k+1)
@@ -76,20 +157,32 @@ def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[Ve
     // ------------------------------------------------------------------------
     // 分类统计
     val model = resultAccount.metricList(0).model
-    // 数据所属的簇
-    val predict = model.predict(dataIndexed)
-    // 类wordcount: 得到各个簇的成员数量
-    val clusterCount = predict.map(x=>(x,1)).reduceByKey(_+_).collect().sorted
+    
+    // 将 model 变为 Broadcast Variables
+    val broadcastModel = sc.broadcast(model)
+    // 再次访问model的方式是 broadcastModel.value
+    
+    // 利用model识别dataIndexed中各自所属的clusterID, 即为每一个 ConsVPM 获得其 clusterID
+    // ConsVPM,ConsVPMClustered 的定义在 create-parsedData-userinfo-s01-v2.scala 文件中
+    def ComputeClusterID(consVpm: ConsVPM):ConsVPMClustered = {
+        val vector = Vectors.dense(consVpm.vpm)
+        val clusterID = broadcastModel.value.predict(vector)
+        val consVpmClustered = new ConsVPMClustered(consVpm, clusterID)
+        consVpmClustered
+    }
+    
+    // 执行函数
+    val dataClustered = dataIndexed.map(x => ComputeClusterID(x))
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusterInfo(resultAccount, clusterCount, predict)
+    new ClusteredInfo(resultAccount, dataClustered)
 }
 
 // ****************************************************************************
 // 函数: 利用最佳K的 KMeansModel进行聚类,即从Account中获得最佳模型
 // ****************************************************************************
-def ClusteringUserInfo_FromAccount(dataIndexed: RDD[Vector], account:Account) = {
+def ClusteringUserInfo_FromAccount(dataIndexed: RDD[ConsVPM], account:Account, sc:org.apache.spark.SparkContext) = {
     // ------------------------------------------------------------------------
     // 取得任务的开始日期,最佳K，最佳K对应的模型
     val dateString = account.getBeginDateString()
@@ -98,14 +191,26 @@ def ClusteringUserInfo_FromAccount(dataIndexed: RDD[Vector], account:Account) = 
     // ------------------------------------------------------------------------
     // 分类统计
     val model = perfectModel
-    // 数据所属的簇
-    val predict = model.predict(dataIndexed)
-    // 类wordcount: 得到各个簇的成员数量
-    val clusterCount = predict.map(x=>(x,1)).reduceByKey(_+_).collect().sorted
+    
+    // 将 model 变为 Broadcast Variables
+    val broadcastModel = sc.broadcast(model)
+    // 再次访问model的方式是 broadcastModel.value
+    
+    // 利用model识别dataIndexed中各自所属的clusterID, 即为每一个 ConsVPM 获得其 clusterID
+    // ConsVPM,ConsVPMClustered 的定义在 create-parsedData-userinfo-s01-v2.scala 文件中
+    def ComputeClusterID(consVpm: ConsVPM):ConsVPMClustered = {
+        val vector = Vectors.dense(consVpm.vpm)
+        val clusterID = broadcastModel.value.predict(vector)
+        val consVpmClustered = new ConsVPMClustered(consVpm, clusterID)
+        consVpmClustered
+    }
+    
+    // 执行函数
+    val dataClustered = dataIndexed.map(x => ComputeClusterID(x))
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusterInfo(account, clusterCount,predict)
+    new ClusteredInfo(account, dataClustered)
 }
 
 

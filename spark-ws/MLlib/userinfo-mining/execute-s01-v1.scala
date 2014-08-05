@@ -27,7 +27,7 @@ def taskName_GoodM2(taskNamePre:String) = taskNamePre + "_" + "GoodM2"
 def taskName_BadF3(taskNamePre:String) = taskNamePre + "_" + "BadF3"
 def taskName_BadF2ExcludeF3(taskNamePre:String) = taskNamePre + "_" + "BadF2ExcludeF3"
 
-val taskNamePre = "S98"
+val taskNamePre = "S01"
 // --------------------------
 // 1. 有效数据
 // (1) 单月数据
@@ -109,7 +109,7 @@ resultWClusterInfo2HDFS_BadF2ExcludeF3._2
 val perfectK = 20;
 val maxIterations = 20 // 当前没有生效
 
-var taskNamePre = "S98_perfectK" + perfectK
+var taskNamePre = "S01_perfectK" + perfectK
 
 // 1. 有效数据
 // (1) 单月数据

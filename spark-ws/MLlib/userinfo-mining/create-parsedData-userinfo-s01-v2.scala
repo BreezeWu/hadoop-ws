@@ -124,25 +124,34 @@ val rddFromHiveIndexed_BadF2ExcludeF3  = hiveContext.hql(s"SELECT ${idInfo},${vp
 // Define the schema using a case class.
 // Note: Case classes in Scala 2.10 can support only up to 22 fields. To work around this limit, 
 // you can use custom classes that implement the Product interface.
+
 // 索引和VPM
 case class Index(cons_id:String, cons_no:String)
+/*
 case class VPM(v1:Double, v2:Double, v3:Double, v4:Double, v5:Double, v6:Double, v7:Double, v8:Double, v9:Double, v10:Double, v11:Double, v12:Double)
-case class ConsVpm(index:Index, vpm:VPM)
+case class ConsVPM(index:Index, vpm:VPM)
+// VPM --> Array
+def VPM2Array(x:VPM):Array[Double] = {
+    Array(x.v1, x.v2, x.v3, x.v4, x.v5, x.v6, x.v7, x.v8, x.v9, x.v10, x.v11, x.v12)
+}
+*/
+case class ConsVPM(index:Index, vpm:Array[Double])
+case class ConsVPMClustered(consVpm: ConsVPM, clusterID:Int)
 
 // 转换函数
-// row --> ConsVpm :	使用了前面的 g(x)
-def row2ConsVpm(p:org.apache.spark.sql.Row) = {
-	ConsVpm(
+// row --> ConsVPM :	使用了前面的 g(x)
+def row2ConsVPM(p:org.apache.spark.sql.Row) = {
+	ConsVPM(
 	    Index(p(0).toString,p(1).toString),
-	    VPM(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
+	    //VPM(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
+	    Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
 	)
 }
-
-//val parsedDataIndexed_GoodM1  = rddFromHiveIndexed_GoodM1.map(r => row2ConsVpm(r))
+//val parsedDataIndexed_GoodM1  = rddFromHiveIndexed_GoodM1.map(r => row2ConsVPM(r))
 // ----------------------------------------------------------------------------
 // 应用于 rddFromHiveIndexed_* (应用数据)
-val parsedDataIndexed_GoodM1  = rddFromHiveIndexed_GoodM1.map(r => row2ConsVpm(r))
-val parsedDataIndexed_GoodM2  = rddFromHiveIndexed_GoodM2.map(r => row2ConsVpm(r))
-val parsedDataIndexed_BadF3  = rddFromHiveIndexed_BadF3.map(r => row2ConsVpm(r))
-val parsedDataIndexed_BadF2ExcludeF3  = rddFromHiveIndexed_BadF2ExcludeF3.map(r => row2ConsVpm(r))
+val parsedDataIndexed_GoodM1  = rddFromHiveIndexed_GoodM1.map(r => row2ConsVPM(r))
+val parsedDataIndexed_GoodM2  = rddFromHiveIndexed_GoodM2.map(r => row2ConsVPM(r))
+val parsedDataIndexed_BadF3  = rddFromHiveIndexed_BadF3.map(r => row2ConsVPM(r))
+val parsedDataIndexed_BadF2ExcludeF3  = rddFromHiveIndexed_BadF2ExcludeF3.map(r => row2ConsVPM(r))
 
