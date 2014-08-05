@@ -9,6 +9,9 @@ execute-s98-v1.scala
 或者
 execute-s01-v1.scala
 
+# 执行导出的命令
+printlnHdfsExportCmd.scala
+
 ===================
 1. 从hive中创建parsedData
 # 抽样数据

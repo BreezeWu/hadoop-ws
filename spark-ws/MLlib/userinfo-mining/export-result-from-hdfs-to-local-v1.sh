@@ -1,4 +1,5 @@
 # --------------------------------------------------------------------------
+# 该脚本被 printlnHdfsExportCmd.scala 替代
 # 使用方法
 #	在spark-shell中执行
 #		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-s98.sh

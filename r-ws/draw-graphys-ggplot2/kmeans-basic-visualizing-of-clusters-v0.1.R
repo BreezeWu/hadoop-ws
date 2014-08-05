@@ -3,8 +3,8 @@
 # 最佳k中心点:	myclustercenters vpm vpm.v
 # -----------------------------------------------------------------------------
 # 运行方法: 在R环境中,使用下面语句
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans.R")
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters.R")
+# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v0.1.R")
+# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v0.1.R")
 # -----------------------------------------------------------------------------
 # 加载包
 library(ggplot2)
