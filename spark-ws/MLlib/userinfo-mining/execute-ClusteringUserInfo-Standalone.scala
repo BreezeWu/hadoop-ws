@@ -66,13 +66,13 @@ val head = taskNamePre + "_"
 
 // 将簇样本信息写入文件
 val sampleNum = 100
-writeClusterSetSample2File(clusterSet_Standalone_GoodM1, sampleNum, head + "clusterSet_Standalone_GoodM1")
-writeClusterSetSample2File(clusterSet_Standalone_GoodM2, sampleNum, head + "clusterSet_Standalone_GoodM2")
-writeClusterSetSample2File(clusterSet_Standalone_BadF3, sampleNum, head + "clusterSet_Standalone_BadF3")
-writeClusterSetSample2File(clusterSet_Standalone_BadF2ExcludeF3, sampleNum, head + "clusterSet_Standalone_BadF2ExcludeF3")
+writeClusterSetSample2File(clusterSet_Standalone_GoodM1, sampleNum, head + "clusterSet_Standalone_GoodM1"+"_k"+perfectK)
+writeClusterSetSample2File(clusterSet_Standalone_GoodM2, sampleNum, head + "clusterSet_Standalone_GoodM2"+"_k"+perfectK)
+writeClusterSetSample2File(clusterSet_Standalone_BadF3, sampleNum, head + "clusterSet_Standalone_BadF3"+"_k"+perfectK)
+writeClusterSetSample2File(clusterSet_Standalone_BadF2ExcludeF3, sampleNum, head + "clusterSet_Standalone_BadF2ExcludeF3"+"_k"+perfectK)
 
 // 单独将簇中心信息写入文件
-writeClusterSetCenters2File(clusterSet_Standalone_GoodM1, head + "clusterSet_Standalone_GoodM1")
-writeClusterSetCenters2File(clusterSet_Standalone_GoodM2, head + "clusterSet_Standalone_GoodM2")
-writeClusterSetCenters2File(clusterSet_Standalone_BadF3, head + "clusterSet_Standalone_BadF3")
-writeClusterSetCenters2File(clusterSet_Standalone_BadF2ExcludeF3, head + "clusterSet_Standalone_BadF2ExcludeF3")
+writeClusterSetCenters2File(clusterSet_Standalone_GoodM1, head + "clusterSet_Standalone_GoodM1" +"_k"+perfectK)
+writeClusterSetCenters2File(clusterSet_Standalone_GoodM2, head + "clusterSet_Standalone_GoodM2"+"_k"+perfectK)
+writeClusterSetCenters2File(clusterSet_Standalone_BadF3, head + "clusterSet_Standalone_BadF3"+"_k"+perfectK)
+writeClusterSetCenters2File(clusterSet_Standalone_BadF2ExcludeF3, head + "clusterSet_Standalone_BadF2ExcludeF3"+"_k"+perfectK)
