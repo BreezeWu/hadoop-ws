@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------
 // 使用方法
-//	在spark-shell中执行  (注意"1.加载数据"的语句即可)
-//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-s01-v1.scala
+//	在spark-shell中执行  (注意"1.加载数据"的语句 和  taskNamePre 的设置即可)
+//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-tryKMeansSmart-ClusterCount.scala.scala
 
 // 1. 加载数据 
 // (1)样本数据
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
 // (2)全量数据
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98.scala
 
 // 2. 加载函数
 // 聚类函数
@@ -15,9 +15,10 @@
 // 根据聚类模型计算ClusterCount
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/ComputeClusterCount.scala
 
+// 设置变量
+val taskNamePre = "s98"
 // ----------------------------------------------------------------------------
 // 任务1： 寻找最佳K
-
 val minK = 2
 val maxK = 200
 val maxIterations = 20 // 当前没有生效
@@ -26,8 +27,6 @@ def taskName_GoodM1(taskNamePre:String) = taskNamePre + "_" + "GoodM1"
 def taskName_GoodM2(taskNamePre:String) = taskNamePre + "_" + "GoodM2"
 def taskName_BadF3(taskNamePre:String) = taskNamePre + "_" + "BadF3"
 def taskName_BadF2ExcludeF3(taskNamePre:String) = taskNamePre + "_" + "BadF2ExcludeF3"
-
-val taskNamePre = "s01"
 // --------------------------
 // 1. 有效数据
 // (1) 单月数据

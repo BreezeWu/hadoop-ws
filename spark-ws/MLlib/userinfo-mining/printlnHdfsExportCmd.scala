@@ -2,7 +2,7 @@
 // 打印出hdfs导数的脚本 以及  打印出R文件矩阵
 // --------------------------
 // 使用方法
-//	在spark-shell中执行  (在执行完 execute-s98-v1.scala 之后)
+//	在spark-shell中执行  (在执行完 execute-tryKMeansSmart-ClusterCount.scala 之后)
 //		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/printlnHdfsExportCmd.scala
 // --------------------------
 

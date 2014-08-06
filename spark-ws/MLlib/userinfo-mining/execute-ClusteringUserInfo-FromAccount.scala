@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------
 // 对用户进行分群: 依赖模式
-//		依赖于 execute-s98-v1.scala/execute-s01-v1.scala, 在他们成功执行之后运行
+//		依赖于 execute-tryKMeansSmart-ClusterCount.scala, 在他们成功执行之后运行
 //
 //	在spark-shell中执行  (注意"1.加载数据"的语句即可)
 //		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-ClusteringUserInfo-FromAccount.scala
@@ -9,7 +9,7 @@
 // 1. 加载数据与函数
 // ****************************************************************************
 // (1)样本数据
-// 下面一行 --已经在 execute-s98-v1.scala/execute-s01-v1.scala 中加载
+// 下面一行 --已经在 execute-s01-v1.scala/execute-s01-v1.scala 中加载
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedDataIndexed-userinfo-s01.scala
 // (2)全量数据
@@ -51,10 +51,10 @@ val clusterSet_BadF2ExcludeF3 = ComputeClusterSet(clusteredInfo_BadF2ExcludeF3)
 
 // ----------------------------------------------------------------------------
 // 二。 从“手工指定最佳K”中继承
-val resultAccount_Special_GoodM1 = resultWClusterInfoSpecial2HDFS_GoodM1._1.account
-val resultAccount_Special_GoodM2 = resultWClusterInfoSpecial2HDFS_GoodM2._1.account
-val resultAccount_Special_BadF3 = resultWClusterInfoSpecial2HDFS_BadF3._1.account
-val resultAccount_Special_BadF2ExcludeF3 = resultWClusterInfoSpecial2HDFS_BadF2ExcludeF3._1.account
+val resultAccount_Special_GoodM1 = resultWClusterCountInfo2HDFS_Special_GoodM1._2.account
+val resultAccount_Special_GoodM2 = resultWClusterCountInfo2HDFS_Special_GoodM2._2.account
+val resultAccount_Special_BadF3 = resultWClusterCountInfo2HDFS_Special_BadF3._2.account
+val resultAccount_Special_BadF2ExcludeF3 = resultWClusterCountInfo2HDFS_Special_BadF2ExcludeF3._2.account
 
 // 1. 有效数据
 // (1) 单月数据 GoodM1
@@ -78,10 +78,29 @@ val clusterSet_Special_BadF2ExcludeF3 = ComputeClusterSet(clusteredInfo_Special_
 // ----------------------------------------------------------------------------
 // (1) 单月数据 GoodM1
 val x = clusterSet_GoodM1
+val x = clusterSet_Special_GoodM1
 x.k
 x.clusterCenters
 x.clusterArray
-getSampleFromClusterSet(x,0,10) // 从簇0中寻找10个样本
-getSampleFromClusterSet(x,3,50) // 从簇0中寻找50个样本
-getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
+val sample1 = getSampleFromClusterSet(x,0,10) // 从簇0中寻找10个样本
+val sample2 = getSampleFromClusterSet(x,3,50) // 从簇0中寻找50个样本
+val sample3 = getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
+
+// 打印簇样本信息
+printClusterSetSample(x,100)
+
+// ----------------------------------------------------------------------------
+val head = taskNamePre + "_"
+// 将簇样本信息写入文件
+// 一。 从“查找最佳K”中继承
+writeClusterSetSample2File(clusterSet_GoodM1,100, head + "clusterSet_GoodM1")
+writeClusterSetSample2File(clusterSet_GoodM2,100, head + "clusterSet_GoodM2")
+writeClusterSetSample2File(clusterSet_BadF3,100, head + "clusterSet_BadF3")
+writeClusterSetSample2File(clusterSet_BadF2ExcludeF3,100, head + "clusterSet_BadF2ExcludeF3")
+// 二。 从“手工指定最佳K”中继承
+writeClusterSetSample2File(clusterSet_Special_GoodM1,100, head + "clusterSet_Special_GoodM1")
+writeClusterSetSample2File(clusterSet_Special_GoodM2,100, head + "clusterSet_Special_GoodM2")
+writeClusterSetSample2File(clusterSet_Special_BadF3,100, head + "clusterSet_Special_BadF3")
+writeClusterSetSample2File(clusterSet_Special_BadF2ExcludeF3,100, head + "clusterSet_Special_BadF2ExcludeF3")
+
 

@@ -6,7 +6,7 @@
 
 # 执行方法请参见脚本
 方法一: 不能获得样本数据
-execute-s98-v1.scala 或者 execute-s01-v1.scala
+execute-tryKMeansSmart-ClusterCount.scala
 
 方法二: 可以获得样本数据
 execute-ClusteringUserInfo-Standalone.scala
