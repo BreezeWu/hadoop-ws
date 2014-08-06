@@ -35,7 +35,7 @@ val maxIterations = 20 // 当前没有生效
 // 1. 有效数据
 // (1) 单月数据 GoodM1
 val clusteredInfo_Standalone_GoodM1 = ClusteringUserInfo_Standalone(parsedData_GoodM1, parsedDataIndexed_GoodM1, perfectK, maxIterations, sc) 
-val clusterSe_Standalonet_GoodM1 = ComputeClusterSet(clusteredInfo_Standalone_GoodM1)
+val clusterSet_Standalone_GoodM1 = ComputeClusterSet(clusteredInfo_Standalone_GoodM1)
 // (2) 双月数据 GoodM2
 val clusteredInfo_Standalone_GoodM2 = ClusteringUserInfo_Standalone(parsedData_GoodM2, parsedDataIndexed_GoodM2, perfectK, maxIterations, sc) 
 val clusterSet_Standalone_GoodM2 = ComputeClusterSet(clusteredInfo_Standalone_GoodM2)
@@ -63,10 +63,16 @@ getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
 
 // ----------------------------------------------------------------------------
 val head = taskNamePre + "_"
+
 // 将簇样本信息写入文件
-writeClusterSetSample2File(clusterSet_Standalone_GoodM1,100, head + "clusterSet_Standalone_GoodM1")
-writeClusterSetSample2File(clusterSet_Standalone_GoodM2,100, head + "clusterSet_Standalone_GoodM2")
-writeClusterSetSample2File(clusterSet_Standalone_BadF3,100, head + "clusterSet_Standalone_BadF3")
-writeClusterSetSample2File(clusterSet_Standalone_BadF2ExcludeF3,100, head + "clusterSet_Standalone_BadF2ExcludeF3")
+val sampleNum = 100
+writeClusterSetSample2File(clusterSet_Standalone_GoodM1, sampleNum, head + "clusterSet_Standalone_GoodM1")
+writeClusterSetSample2File(clusterSet_Standalone_GoodM2, sampleNum, head + "clusterSet_Standalone_GoodM2")
+writeClusterSetSample2File(clusterSet_Standalone_BadF3, sampleNum, head + "clusterSet_Standalone_BadF3")
+writeClusterSetSample2File(clusterSet_Standalone_BadF2ExcludeF3, sampleNum, head + "clusterSet_Standalone_BadF2ExcludeF3")
 
-
+// 单独将簇中心信息写入文件
+writeClusterSetCenters2File(clusterSet_Standalone_GoodM1, head + "clusterSet_Standalone_GoodM1")
+writeClusterSetCenters2File(clusterSet_Standalone_GoodM2, head + "clusterSet_Standalone_GoodM2")
+writeClusterSetCenters2File(clusterSet_Standalone_BadF3, head + "clusterSet_Standalone_BadF3")
+writeClusterSetCenters2File(clusterSet_Standalone_BadF2ExcludeF3, head + "clusterSet_Standalone_BadF2ExcludeF3")

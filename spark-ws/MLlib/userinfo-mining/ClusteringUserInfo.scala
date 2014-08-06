@@ -207,7 +207,7 @@ def printClusterSetSample(clusterSet:ClusterSet, sampleNum:Int) = {
 // 打印簇以及样本
 def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String) = {
     val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + "sampledata_" + filename + ".txt"
+    val filepath = rootpath + "sampledata_" + sampleNum + "_" + filename + ".txt"
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()
@@ -269,6 +269,36 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
         writerOneClusterSample(oneCluster, sampleNum)
     }
     filewriter.write("\n=====================================================================================")
+    
+    filewriter.flush()
+    filewriter.close() 
+}
+
+// -----------------------------------------------------------------------
+// 打印簇中心信息
+def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String) = {
+    val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
+    val filepath = rootpath + "clusterCenters_" + filename + ".txt"
+    
+    val file = new java.io.File(filepath)
+    val newfile = file.createNewFile()
+    
+    val filewriter = new java.io.FileWriter(file)
+    
+    val k = clusterSet.k
+    val clusterCenters = clusterSet.clusterCenters
+    val clusterArray = clusterSet.clusterArray
+    
+    // 打印簇中心
+    // for (center <- clusterCenters) {  //想要打印出ID和计数
+    val range = Range(0, clusterCenters.length)
+    for (i <- range) {
+        val id = i
+        val counter = clusterArray(i).counter
+        val sHead = s"${id},${counter},"
+        val centerStr = clusterCenters(i).toArray.foldLeft(sHead)((x,y) => x + "," + y)
+        filewriter.write("\n" + centerStr)
+    }
     
     filewriter.flush()
     filewriter.close() 
