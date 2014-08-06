@@ -1,0 +1,10 @@
+2, 20, 3.3274735974423284E16, 2014-08-04 17:35:52, 2014-08-04 17:47:12, org.apache.spark.mllib.clustering.KMeansModel@74ed4150
+200, 20, 4.219624833540953E14, 2014-08-04 17:47:12, 2014-08-04 18:22:37, org.apache.spark.mllib.clustering.KMeansModel@35a5436b
+101, 20, 8.281530616095515E14, 2014-08-04 18:22:38, 2014-08-04 18:52:01, org.apache.spark.mllib.clustering.KMeansModel@2a628496
+150, 20, 5.830314930769309E14, 2014-08-04 18:52:01, 2014-08-04 19:24:42, org.apache.spark.mllib.clustering.KMeansModel@6770581b
+175, 20, 4.975277173270091E14, 2014-08-04 19:24:42, 2014-08-04 19:58:25, org.apache.spark.mllib.clustering.KMeansModel@6744949d
+187, 20, 4.639066500707566E14, 2014-08-04 19:58:25, 2014-08-04 20:33:01, org.apache.spark.mllib.clustering.KMeansModel@2b4c91ba
+193, 20, 4.4869081268674875E14, 2014-08-04 20:33:01, 2014-08-04 21:08:09, org.apache.spark.mllib.clustering.KMeansModel@d9fc79b
+196, 20, 4.34385650091973E14, 2014-08-04 21:08:09, 2014-08-04 21:43:21, org.apache.spark.mllib.clustering.KMeansModel@74b320b1
+198, 20, 4.223242946840495E14, 2014-08-04 21:43:21, 2014-08-04 22:19:09, org.apache.spark.mllib.clustering.KMeansModel@77552522
+199, 20, 4.110444957084093E14, 2014-08-04 22:19:09, 2014-08-04 22:55:08, org.apache.spark.mllib.clustering.KMeansModel@72d41a1b
