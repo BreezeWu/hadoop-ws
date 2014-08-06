@@ -295,9 +295,9 @@ def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String) = {
     for (i <- range) {
         val id = i
         val counter = clusterArray(i).counter
-        val sHead = s"${id},${counter},"
+        val sHead = s"${id},${counter}"
         val centerStr = clusterCenters(i).toArray.foldLeft(sHead)((x,y) => x + "," + y)
-        filewriter.write("\n" + centerStr)
+        filewriter.write(centerStr + "\n")
     }
     
     filewriter.flush()
