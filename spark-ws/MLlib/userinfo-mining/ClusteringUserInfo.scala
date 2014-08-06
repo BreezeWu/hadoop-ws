@@ -207,7 +207,7 @@ def printClusterSetSample(clusterSet:ClusterSet, sampleNum:Int) = {
 // 打印簇以及样本
 def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String) = {
     val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + "sampledata_" + sampleNum + "_" + filename + ".csv"
+    val filepath = rootpath + "sampledata_" + sampleNum + "_" + filename + ".txt"
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()

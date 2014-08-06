@@ -37,10 +37,10 @@ dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
 dimCols <- c("unsorted", "sorted", "clustercenters", "cluster", "cluster0fSpecial")
 # 文件名
 filesVector_s98_standalone <- c(
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM1_k20.txt",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM2_k20.txt",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF3_k20.txt",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF2ExcludeF3_k20.txt"
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM1_k20.csv",
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM2_k20.csv",
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF3_k20.csv",
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF2ExcludeF3_k20.csv"
 	)
 
 filesVector <- filesVector_s98_standalone # filesVector_s01
