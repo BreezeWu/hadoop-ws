@@ -4,7 +4,9 @@
 #	最佳k中心点:	myclustercenters vpm vpm.v	
 # -----------------------------------------------------------------------------
 # 运行方法: 在R环境中,使用下面语句
-#   dataSetID <- "s01"  # s98
+#   修改 中的这两个语句
+#				dataSetID <- "s98"  # s01
+#				filesVector <- filesVector_s98 # filesVector_s01
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1.R")
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v1.R")
 # -----------------------------------------------------------------------------
