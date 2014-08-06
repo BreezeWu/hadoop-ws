@@ -2,7 +2,7 @@
 //     智能化寻找最佳k
 //        输入期望最小、最大
 //
-// 在 spark-shell 中 运行
+// 在 spark-shell 中 运行  (请参见 execute-s01-v1.scala execute-s98-v1.scala 中的"任务1： 寻找最佳K")
 /*
     // 1. 加载数据 
     // 最后生成 parsedData:org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]

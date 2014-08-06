@@ -33,70 +33,6 @@ val whereStr = ""
 val vpmStr = vpmStrOf2013
 
 // ****************************************************************************
-// rddFromHive_* (建模数据)
-// 不包括索引, 只获得 ${vpmStrOf2013}
-// ****************************************************************************
-// ----------------------------------------------------------------------------
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.linalg.distributed.RowMatrix
-
-val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
-
-// 1. 有效数据
-// 单月
-val rddFromHive_GoodM1  = hiveContext.hql(s"SELECT ${vpmStrOf2013} FROM BIGDATA_USER_INFO_S98_ONEBIGTABLE_GOOD_M1")
-// 双月
-val rddFromHive_GoodM2  = hiveContext.hql(s"SELECT ${vpmStrOf2013} FROM BIGDATA_USER_INFO_S98_ONEBIGTABLE_GOOD_M2")
-
-// 2. 无效数据
-// 前3各月都是 0/NULL
-val rddFromHive_BadF3  = hiveContext.hql(s"SELECT ${vpmStrOf2013} FROM BIGDATA_USER_INFO_S98_ONEBIGTABLE_ZERO_AND_NULL_F3")
-// 仅前两个月都是 0或NULL
-val rddFromHive_BadF2ExcludeF3  = hiveContext.hql(s"SELECT ${vpmStrOf2013} FROM BIGDATA_USER_INFO_S98_ONEBIGTABLE_ZERO_AND_NULL_F2_EXCLUDE_F3")
-                                                                                                                                                                                              
-// ----------------------------------------------------------------------------
-// 数据变换函数:  应用于 rddFromHive_* (建模数据)
-// ----------------------------------------------------------------------------
-// 定义函数:对一个org.apache.spark.sql.Row中每一个列的处理函数
-// 函数原型为: g: (y: Any)Double
-def g(y:Any):Double = y match {
-	case null => 0			// 将null转换为0
-	case i:Int => i.toDouble	// 将Int转换为Double 
-	case d:Double => d
-}
-
-// 定义函数: 对每一个org.apache.spark.sql.Row对象的处理函数
-// 原型为: f: (x: org.apache.spark.sql.Row)Seq[Double]
-def f(x:org.apache.spark.sql.Row) = {
-	x.map(y => g(y))
-}
-
-// ------------------------------------
-// 数据变换函数运用举例
-// 双月数据 m1
-// 转换为vector,最后变为matrices
-//val parsedData_M1 = rddFromHive_M1.map(x => f(x)).	// 去掉null,转换为Double
-//	map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
-
-// 测试 g(y)
-// 对一个org.apache.spark.sql.Row中每一个列的处理
-// rddFromHive_.first.map(y => g(y))
-
-// ----------------------------------------------------------------------------
-// 应用于 rddFromHive_* (建模数据)
-val parsedData_GoodM1 = rddFromHive_GoodM1.map(x => f(x)).	// 去掉null,转换为Double
-	map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
-
-val parsedData_GoodM2 = rddFromHive_GoodM2.map(x => f(x)).	// 去掉null,转换为Double
-	map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
-	
-val parsedData_BadF3 = rddFromHive_BadF3.map(x => f(x)).	// 去掉null,转换为Double
-	map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
-
-val parsedData_BadF2ExcludeF3 = rddFromHive_BadF2ExcludeF3.map(x => f(x)).	// 去掉null,转换为Double
-	map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
-
-// ****************************************************************************
 // rddFromHiveIndexed_* (建模数据)
 // 包括索引, 获得 ${idInfo},${vpmStrOf2013}
 // ****************************************************************************
@@ -135,12 +71,44 @@ def VPM2Array(x:VPM):Array[Double] = {
     Array(x.v1, x.v2, x.v3, x.v4, x.v5, x.v6, x.v7, x.v8, x.v9, x.v10, x.v11, x.v12)
 }
 */
-case class ConsVPM(index:Index, vpm:Array[Double])
-case class ConsVPMClustered(consVpm: ConsVPM, clusterID:Int)
+case class ConsVPM(index:Index, vpm:Array[Double]) {
+    def getPrintLine():String = {
+        val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ||"
+        val line = this.vpm.foldLeft(headStr)((x,y) => x + ", " + y)
+        return line     
+    }
+    def print() = {
+        println(this.getPrintLine())        
+    }
+}
+// 测试语句: 
+//val x = ConsVPM(Index("cons_id","cons_no"), Array(0,1,2,4.3))
+//x.print
+case class ConsVPMClustered(consVpm: ConsVPM, clusterID:Int) {
+    def getPrintLine():String = {
+        val line = this.consVpm.getPrintLine() + s", ||,  ${this.clusterID}"
+        return line     
+    }
+    def print() = {
+        println(this.getPrintLine())        
+    }
+}
+// 测试语句
+//val y = ConsVPMClustered(x, 10)
+//y.print
 
 // 转换函数
 // row --> ConsVPM :	使用了前面的 g(x)
 def row2ConsVPM(p:org.apache.spark.sql.Row) = {
+	
+	// 定义函数:对一个org.apache.spark.sql.Row中每一个列的处理函数
+	// 函数原型为: g: (y: Any)Double
+	def g(y:Any):Double = y match {
+		case null => 0			// 将null转换为0
+		case i:Int => i.toDouble	// 将Int转换为Double 
+		case d:Double => d
+	}
+	
 	ConsVPM(
 	    Index(p(0).toString,p(1).toString),
 	    //VPM(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
