@@ -37,19 +37,31 @@ fileData_GoodM1_clusterSpecial <- loadCluster(file_GoodM1_clusterSpecial)
 # *****************************************************************************
 
 # FilePath
-rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
+dataSetID <- "s01"  # s98
+#rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
+rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID)
 rootFilePathOfOut <- stringr::str_c(rootFilePathOfIn,"formated/")
 
 # 行: 数据集+单月/双月
 dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
 dimCols <- c("unsorted", "sorted", "clustercenters", "cluster", "cluster0fSpecial")
 # 文件名
-filesVector <- c(
+filesVector_s01 <- c(
+    "s01_GoodM1_kmeans_200_metrics_unsorted.csv",  "s01_GoodM1_kmeans_200_metrics_sorted.csv",  "s01_GoodM1_kmeans_200_clusterCenters.csv",  "s01_GoodM1_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM1_kmeans_20_cluster.csv",
+    "s01_GoodM2_kmeans_200_metrics_unsorted.csv",  "s01_GoodM2_kmeans_200_metrics_sorted.csv",  "s01_GoodM2_kmeans_200_clusterCenters.csv",  "s01_GoodM2_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM2_kmeans_20_cluster.csv",
+    "s01_BadF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF3_kmeans_199_metrics_sorted.csv",  "s01_BadF3_kmeans_199_clusterCenters.csv",  "s01_BadF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF3_kmeans_20_cluster.csv",
+    "s01_BadF2ExcludeF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_metrics_sorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_clusterCenters.csv",  "s01_BadF2ExcludeF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv",
+	)
+	
+filesVector_s98 <- c(
     "S98_GoodM1_kmeans_199_metrics_unsorted.csv",  "S98_GoodM1_kmeans_199_metrics_sorted.csv",  "S98_GoodM1_kmeans_199_clusterCenters.csv",  "S98_perfectK20_GoodM1_kmeans_20_cluster.csv",  "S98_perfectK20_GoodM1_kmeans_20_cluster.csv",
     "S98_GoodM2_kmeans_200_metrics_unsorted.csv",  "S98_GoodM2_kmeans_200_metrics_sorted.csv",  "S98_GoodM2_kmeans_200_clusterCenters.csv",  "S98_perfectK20_GoodM2_kmeans_20_cluster.csv",  "S98_perfectK20_GoodM2_kmeans_20_cluster.csv",
     "S98_BadF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF3_kmeans_200_metrics_sorted.csv",  "S98_BadF3_kmeans_200_clusterCenters.csv",  "S98_perfectK20_BadF3_kmeans_20_cluster.csv",  "S98_perfectK20_BadF3_kmeans_20_cluster.csv",
     "S98_BadF2ExcludeF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_metrics_sorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_clusterCenters.csv",  "S98_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv",  "S98_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv"
 	)
+
+filesVector <- filesVector_s01
+
 # 构建矩阵
 filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length(dimCols),dimnames=list(dimRows, dimCols))
 #str(filesMatrix)
