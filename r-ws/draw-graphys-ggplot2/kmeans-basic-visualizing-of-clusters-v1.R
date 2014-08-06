@@ -100,7 +100,12 @@ visualizingCluster <- function(fileDataOfCluster, curTaskName) {
 	p <- ggplot(curdata, aes(factor(ym), value))
 	p <- p + xlab("年月") + ylab("簇中心的用电量")
 	p + geom_boxplot()
-	ggsave(getImageFile("(3)geom_boxplot", curTaskName))
+	ggsave(getImageFile("(3.1)geom_boxplot", curTaskName))
+	
+	p <- ggplot(curdata, aes(factor(ym), sqrt(value)))
+	p <- p + xlab("年月") + ylab("簇中心的用电量")
+	p + geom_boxplot()
+	ggsave(getImageFile("(3.2)geom_boxplot_sqrt", curTaskName))
 	# ---------------------------
 	# 平行坐标图
 
