@@ -70,23 +70,23 @@ val resultWClusterCountInfo2HDFS_BadF2ExcludeF3 = writeClusterCountInfo2HDFS(res
 val perfectK = 20;
 val maxIterations = 20 // 当前没有生效
 
-var taskNamePre = "s01_perfectK" + perfectK
+var taskNamePre_perfect = s"${taskNamePre}_perfectK" + perfectK
 
 // 1. 有效数据
 // (1) 单月数据
 val resultClusterCountInfo_Special_GoodM1 = ComputeClusterCount_Standalone(parsedData_GoodM1, perfectK, maxIterations) 
-val resultWClusterCountInfo2HDFS_Special_GoodM1 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_GoodM1, taskName_GoodM1(taskNamePre))  
+val resultWClusterCountInfo2HDFS_Special_GoodM1 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_GoodM1, taskName_GoodM1(taskNamePre_perfect))  
 // (2) 双月数据
 val resultClusterCountInfo_Special_GoodM2 = ComputeClusterCount_Standalone(parsedData_GoodM2, perfectK, maxIterations)  
-val resultWClusterCountInfo2HDFS_Special_GoodM2 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_GoodM2, taskName_GoodM2(taskNamePre))  	
+val resultWClusterCountInfo2HDFS_Special_GoodM2 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_GoodM2, taskName_GoodM2(taskNamePre_perfect))  	
 // --------------------------
 // 2. 无效数据
 // (1) 前三个月都是 0或NULL
 val resultClusterCountInfo_Special_BadF3 = ComputeClusterCount_Standalone(parsedData_BadF3, perfectK, maxIterations) 
-val resultWClusterCountInfo2HDFS_Special_BadF3 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_BadF3, taskName_BadF3(taskNamePre))
+val resultWClusterCountInfo2HDFS_Special_BadF3 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_BadF3, taskName_BadF3(taskNamePre_perfect))
 // (2) 仅前两个月都是 0或NULL
 val resultClusterCountInfo_Special_BadF2ExcludeF3 = ComputeClusterCount_Standalone(parsedData_BadF2ExcludeF3, perfectK, maxIterations) 
-val resultWClusterCountInfo2HDFS_Special_BadF2ExcludeF3 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_BadF2ExcludeF3, taskName_BadF2ExcludeF3(taskNamePre))
+val resultWClusterCountInfo2HDFS_Special_BadF2ExcludeF3 = writeClusterCountInfo2HDFS(resultClusterCountInfo_Special_BadF2ExcludeF3, taskName_BadF2ExcludeF3(taskNamePre_perfect))
 
 // ----------------------------------------------------------------------------
 //  统一显示一下结果变量
