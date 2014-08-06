@@ -2,5 +2,5 @@
 # 从HDFS将结果数据导出到本地文件系统
 # -----------------------------------------------------------------------------
 
-请阅读 export-result-from-hdfs-to-local.sh
+请阅读 printlnHdfsExportCmd.scala ( 替代 export-result-from-hdfs-to-local.sh)
 
