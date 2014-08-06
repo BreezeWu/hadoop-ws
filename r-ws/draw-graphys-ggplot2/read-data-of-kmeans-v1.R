@@ -22,16 +22,7 @@
 #	!!!!! 当前没有加载 _clusterCenters 的函数
 # -----------------------------------------------------------------------------
 
-fileData_GoodM1_metrics_unsorted <- loadMetrics(file_GoodM1_metrics_unsorted)
-fileData_GoodM1_metrics_sorted <- loadMetrics(file_GoodM1_metrics_sorted)
-#fileData__GoodM1_clusterCenters <- ?????
-fileData_GoodM1_cluster <- loadCluster(file_GoodM1_cluster)
-fileData_GoodM1_clusterSpecial <- loadCluster(file_GoodM1_clusterSpecial)
 # *****************************************************************************
-# KMeans算法数据
-#	过程度量数据:	mymetrics	
-#	最佳k中心点:	myclustercenters vpm vpm.v	
-
 # 也可以调整为每次手动选择文件
 #	mydata = read.table(file.choose(), header=FALSE, sep=",")
 # *****************************************************************************
@@ -39,8 +30,7 @@ fileData_GoodM1_clusterSpecial <- loadCluster(file_GoodM1_clusterSpecial)
 # FilePath
 dataSetID <- "s01"  # s98
 #rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
-rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID)
-rootFilePathOfOut <- stringr::str_c(rootFilePathOfIn,"formated/")
+rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
 
 # 行: 数据集+单月/双月
 dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
@@ -50,7 +40,7 @@ filesVector_s01 <- c(
     "s01_GoodM1_kmeans_200_metrics_unsorted.csv",  "s01_GoodM1_kmeans_200_metrics_sorted.csv",  "s01_GoodM1_kmeans_200_clusterCenters.csv",  "s01_GoodM1_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM1_kmeans_20_cluster.csv",
     "s01_GoodM2_kmeans_200_metrics_unsorted.csv",  "s01_GoodM2_kmeans_200_metrics_sorted.csv",  "s01_GoodM2_kmeans_200_clusterCenters.csv",  "s01_GoodM2_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM2_kmeans_20_cluster.csv",
     "s01_BadF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF3_kmeans_199_metrics_sorted.csv",  "s01_BadF3_kmeans_199_clusterCenters.csv",  "s01_BadF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF3_kmeans_20_cluster.csv",
-    "s01_BadF2ExcludeF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_metrics_sorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_clusterCenters.csv",  "s01_BadF2ExcludeF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv",
+    "s01_BadF2ExcludeF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_metrics_sorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_clusterCenters.csv",  "s01_BadF2ExcludeF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv" 
 	)
 	
 filesVector_s98 <- c(

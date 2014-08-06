@@ -1,8 +1,10 @@
 # -----------------------------------------------------------------------------
 # 基本图形化展现
-# 最佳k中心点:	myclustercenters vpm vpm.v
+#	过程度量数据:	mymetrics	
+#	最佳k中心点:	myclustercenters vpm vpm.v	
 # -----------------------------------------------------------------------------
 # 运行方法: 在R环境中,使用下面语句
+#   dataSetID <- "s01"  # s98
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1.R")
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v1.R")
 # -----------------------------------------------------------------------------
@@ -17,8 +19,9 @@ library(ggplot2)
 # *****************************************************************************
 # -----------------------------------------------------------------------------
 # 图形名字函数
-getImageFile <- function(desc, curTaskName, filetype="pdf") {
-	rootFilePathOfImage <- "~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/graphys/"
+getImageFile <- function(desc, curTaskName, filetype="pdf", subdir=dataSetID) {
+	#rootFilePathOfImage <- "~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/graphys/"
+	rootFilePathOfImage <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/graphys/",dataSetID, "/")
 	
 	fileHead <- paste(rootFilePathOfImage, curTaskName, sep="")
 	filenameOfImage <- paste(fileHead, desc, filetype, sep=".")
@@ -130,7 +133,8 @@ visualizingCluster_clusterSpecial <- function(fileDataOfCluster, curTaskName) {
 # 	函数应用
 # *****************************************************************************
 # GoodM1
-curTaskName <- "s98_GoodM1"
+#curTaskName <- "s98_GoodM1"
+curTaskName <- paste(dataSetID, "GoodM1", sep="_")
 visualizingMetrics_unsorted(fileData_GoodM1_metrics_unsorted, curTaskName)
 visualizingMetrics_sorted(fileData_GoodM1_metrics_sorted, curTaskName)
 #visualizingClusterCenters(...)
@@ -138,7 +142,7 @@ visualizingCluster_cluster(fileData_GoodM1_cluster, curTaskName)
 visualizingCluster_clusterSpecial(fileData_GoodM1_clusterSpecial, curTaskName)
 
 # GoodM2
-curTaskName <- "s98_GoodM2"
+curTaskName <- paste(dataSetID, "GoodM2", sep="_")
 visualizingMetrics_unsorted(fileData_GoodM2_metrics_unsorted, curTaskName)
 visualizingMetrics_sorted(fileData_GoodM2_metrics_sorted, curTaskName)
 #visualizingClusterCenters(...)
@@ -146,7 +150,7 @@ visualizingCluster_cluster(fileData_GoodM2_cluster, curTaskName)
 visualizingCluster_clusterSpecial(fileData_GoodM2_clusterSpecial, curTaskName)
 
 # BadF3
-curTaskName <- "s98_BadF3"
+curTaskName <- paste(dataSetID, "BadF3", sep="_")
 visualizingMetrics_unsorted(fileData_BadF3_metrics_unsorted, curTaskName)
 visualizingMetrics_sorted(fileData_BadF3_metrics_sorted, curTaskName)
 #visualizingClusterCenters(...)
@@ -154,7 +158,7 @@ visualizingCluster_cluster(fileData_BadF3_cluster, curTaskName)
 visualizingCluster_clusterSpecial(fileData_BadF3_clusterSpecial, curTaskName)
 
 # BadF2ExcludeF3
-curTaskName <- "s98_BadF2ExcludeF3"
+curTaskName <- paste(dataSetID, "BadF2ExcludeF3", sep="_")
 visualizingMetrics_unsorted(fileData_BadF2ExcludeF3_metrics_unsorted, curTaskName)
 visualizingMetrics_sorted(fileData_BadF2ExcludeF3_metrics_sorted, curTaskName)
 #visualizingClusterCenters(...)
