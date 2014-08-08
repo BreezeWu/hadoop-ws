@@ -143,7 +143,7 @@ def analyzeParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrix
 
 // ----------------------------------------------------------------------------
 // 在 ParsedRDDMatrix 上执行分析任务
-val perfectK = 3;
+val perfectK = 20;
 val maxIterations = 20 // 当前没有生效
 
 // 执行分析
@@ -223,7 +223,7 @@ def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[A
 // ----------------------------------------------------------------------------
 val head = taskNamePre + "_L2"
 // 将簇样本信息写入文件
-val sampleNum = 3
+val sampleNum = 200
 writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head)
 
 // 单独将簇中心信息写入文件
