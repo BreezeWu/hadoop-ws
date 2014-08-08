@@ -2,7 +2,7 @@
 // 从hive获取数据 S98
 //		
 //	在spark-shell中执行
-//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98-ladder_ts_notboth.scala
+//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-s98-ladder_ts_notboth.scala
 
 //	用户月用电量数据: 
 //			第一层划分，数据四大类						DataSetRef
@@ -123,7 +123,10 @@ val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
 // 第二层分类: 阶梯/分时/NotTsNotLadder
 case class DataSetRefItem_L2(index:Int, id:String, tablename:String, where:String)
 // 表名
-val tmpTableName = "bigdata_ts_or_prcscope_s98_unique"
+//val tmpTableName = "bigdata_ts_or_prcscope_s98_unique"
+// 表名: 根据 taskNamePre 构建 DataSetRef_L2中的表名
+val tmpTableName = s"bigdata_ts_or_prcscope_${taskNamePre}_unique"
+
 val DataSetRef_L2 = List(
 	DataSetRefItem_L2(0, "Ladder", tmpTableName, whereOfLadder),
 	DataSetRefItem_L2(1, "Ts", tmpTableName, whereOfTs),
@@ -132,11 +135,22 @@ val DataSetRef_L2 = List(
 // ----------------------------------------------------------------------------
 // 第一层分类: 数据四大类
 case class DataSetRefItem_L1(index:Int, id:String, tablename:String)
+
+// 固定为 s98
+/*
 val DataSetRef_L1 = List(
 	DataSetRefItem_L1(0, "GoodM1", "bigdata_user_info_s98_onebigtable_good_m1"),
 	DataSetRefItem_L1(1, "GoodM2", "bigdata_user_info_s98_onebigtable_good_m2"),
 	DataSetRefItem_L1(2, "BadF2ExcludeF3", "bigdata_user_info_s98_onebigtable_zero_and_null_f2_exclude_f3"),
 	DataSetRefItem_L1(3, "BadF3", "bigdata_user_info_s98_onebigtable_zero_and_null_f3")
+)*/
+
+// 根据 taskNamePre 构建 DataSetRef_L1
+val DataSetRef_L1 = List(
+	DataSetRefItem_L1(0, "GoodM1", s"bigdata_user_info_${taskNamePre}_onebigtable_good_m1"),
+	DataSetRefItem_L1(1, "GoodM2", s"bigdata_user_info_${taskNamePre}_onebigtable_good_m2"),
+	DataSetRefItem_L1(2, "BadF2ExcludeF3", s"bigdata_user_info_${taskNamePre}_onebigtable_zero_and_null_f2_exclude_f3"),
+	DataSetRefItem_L1(3, "BadF3", s"bigdata_user_info_${taskNamePre}_onebigtable_zero_and_null_f3")
 )
 
 // 第一层与第二层交叉的SQL
@@ -154,7 +168,7 @@ case class VpmHiveRDDRef(vpm:org.apache.spark.sql.SchemaRDD, vpmIndexed:org.apac
 case class HiveRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, hiveDataRef:VpmHiveRDDRef)
 
 case class VpmParsedRDDRef(vpm: RDD[org.apache.spark.mllib.linalg.Vector], vpmIndexed:RDD[ConsVPM])
-case class ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, parsedDataRef:VpmParsedRDDRef)
+case class ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, parsedRDDRef:VpmParsedRDDRef)
 
 // ----------------------------------------------------------------------------
 // 构建第一层与第二层交叉的SQLMatrix
@@ -276,7 +290,7 @@ def transform2ParsedRDDMatrix(hiveRDDMatrix:List[List[HiveRDDMatrixItem]]):List[
 			// 变换 rddFromHiveIndexed_* (应用数据)
 			val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => row2ConsVPM(r))
 
-			// 对象			
+			// 结果对象			
 			val parsedRDDMatrixItem = ParsedRDDMatrixItem(item.item_L1, item.item_L2, VpmParsedRDDRef(parsedData_vpm,parsedData_vpmIndexed))
 			
 			return parsedRDDMatrixItem
@@ -289,6 +303,33 @@ def transform2ParsedRDDMatrix(hiveRDDMatrix:List[List[HiveRDDMatrixItem]]):List[
 	val parsedRDDMatrix = hiveRDDMatrix.map(x => transformHiveRDDList(x))
 	
 	return parsedRDDMatrix
+}
+
+// ----------------------------------------------------------------------------
+// 打印 ParsedRDDMatrix 中各自的数量
+def ComputeRDDCount_ParsedRDDMatrix(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]):List[List[(Long,Long)]] = {
+	def ComputeRDDCount_ParsedRDDList(list:List[ParsedRDDMatrixItem]):List[(Long,Long)] = {
+		def ComputeRDDCount_ParsedRDD(item:ParsedRDDMatrixItem):(Long,Long) = {
+			val parsedRDDRef = item.parsedRDDRef
+			val parsedRDD_vpm = parsedRDDRef.vpm
+			val parsedRDD_vpmIndexed = parsedRDDRef.vpmIndexed
+			
+			// count
+			val countOf_parsedRDD_vpm = parsedRDD_vpm.count
+			val countOf_parsedRDD_vpmIndexed = parsedRDD_vpmIndexed.count
+			
+			// 结果对象			
+			val rddCountPair = Tuple2(countOf_parsedRDD_vpm, countOf_parsedRDD_vpmIndexed)
+			return rddCountPair
+		}
+		
+		val result = list.map(y => ComputeRDDCount_ParsedRDD(y))
+		return result
+	}
+	
+	val rddCountMatrix = parsedRDDMatrix.map(x => ComputeRDDCount_ParsedRDDList(x))
+	
+	return rddCountMatrix
 }
 
 // 计算SQLMatrix

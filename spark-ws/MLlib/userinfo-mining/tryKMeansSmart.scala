@@ -187,7 +187,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.Vector
     // ****************************************************************************
     // 对某个K进行KMeans聚类
-    def evalWSSSEOfK(data: RDD[Vector], k:Int, maxIterations: Int = 20, x:Account) = {
+    def evalWSSSEOfK(data: RDD[Vector], k:Int, maxIterations: Int = 20, x:Account):Account = {
         // metric信息
         val timeBegin = new java.util.Date()
         
@@ -197,10 +197,25 @@ import org.apache.spark.mllib.linalg.Vector
         val modelOfK: org.apache.spark.mllib.clustering.KMeansModel = null
         */
         // 执行KMeans算法
+        // 检查数据集的数量, 如果 count不大于K,则会出现错误
+        /*
+        java.lang.ArrayIndexOutOfBoundsException: -1
+	        at org.apache.spark.mllib.clustering.LocalKMeans$$anonfun$kMeansPlusPlus$1.apply$mcVI$sp(LocalKMeans.scala:62)
+	        at scala.collection.immutable.Range.foreach$mVc$sp(Range.scala:141)
+	        at org.apache.spark.mllib.clustering.LocalKMeans$.kMeansPlusPlus(LocalKMeans.scala:49)
+	        at org.apache.spark.mllib.clustering.KMeans$$anonfun$20.apply(KMeans.scala:297)
+	        at org.apache.spark.mllib.clustering.KMeans$$anonfun$20.apply(KMeans.scala:294)
+	        */
+        val count = data.count
+        if (k > count) {    // 此时不能运行后续命令,否则回报错!       
+            // 返回原 Account, 而原 Account 中 metricList可能为Nil
+            return x
+        }
+        
         val clusteringKM = new KMeans()
-    clusteringKM.setK(k)
-    val model = clusteringKM.run(data)
-    val WSSSEOfK = model.computeCost(data)
+        clusteringKM.setK(k)
+        val model = clusteringKM.run(data)
+        val WSSSEOfK = model.computeCost(data)
         //val modelOfK = KMeans.train(data, k, maxIterations)
         //val WSSSEOfK = modelOfK.computeCost(data)
         

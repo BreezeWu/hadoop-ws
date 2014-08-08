@@ -65,11 +65,25 @@ case class ClusterSet(
 
 //object ClusterSet {
     // -----------------------------------------------------------------------
-    // 计算 ClusterSet 的辅助函数, 为 getClusterCount函数所使用
+    // 计算 ClusterSet 的辅助函数
     def ComputeClusterSet(clusteredInfo:ClusteredInfo):ClusterSet = {
         // 簇个数
         val k = clusteredInfo.getPerfectK()
+        
         // 簇中心点集合
+        val perfeckModel = clusteredInfo.getPerfectModel()     // 可能为 null
+
+        if(null == perfeckModel) {
+            // 虚构 clusterCenters   
+            // 虚构 clusterArray
+        
+            // 簇集合对象
+            val fake_clusterSet = new ClusterSet(k, null, null)            
+            // 返回值
+            return fake_clusterSet
+        }
+        
+        // 下面可以安全执行
         val clusterCenters = clusteredInfo.getPerfectModel().clusterCenters
         
         // ------------------------------------------------------------------------
@@ -205,9 +219,9 @@ def printClusterSetSample(clusterSet:ClusterSet, sampleNum:Int) = {
 
 // -----------------------------------------------------------------------
 // 打印簇以及样本
-def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String) = {
+def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String):Unit = {
     val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + "sampledata_" + sampleNum + "_" + filename + ".txt"
+    val filepath = rootpath + filename + "_sampledata_" + sampleNum + "_" + ".txt"
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()
@@ -222,6 +236,17 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
     val k = clusterSet.k
     val clusterCenters = clusterSet.clusterCenters
     val clusterArray = clusterSet.clusterArray
+    
+    // 检查是否 虚假 Cluster
+    if ( null == clusterCenters || null == clusterArray) {
+        filewriter.write("\n======================================================================================")
+        filewriter.write("\n\t 这个簇的 null == clusterCenters || null == clusterArray .")
+        filewriter.write("\n======================================================================================")
+        
+        filewriter.flush()
+        filewriter.close()
+        return 
+    }
     
     filewriter.write("\n======================================================================================")
     filewriter.write("\n----------------------------------------------------------------------------")
@@ -276,9 +301,9 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
 
 // -----------------------------------------------------------------------
 // 打印簇中心信息
-def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String) = {
+def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String):Unit = {
     val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + "clusterCenters_" + filename + ".csv"
+    val filepath = rootpath + filename + "_clusterCenters" + ".csv"
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()
@@ -288,6 +313,17 @@ def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String) = {
     val k = clusterSet.k
     val clusterCenters = clusterSet.clusterCenters
     val clusterArray = clusterSet.clusterArray
+    
+    // 检查是否 虚假 Cluster
+    if ( null == clusterCenters || null == clusterArray) {
+        filewriter.write("\n======================================================================================")
+        filewriter.write("\n\t 这个簇的 null == clusterCenters || null == clusterArray .")
+        filewriter.write("\n======================================================================================")
+        
+        filewriter.flush()
+        filewriter.close()
+        return 
+    }
     
     // 打印簇中心
     // for (center <- clusterCenters) {  //想要打印出ID和计数
@@ -303,12 +339,40 @@ def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String) = {
     filewriter.flush()
     filewriter.close() 
 }
+
+// ****************************************************************************
+// 将 broadcastModelRef 放回 Account, 其实是copy一个Account了！
+// 避免大集群下 model被复制多份！
+// ****************************************************************************
+    def cloneAccountRepalcePerfeckModelRef(source:Account, kOfModel:Int, broadcastModelRef:org.apache.spark.broadcast.Broadcast[org.apache.spark.mllib.clustering.KMeansModel]):Account = {
+    	val counter = source.counter
+    	val tryCounter = source.tryCounter
+    	val metricList = source.metricList
+    	
+    	// 关键在于 metricList 替换
+    	// 条件替换函数
+    	def smartClone(curMetric:Metric, toBeReplacingK:Int):Metric = {
+    		if (curMetric.k == toBeReplacingK) {
+    		    // 这里就使用 broadcastModelRef.value , 会有效果吗?
+    			val newMetric = Metric(curMetric.k, curMetric.maxIterations, curMetric.WSSSE, curMetric.begin, curMetric.end, broadcastModelRef.value)
+    			return newMetric
+    		} else {
+    			return curMetric 
+    		}
+    	}
+    	
+    	val newMetricList = metricList.map(x => smartClone(x, kOfModel))
+    	
+    	// 结果对象
+    	return Account(counter, tryCounter, newMetricList)    	
+    }
+    
 // ****************************************************************************
 // 函数: 聚类并分配簇标号
 // ****************************************************************************
 //  独立进行聚类并分群
 //    // maxIterations :    当前没有生效
-def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[ConsVPM], k:Int, maxIterations: Int = 20, sc:org.apache.spark.SparkContext) = {
+def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[ConsVPM], k:Int, maxIterations: Int = 20, sc:org.apache.spark.SparkContext):ClusteredInfo = {
     // ------------------------------------------------------------------------
     // 执行聚类
     val parKTriangle = new KTriangle(k,k+1)
@@ -317,18 +381,40 @@ def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[Co
     // 聚类结果写入文件
     // val resultWriteHDFS = writeAccount2HDFS(resultAccount,0)
     // ------------------------------------------------------------------------
-    // 分类统计
+    // 分类统计  注意 evalWSSSEOfK 可能会返回 Account(0,0,Nil), 即metricList是Nil
+    //
+    if (Nil == resultAccount.metricList) {
+        def fakeComputeClusterID(consVpm: ConsVPM):ConsVPMClustered = {
+            val vector = Vectors.dense(consVpm.vpm)
+            val clusterID = 9999999
+            val consVpmClustered = new ConsVPMClustered(consVpm, clusterID)
+            consVpmClustered
+        }
+        
+        // 虚假
+        val fake_dataClustered = dataIndexed.map(x => fakeComputeClusterID(x))
+        // 虚假 Metric
+        val fake_metric = Metric(k, maxIterations, 0,  new java.util.Date(),  new java.util.Date(), null)
+        // 虚假 metricList
+        val fake_account = Account(0,0,List(fake_metric))
+        
+        return new ClusteredInfo(fake_account, fake_dataClustered)
+    }
+    
+    // 此时 model 是有效的
     val model = resultAccount.metricList(0).model
     
     // 将 model 变为 Broadcast Variables
-    val broadcastModel = sc.broadcast(model)
-    // 再次访问model的方式是 broadcastModel.value
+    val broadcastModelRef = sc.broadcast(model)
+    // 再次访问model的方式是 broadcastModelRef.value
+    
+    val newAccount = cloneAccountRepalcePerfeckModelRef(resultAccount, k, broadcastModelRef)
     
     // 利用model识别dataIndexed中各自所属的clusterID, 即为每一个 ConsVPM 获得其 clusterID
     // ConsVPM,ConsVPMClustered 的定义在 create-parsedData-userinfo-s01-v2.scala 文件中
     def ComputeClusterID(consVpm: ConsVPM):ConsVPMClustered = {
         val vector = Vectors.dense(consVpm.vpm)
-        val clusterID = broadcastModel.value.predict(vector)
+        val clusterID = broadcastModelRef.value.predict(vector)
         val consVpmClustered = new ConsVPMClustered(consVpm, clusterID)
         consVpmClustered
     }
@@ -338,7 +424,8 @@ def ClusteringUserInfo_Standalone(dataForModel: RDD[Vector], dataIndexed: RDD[Co
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusteredInfo(resultAccount, dataClustered)
+    //new ClusteredInfo(resultAccount, dataClustered)
+    new ClusteredInfo(newAccount, dataClustered)
 }
 
 // ****************************************************************************
@@ -355,14 +442,16 @@ def ClusteringUserInfo_FromAccount(dataIndexed: RDD[ConsVPM], account:Account, s
     val model = perfectModel
     
     // 将 model 变为 Broadcast Variables
-    val broadcastModel = sc.broadcast(model)
+    val broadcastModelRef = sc.broadcast(model)
     // 再次访问model的方式是 broadcastModel.value
+    
+    val newAccount = cloneAccountRepalcePerfeckModelRef(account, perfectK, broadcastModelRef)
     
     // 利用model识别dataIndexed中各自所属的clusterID, 即为每一个 ConsVPM 获得其 clusterID
     // ConsVPM,ConsVPMClustered 的定义在 create-parsedData-userinfo-s01-v2.scala 文件中
     def ComputeClusterID(consVpm: ConsVPM):ConsVPMClustered = {
         val vector = Vectors.dense(consVpm.vpm)
-        val clusterID = broadcastModel.value.predict(vector)
+        val clusterID = broadcastModelRef.value.predict(vector)
         val consVpmClustered = new ConsVPMClustered(consVpm, clusterID)
         consVpmClustered
     }
@@ -372,7 +461,7 @@ def ClusteringUserInfo_FromAccount(dataIndexed: RDD[ConsVPM], account:Account, s
 
     // ------------------------------------------------------------------------
     // 函数返回值
-    new ClusteredInfo(account, dataClustered)
+    //new ClusteredInfo(resultAccount, dataClustered)
+    new ClusteredInfo(newAccount, dataClustered)
 }
-
 
