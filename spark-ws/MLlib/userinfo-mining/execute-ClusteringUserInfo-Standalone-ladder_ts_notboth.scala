@@ -104,12 +104,12 @@ val k = perfectK
     val model = resultAccount.metricList(0).model
 */
 def analyzeParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]], perfectK:Int, maxIterations: Int = 20, sc:org.apache.spark.SparkContext): List[List[AnalyzeResultMatrixItem]] = {	
-	def executeParsedRDDList(list:List[ParsedRDDMatrixItem]):List[AnalyzeResultMatrixItem] = {
-		def executeParsedRDD(item:ParsedRDDMatrixItem):AnalyzeResultMatrixItem = {
+	def executeParsedRDDList(list:List[ParsedRDDMatrixItem], perfectK:Int, maxIterations: Int):List[AnalyzeResultMatrixItem] = {
+		def executeParsedRDD(item:ParsedRDDMatrixItem, perfectK:Int, maxIterations: Int):AnalyzeResultMatrixItem = {
 			val parsedRDDRef = item.parsedRDDRef
 			val parsedRDD_vpm = parsedRDDRef.vpm
 			val parsedRDD_vpmIndexed = parsedRDDRef.vpmIndexed
-			
+
 			// 打印一些信息
 			println("----------------------------------------------------------------------------")
 			// 时间信息
@@ -132,48 +132,14 @@ def analyzeParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrix
 			return analyzeResultMatrixItem
 		}
 		
-		val result = list.map(y => executeParsedRDD(y))
+		val result = list.map(y => executeParsedRDD(y, perfectK, maxIterations))
 		return result
 	}
 	
-	val analyzeRDDMatrix = parsedRDDMatrix.map(x => executeParsedRDDList(x))
+	val analyzeRDDMatrix = parsedRDDMatrix.map(x => executeParsedRDDList(x, perfectK, maxIterations))
 	
 	return analyzeRDDMatrix
 }
-
-// ----------------------------------------------------------------------------
-// 在 ParsedRDDMatrix 上执行分析任务
-val perfectK = 20;
-val maxIterations = 20 // 当前没有生效
-
-// 执行分析
-val AnalyzeResultMatrix = analyzeParsedRDDMatrix_Standalone(ParsedRDDMatrix, perfectK, maxIterations, sc) 
-
-// 测试分析
-// 计算 ParsedRDDMatrix 中各个RDD 的count
-val rddCountMatrix_ParsedRDD = ComputeRDDCount_ParsedRDDMatrix(ParsedRDDMatrix)
-        //  List(List((11723,11723), (39,39), (995,995)), List((2037,2037), (1,1), (85,85)), List((324,324), (2,2), (52,52)), List((3624,3624), (20,20), (734,734)))
-
-// ****************************************************************************
-// 交互式查询样本
-//	 	1.下面矩阵是 DataSetRefItem_L1 * DataSetRefItem_L2 的矩阵，即 4*3
-//				DataSetRef_L1 (index:Int, id:String, tablename:String)
-//				DataSetRef_L2 (index:Int, id:String, tablename:String, where:String)
-//		2.矩阵
-//						SqlMatrix:	查询Hive的SQL String |sql| VpmSqlRef(vpm:String, vpmIndexed:String)
-//				HiveRDDMatrix:	Hive数据集句柄 |hiveDataRef| VpmHiveRDDRef(vpm:SchemaRDD, vpmIndexed:SchemaRDD)
-//			ParsedRDDMatrix:  RDD数据集句柄 |parsedRDDRef| VpmParsedRDDRef(vpm: RDD[Vector], vpmIndexed:RDD[ConsVPM])
-//	AnalyzeResultMatrix:	群分后的数据 clusterSet:ClusterSet
-// ****************************************************************************
-// ----------------------------------------------------------------------------
-// (1) 单月数据 GoodM1-Ladder
-val x = AnalyzeResultMatrix(0)(0).clusterSet
-x.k
-x.clusterCenters
-x.clusterArray
-getSampleFromClusterSet(x,0,10) // 从簇0中寻找10个样本
-getSampleFromClusterSet(x,3,50) // 从簇0中寻找50个样本
-getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
 
 // ----------------------------------------------------------------------------
 // 将 AnalyzeResultMatrix 的簇样本信息写入文件
@@ -200,14 +166,12 @@ def writeAnalyzeResultMatrix_Sample2File(analyzeResultMatrix:List[List[AnalyzeRe
 // 将 AnalyzeResultMatrix 的簇中心信息写入文件
 def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String) = {
 	def writeClusterCentersOfAnalyzeResultList(list:List[AnalyzeResultMatrixItem]) = {
-		def writeClusterCentersOfAnalyzeResult(item:AnalyzeResultMatrixItem):AnalyzeResultMatrixItem = {
+		def writeClusterCentersOfAnalyzeResult(item:AnalyzeResultMatrixItem) = {
 			val clusterSet = item.clusterSet
 			val k = clusterSet.k 
 			val filenameID = s"k${k}_${item.item_L1.id}_${item.item_L2.id}"
 			
 			writeClusterSetCenters2File(clusterSet, filenameHead + filenameID)
-			
-			writeClusterSetClusterCenters2File(clusterSet, sampleNum, filenameHead + filenameID)
 			// 结果对象 : 无	
 		}
 		
@@ -219,6 +183,41 @@ def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[A
 	//analyzeResultMatrix.map(x => writeClusterCentersOfAnalyzeResultList(x))
 	analyzeResultMatrix.foreach(x => writeClusterCentersOfAnalyzeResultList(x))	
 }
+
+
+// ----------------------------------------------------------------------------
+// 在 ParsedRDDMatrix 上执行分析任务
+val perfectK = 3;
+val maxIterations = 20 // 当前没有生效
+
+// 执行分析
+val AnalyzeResultMatrix = analyzeParsedRDDMatrix_Standalone(ParsedRDDMatrix, perfectK, maxIterations, sc) 
+
+// 测试分析
+// 计算 ParsedRDDMatrix 中各个RDD 的count
+val rddCountMatrix_ParsedRDD = ComputeRDDCount_ParsedRDDMatrix(ParsedRDDMatrix)
+        //  List(List((11723,11723), (39,39), (995,995)), List((2037,2037), (1,1), (85,85)), List((324,324), (2,2), (52,52)), List((3624,3624), (20,20), (734,734)))
+        
+// ****************************************************************************
+// 交互式查询样本
+//	 	1.下面矩阵是 DataSetRefItem_L1 * DataSetRefItem_L2 的矩阵，即 4*3
+//				DataSetRef_L1 (index:Int, id:String, tablename:String)
+//				DataSetRef_L2 (index:Int, id:String, tablename:String, where:String)
+//		2.矩阵
+//						SqlMatrix:	查询Hive的SQL String |sql| VpmSqlRef(vpm:String, vpmIndexed:String)
+//				HiveRDDMatrix:	Hive数据集句柄 |hiveDataRef| VpmHiveRDDRef(vpm:SchemaRDD, vpmIndexed:SchemaRDD)
+//			ParsedRDDMatrix:  RDD数据集句柄 |parsedRDDRef| VpmParsedRDDRef(vpm: RDD[Vector], vpmIndexed:RDD[ConsVPM])
+//	AnalyzeResultMatrix:	群分后的数据 clusterSet:ClusterSet
+// ****************************************************************************
+// ----------------------------------------------------------------------------
+// (1) 单月数据 GoodM1-Ladder
+val x = AnalyzeResultMatrix(0)(0).clusterSet
+x.k
+x.clusterCenters
+x.clusterArray
+getSampleFromClusterSet(x,0,10) // 从簇0中寻找10个样本
+getSampleFromClusterSet(x,3,50) // 从簇0中寻找50个样本
+getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
 
 // ----------------------------------------------------------------------------
 val head = taskNamePre + "_L2"
