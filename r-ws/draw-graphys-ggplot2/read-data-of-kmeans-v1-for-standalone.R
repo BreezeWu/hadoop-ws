@@ -11,8 +11,8 @@
 #				(4)	fileData_GoodM1_cluster
 #				(5)	fileData_GoodM1_clusterSpecial
 #	2. 数据集 GoodM2
-#	3. 数据集 BadF3
-#	4. 数据集 BadF2ExcludeF3
+#	3. 数据集 BadF2ExcludeF3
+#	4. 数据集 BadF3
 #
 #  特别注意：
 #  loadMetrics	:	加载 metrics 的函数
@@ -33,14 +33,14 @@ dataSetID <- "s98_standalone"  # s01
 rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
 
 # 行: 数据集+单月/双月
-dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
+dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF2ExcludeF3", "S98_BadF3")
 dimCols <- c("unsorted", "sorted", "clustercenters", "cluster", "cluster0fSpecial")
 # 文件名
 filesVector_s98_standalone <- c(
     "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM1_k20.csv",
     "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM2_k20.csv",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF3_k20.csv",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF2ExcludeF3_k20.csv"
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF2ExcludeF3_k20.csv",
+    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF3_k20.csv"
 	)
 
 filesVector <- filesVector_s98_standalone # filesVector_s01
@@ -57,10 +57,11 @@ filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length
 file_GoodM1_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[1,5])
 # GoodM2
 file_GoodM2_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,5])
-# BadF3
-file_BadF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,5])
 # BadF2ExcludeF3
-file_BadF2ExcludeF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,5])
+file_BadF2ExcludeF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,5])
+# BadF3
+file_BadF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,5])
+
 
 # *****************************************************************************
 # 函数定义
@@ -154,11 +155,13 @@ fileData_GoodM1_clusterSpecial <- loadCluster(file_GoodM1_clusterSpecial)
 # GoodM2
 fileData_GoodM2_clusterSpecial <- loadCluster(file_GoodM2_clusterSpecial)
 
+# BadF2ExcludeF3
+fileData_BadF2ExcludeF3_clusterSpecial <- loadCluster(file_BadF2ExcludeF3_clusterSpecial)
+
 # BadF3
 fileData_BadF3_clusterSpecial <- loadCluster(file_BadF3_clusterSpecial)
 
-# BadF2ExcludeF3
-fileData_BadF2ExcludeF3_clusterSpecial <- loadCluster(file_BadF2ExcludeF3_clusterSpecial)
+
 
 # *****************************************************************************
 # 其他存档

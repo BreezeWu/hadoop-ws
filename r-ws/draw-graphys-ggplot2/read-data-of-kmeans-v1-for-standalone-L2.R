@@ -11,8 +11,8 @@
 #				(4)	fileData_GoodM1_cluster
 #				(5)	fileData_GoodM1_clusterSpecial
 #	2. 数据集 GoodM2
-#	3. 数据集 BadF3
-#	4. 数据集 BadF2ExcludeF3
+#	3. 数据集 BadF2ExcludeF3
+#	4. 数据集 BadF3
 #
 #  特别注意：
 #  loadMetrics	:	加载 metrics 的函数
@@ -29,20 +29,12 @@
 
 # FilePath
 # dataSetID <- "s98_L2k20_clusterCenters"  # s01
-#rootFilePathOfIn <- "~/workspace_github/hadoop-ws/r-ws/result-data/"
 rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
 
 # 行: 数据集+单月/双月
-dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
+dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF2ExcludeF3", "S98_BadF3")
 dimCols <- c("unsorted", "sorted", "clustercenters", "cluster", "cluster0fSpecial")
 # 文件名
-filesVector_s98_standalone <- c(
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM1_k20.csv",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_GoodM2_k20.csv",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF3_k20.csv",
-    "",  "",  "",  "",  "clusterCenters_s98_clusterSet_Standalone_BadF2ExcludeF3_k20.csv"
-	)
-	
 filesVector_s98_standalone_L2 <- c(
     "",  "",  "",  "",  "s98_L2k20_GoodM1_Ladder_clusterCenters.csv",
     "",  "",  "",  "",  "s98_L2k20_GoodM1_Ts_clusterCenters.csv",
@@ -62,16 +54,14 @@ filesVector_s98_standalone_L2 <- c(
     
 	)
 
-#filesVector <- filesVector_s98_standalone # filesVector_s01
 filesVector <- filesVector_s98_standalone_L2 #filesVector_s98_standalone # filesVector_s01
 
 # 构建矩阵
-#filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length(dimCols),dimnames=list(dimRows, dimCols))
-
 dimRows <- c("S98_GoodM1_Ladder", "S98_GoodM1_Ts", "S98_GoodM1_NotTsNotLadder",
 						"S98_GoodM2_Ladder", "S98_GoodM2_Ts", "S98_GoodM2_NotTsNotLadder", 
-						"S98_BadF3_Ladder", "S98_BadF3_Ts", "S98_BadF3_NotTsNotLadder", 
-						"S98_BadF2ExcludeF3_Ladder", "S98_BadF2ExcludeF3_Ts", "S98_BadF2ExcludeF3_NotTsNotLadder")
+						"S98_BadF2ExcludeF3_Ladder", "S98_BadF2ExcludeF3_Ts", "S98_BadF2ExcludeF3_NotTsNotLadder", 
+						"S98_BadF3_Ladder", "S98_BadF3_Ts", "S98_BadF3_NotTsNotLadder"
+						)
 filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length(dimCols),dimnames=list(dimRows, dimCols))
 
 #str(filesMatrix)
@@ -88,14 +78,17 @@ file_GoodM1_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, fi
 file_GoodM2_clusterSpecial_Ladder <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,5])
 file_GoodM2_clusterSpecial_Ts <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,5])
 file_GoodM2_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, filesMatrix[6,5])
-# BadF3
-file_BadF3_clusterSpecial_Ladder <- stringr::str_c(rootFilePathOfIn, filesMatrix[7,5])
-file_BadF3_clusterSpecial_Ts <- stringr::str_c(rootFilePathOfIn, filesMatrix[8,5])
-file_BadF3_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, filesMatrix[9,5])
+
 # BadF2ExcludeF3
-file_BadF2ExcludeF3_clusterSpecial_Ladder <- stringr::str_c(rootFilePathOfIn, filesMatrix[10,5])
-file_BadF2ExcludeF3_clusterSpecial_Ts <- stringr::str_c(rootFilePathOfIn, filesMatrix[11,5])
-file_BadF2ExcludeF3_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, filesMatrix[12,5])
+file_BadF2ExcludeF3_clusterSpecial_Ladder <- stringr::str_c(rootFilePathOfIn, filesMatrix[7,5])
+file_BadF2ExcludeF3_clusterSpecial_Ts <- stringr::str_c(rootFilePathOfIn, filesMatrix[8,5])
+file_BadF2ExcludeF3_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, filesMatrix[9,5])
+
+# BadF3
+file_BadF3_clusterSpecial_Ladder <- stringr::str_c(rootFilePathOfIn, filesMatrix[10,5])
+file_BadF3_clusterSpecial_Ts <- stringr::str_c(rootFilePathOfIn, filesMatrix[11,5])
+file_BadF3_clusterSpecial_NotTsNotLadder <- stringr::str_c(rootFilePathOfIn, filesMatrix[12,5])
+
 
 # *****************************************************************************
 # 函数定义
@@ -193,15 +186,15 @@ fileData_GoodM2_clusterSpecial_Ladder <- loadCluster(file_GoodM2_clusterSpecial_
 fileData_GoodM2_clusterSpecial_Ts <- loadCluster(file_GoodM2_clusterSpecial_Ts)
 fileData_GoodM2_clusterSpecial_NotTsNotLadder <- loadCluster(file_GoodM2_clusterSpecial_NotTsNotLadder)
 
-# BadF3
-fileData_BadF3_clusterSpecial_Ladder <- loadCluster(file_BadF3_clusterSpecial_Ladder)
-fileData_BadF3_clusterSpecial_Ts <- loadCluster(file_BadF3_clusterSpecial_Ts)
-fileData_BadF3_clusterSpecial_NotTsNotLadder <- loadCluster(file_BadF3_clusterSpecial_NotTsNotLadder)
-
 # BadF2ExcludeF3
 fileData_BadF2ExcludeF3_clusterSpecial_Ladder <- loadCluster(file_BadF2ExcludeF3_clusterSpecial_Ladder)
 fileData_BadF2ExcludeF3_clusterSpecial_Ts <- loadCluster(file_BadF2ExcludeF3_clusterSpecial_Ts)
 fileData_BadF2ExcludeF3_clusterSpecial_NotTsNotLadder <- loadCluster(file_BadF2ExcludeF3_clusterSpecial_NotTsNotLadder)
+
+# BadF3
+fileData_BadF3_clusterSpecial_Ladder <- loadCluster(file_BadF3_clusterSpecial_Ladder)
+fileData_BadF3_clusterSpecial_Ts <- loadCluster(file_BadF3_clusterSpecial_Ts)
+fileData_BadF3_clusterSpecial_NotTsNotLadder <- loadCluster(file_BadF3_clusterSpecial_NotTsNotLadder)
 
 # *****************************************************************************
 # 其他存档

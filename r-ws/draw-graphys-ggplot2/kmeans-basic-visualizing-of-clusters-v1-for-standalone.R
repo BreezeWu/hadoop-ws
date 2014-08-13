@@ -147,10 +147,12 @@ visualizingCluster_clusterSpecial(fileData_GoodM1_clusterSpecial, curTaskName)
 curTaskName <- paste(dataSetID, "GoodM2", sep="_")
 visualizingCluster_clusterSpecial(fileData_GoodM2_clusterSpecial, curTaskName)
 
+# BadF2ExcludeF3
+curTaskName <- paste(dataSetID, "BadF2ExcludeF3", sep="_")
+visualizingCluster_clusterSpecial(fileData_BadF2ExcludeF3_clusterSpecial, curTaskName)
+
 # BadF3
 curTaskName <- paste(dataSetID, "BadF3", sep="_")
 visualizingCluster_clusterSpecial(fileData_BadF3_clusterSpecial, curTaskName)
 
-# BadF2ExcludeF3
-curTaskName <- paste(dataSetID, "BadF2ExcludeF3", sep="_")
-visualizingCluster_clusterSpecial(fileData_BadF2ExcludeF3_clusterSpecial, curTaskName)
+

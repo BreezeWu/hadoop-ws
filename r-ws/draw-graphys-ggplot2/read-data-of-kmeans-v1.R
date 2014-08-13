@@ -11,8 +11,8 @@
 #				(4)	fileData_GoodM1_cluster
 #				(5)	fileData_GoodM1_clusterSpecial
 #	2. 数据集 GoodM2
-#	3. 数据集 BadF3
-#	4. 数据集 BadF2ExcludeF3
+#	3. 数据集 BadF2ExcludeF3
+#	4. 数据集 BadF3
 #
 #  特别注意：
 #  loadMetrics	:	加载 metrics 的函数
@@ -33,21 +33,23 @@ dataSetID <- "s98"  # s01
 rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
 
 # 行: 数据集+单月/双月
-dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF3", "S98_BadF2ExcludeF3")
+dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF2ExcludeF3", "S98_BadF3")
 dimCols <- c("unsorted", "sorted", "clustercenters", "cluster", "cluster0fSpecial")
 # 文件名
 filesVector_s01 <- c(
     "s01_GoodM1_kmeans_200_metrics_unsorted.csv",  "s01_GoodM1_kmeans_200_metrics_sorted.csv",  "s01_GoodM1_kmeans_200_clusterCenters.csv",  "s01_GoodM1_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM1_kmeans_20_cluster.csv",
     "s01_GoodM2_kmeans_200_metrics_unsorted.csv",  "s01_GoodM2_kmeans_200_metrics_sorted.csv",  "s01_GoodM2_kmeans_200_clusterCenters.csv",  "s01_GoodM2_kmeans_200_cluster.csv",  "s01_perfectK20_GoodM2_kmeans_20_cluster.csv",
-    "s01_BadF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF3_kmeans_199_metrics_sorted.csv",  "s01_BadF3_kmeans_199_clusterCenters.csv",  "s01_BadF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF3_kmeans_20_cluster.csv",
-    "s01_BadF2ExcludeF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_metrics_sorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_clusterCenters.csv",  "s01_BadF2ExcludeF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv" 
+    "s01_BadF2ExcludeF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_metrics_sorted.csv",  "s01_BadF2ExcludeF3_kmeans_199_clusterCenters.csv",  "s01_BadF2ExcludeF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv",
+    "s01_BadF3_kmeans_199_metrics_unsorted.csv",  "s01_BadF3_kmeans_199_metrics_sorted.csv",  "s01_BadF3_kmeans_199_clusterCenters.csv",  "s01_BadF3_kmeans_199_cluster.csv",  "s01_perfectK20_BadF3_kmeans_20_cluster.csv"
+
 	)
 	
 filesVector_s98 <- c(
     "S98_GoodM1_kmeans_199_metrics_unsorted.csv",  "S98_GoodM1_kmeans_199_metrics_sorted.csv",  "S98_GoodM1_kmeans_199_clusterCenters.csv",  "S98_GoodM1_kmeans_199_cluster.csv",  "S98_perfectK20_GoodM1_kmeans_20_cluster.csv",
     "S98_GoodM2_kmeans_200_metrics_unsorted.csv",  "S98_GoodM2_kmeans_200_metrics_sorted.csv",  "S98_GoodM2_kmeans_200_clusterCenters.csv",  "S98_GoodM2_kmeans_200_cluster.csv",  "S98_perfectK20_GoodM2_kmeans_20_cluster.csv",
-    "S98_BadF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF3_kmeans_200_metrics_sorted.csv",  "S98_BadF3_kmeans_200_clusterCenters.csv",  "S98_BadF3_kmeans_200_cluster.csv",  "S98_perfectK20_BadF3_kmeans_20_cluster.csv",
-    "S98_BadF2ExcludeF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_metrics_sorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_clusterCenters.csv",  "S98_BadF2ExcludeF3_kmeans_200_cluster.csv",  "S98_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv"
+    "S98_BadF2ExcludeF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_metrics_sorted.csv",  "S98_BadF2ExcludeF3_kmeans_200_clusterCenters.csv",  "S98_BadF2ExcludeF3_kmeans_200_cluster.csv",  "S98_perfectK20_BadF2ExcludeF3_kmeans_20_cluster.csv",
+    "S98_BadF3_kmeans_200_metrics_unsorted.csv",  "S98_BadF3_kmeans_200_metrics_sorted.csv",  "S98_BadF3_kmeans_200_clusterCenters.csv",  "S98_BadF3_kmeans_200_cluster.csv",  "S98_perfectK20_BadF3_kmeans_20_cluster.csv"
+
 	)
 
 filesVector <- filesVector_s98 # filesVector_s01
@@ -73,18 +75,20 @@ file_GoodM2_metrics_sorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,2])
 file_GoodM2_clusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,3])
 file_GoodM2_cluster <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,4])
 file_GoodM2_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[2,5])
-# BadF3
-file_BadF3_metrics_unsorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,1])
-file_BadF3_metrics_sorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,2])
-file_BadF3_clusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,3])
-file_BadF3_cluster <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,4])
-file_BadF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,5])
+
 # BadF2ExcludeF3
-file_BadF2ExcludeF3_metrics_unsorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,1])
-file_BadF2ExcludeF3_metrics_sorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,2])
-file_BadF2ExcludeF3_clusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,3])
-file_BadF2ExcludeF3_cluster <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,4])
-file_BadF2ExcludeF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,5])
+file_BadF2ExcludeF3_metrics_unsorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,1])
+file_BadF2ExcludeF3_metrics_sorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,2])
+file_BadF2ExcludeF3_clusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,3])
+file_BadF2ExcludeF3_cluster <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,4])
+file_BadF2ExcludeF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[3,5])
+
+# BadF3
+file_BadF3_metrics_unsorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,1])
+file_BadF3_metrics_sorted <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,2])
+file_BadF3_clusterCenters <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,3])
+file_BadF3_cluster <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,4])
+file_BadF3_clusterSpecial <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,5])
 
 # *****************************************************************************
 # 函数定义
@@ -186,19 +190,19 @@ fileData_GoodM2_metrics_sorted <- loadMetrics(file_GoodM2_metrics_sorted)
 fileData_GoodM2_cluster <- loadCluster(file_GoodM2_cluster)
 fileData_GoodM2_clusterSpecial <- loadCluster(file_GoodM2_clusterSpecial)
 
-# BadF3
-fileData_BadF3_metrics_unsorted <- loadMetrics(file_BadF3_metrics_unsorted)
-fileData_BadF3_metrics_sorted <- loadMetrics(file_BadF3_metrics_sorted)
-#fileData__BadF3_clusterCenters <- ?????
-fileData_BadF3_cluster <- loadCluster(file_BadF3_cluster)
-fileData_BadF3_clusterSpecial <- loadCluster(file_BadF3_clusterSpecial)
-
 # BadF2ExcludeF3
 fileData_BadF2ExcludeF3_metrics_unsorted <- loadMetrics(file_BadF2ExcludeF3_metrics_unsorted)
 fileData_BadF2ExcludeF3_metrics_sorted <- loadMetrics(file_BadF2ExcludeF3_metrics_sorted)
 #fileData__BadF2ExcludeF3_clusterCenters <- ?????
 fileData_BadF2ExcludeF3_cluster <- loadCluster(file_BadF2ExcludeF3_cluster)
 fileData_BadF2ExcludeF3_clusterSpecial <- loadCluster(file_BadF2ExcludeF3_clusterSpecial)
+
+# BadF3
+fileData_BadF3_metrics_unsorted <- loadMetrics(file_BadF3_metrics_unsorted)
+fileData_BadF3_metrics_sorted <- loadMetrics(file_BadF3_metrics_sorted)
+#fileData__BadF3_clusterCenters <- ?????
+fileData_BadF3_cluster <- loadCluster(file_BadF3_cluster)
+fileData_BadF3_clusterSpecial <- loadCluster(file_BadF3_clusterSpecial)
 
 # *****************************************************************************
 # 其他存档
