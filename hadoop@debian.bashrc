@@ -187,7 +187,8 @@ export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
 # -----------------------------------------------------------------------------
 # scala
-export SCALA_HOME=/opt/scala/scala-2.11.0
+#export SCALA_HOME=/opt/scala/scala-2.11.0
+export SCALA_HOME=/opt/scala/scala-2.11.2
 export PATH=${SCALA_HOME}/bin:${PATH}
 
 # -----------------------------------------------------------------------------
@@ -257,8 +258,8 @@ export IDEA_IC=/opt/idea-IC/idea-IC-135.909
 export PATH=${IDEA_IC}/bin:${PATH}
 
 # eclipse
-export ECLIPSE_HOME=/opt/eclipse/eclipse-jee-kepler-SR2
-#export ECLIPSE_HOME=/opt/eclipse/eclipse-3.7.2
+#export ECLIPSE_HOME=/opt/eclipse/eclipse-jee-kepler-SR2
+export ECLIPSE_HOME=/opt/eclipse/scala-SDK-3.0.4-2.11-linux
 export PATH=$ECLIPSE_HOME:$PATH
 
 # netbeans
