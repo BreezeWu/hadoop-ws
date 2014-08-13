@@ -1,3 +1,4 @@
+#sudo ntfs-3g /dev/sda6 /mnt/win-d
 sudo ntfs-3g /dev/sda7 /mnt/win-f
 cd ~/link-goagent/local
 #python ~/link-goagent/local/proxy.py &
