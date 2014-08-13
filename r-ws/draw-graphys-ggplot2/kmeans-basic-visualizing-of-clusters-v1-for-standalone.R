@@ -7,6 +7,8 @@
 #   修改 中的这两个语句
 #				dataSetID <- "filesVector_s98_standalone"  # s01
 #				filesVector <- filesVector_s98 # filesVector_s01
+#   创建图形输出目录    graphys/filesVector_s98_standalone
+#   执行
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1-for-standalone.R")
 # 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v1-for-standalone.R")
 # -----------------------------------------------------------------------------
