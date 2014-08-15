@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------
 # 基本图形化展现
 #	过程度量数据:	mymetrics	
 #	最佳k中心点:	myclustercenters vpm vpm.v	
@@ -8,9 +8,9 @@
 #				dataSetID <- "s98_L2k20_clusterCenters"  # s01
 #				filesVector <- filesVector_s98_standalone_L2 #filesVector_s98 # filesVector_s01
 #   创建图形输出目录    graphys/s98_L2k20_clusterCenters
-#   执行
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1-for-standalone-L2.R")
-# 	source("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v1-for-standalone-L2.R")
+#   执行 - windows版本
+# 	source("J:/home/hadoop/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1-for-standalone-L2.R")
+# 	source("J:/home/hadoop/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/kmeans-basic-visualizing-of-clusters-v1-for-standalone-L2-winpatch.R")
 # -----------------------------------------------------------------------------
 # 加载包
 library(ggplot2)
@@ -25,8 +25,11 @@ library(ggplot2)
 # 图形名字函数
 getImageFile <- function(desc, curTaskName, filetype="pdf", subdir=dataSetID) {
 	#rootFilePathOfImage <- "~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/graphys/"
+	# linux版本
 	rootFilePathOfImage <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/graphys/",dataSetID, "/")
-	
+	# windows版本
+	rootFilePathOfImage <- stringr::str_c("F:/工作目录2014/职场之数据挖掘/数据挖掘_任务.电力/DM之电力.辽宁/报告.201408/样本分析-第二层聚类/",dataSetID, "/")
+
 	fileHead <- paste(rootFilePathOfImage, curTaskName, sep="")
 	filenameOfImage <- paste(fileHead, desc, filetype, sep=".")
 	return (filenameOfImage)	# 返回值必须加上括号？
@@ -45,84 +48,35 @@ visualizingCluster <- function(fileDataOfCluster, curTaskName) {
 	cat("\t >>>>> 对 cluster clusterInfo 进行图形化展现 \n")
 
 	# -----------------------------------------------------------------------------
-	# clusterID 及其 数量
-	vpm <- fileDataOfCluster[[1]]
-	curdata <- vpm[c("clusterID", "counter")]	
-	curdata$clusterID <- as.factor(curdata$clusterID)
-	curdata
-	# ---------------------------
-	# 基于 y 变量的 value
-	p <- ggplot(curdata, aes(x=clusterID, y=counter))
-	p+ geom_bar(stat="identity")
-	#ggsave("draw-graphys-ggplot2/graphys/s98_m1_k19.geom_bar_counter.pdf", width = 7, height = 6.99) 
-	ggsave(getImageFile("(1.1)geom_bar_counter", curTaskName))
-	
-	p <- ggplot(curdata, aes(x=clusterID, y=sqrt(counter)))
-	p+ geom_bar(stat="identity")
-	ggsave(getImageFile("(1.2)geom_bar_counter_sqrt", curTaskName))
-	
-	p <- ggplot(curdata, aes(x=clusterID, y=sqrt(sqrt(counter))))
-	p+ geom_bar(stat="identity")
-	ggsave(getImageFile("(1.3)geom_bart_counter_sqrtsqr", curTaskName))
-	
-	# ---------------------------
-	# 基于 y 变量的 统计次数
-	# 数据中不能指定 y
-	p <- ggplot(curdata, aes(x=clusterID))	
-	p+ geom_bar(stat="bin")	# p+ geom_bar()
-	
-	# -----------------------------------------------------------------------------
 	# 簇中心的月用电量
 	vpm.v <- fileDataOfCluster[[2]]
 	curdata <- vpm.v
 	curdata$clusterID <- as.factor(curdata$clusterID)
+	curdata$counter_linesize <- as.factor(as.integer(sqrt(sqrt(sqrt(curdata$counter)))/2)) # as.factor(as.integer(sqrt(sqrt(curdata$counter))/2))
 	curdata$ym <- ordered(curdata$ym)
 	#str(curdata)
-	
-	curdata[c("clusterID","value")]
-	data.frame(curdata$clusterID, curdata$ym, sqrt(curdata$value))
+
 	# ---------------------------
 	# 折线图
 	p <- ggplot(curdata, aes(x=ym, y=value, group=clusterID))
-	#p <- p + xlab("年月") + ylab("簇中心的用电量")			# 中文有问题
 	p <- p + xlab("month") + ylab("volume center")
 	p + geom_line()
-	p + geom_line(aes(colour = clusterID))
-	#p + geom_line(aes(colour = clusterID, size=clusterID))
-	#p + geom_line(aes(colour = clusterID, size= as.integer(clusterID) %% 5))
-	ggsave(getImageFile("(2.1)簇中心的月用电量折线图", curTaskName), width = 10, height = 8)
+	#p + geom_line(aes(colour = clusterID))
 	
-	# 线的大小是簇数量的平方根的平方根
-	p + geom_line(aes(colour = clusterID, size= as.integer(counter)))
-	ggsave(getImageFile("(2.1)簇中心的月用电量折线图_簇数量函数作为线大小", curTaskName), width = 10, height = 8)
+	# 线的大小是簇数量的函数
+	p + geom_line(aes(colour = clusterID, size= counter_linesize))
+	ggsave(getImageFile("(2.1)簇中心的月用电量折线图_簇数量函数作为线粗细", curTaskName), width = 40, height = 20)
 	
 	# -----
 	p <- ggplot(curdata, aes(x=ym, y=sqrt(value), group=clusterID))
-	#p <- p + xlab("年月") + ylab("簇中心的用电量")			# 中文有问题
+	p <- ggplot(curdata, aes(x=ym, y=sqrt(sqrt(value)), group=clusterID))
 	p <- p + xlab("month") + ylab("volume center")
-	p + geom_line(aes(colour = clusterID))
-	ggsave(getImageFile("(2.2)簇中心的月用电量折线图_sqrt", curTaskName), width = 10, height = 8)
-	
-	# 线的大小是簇数量的平方根的平方根
-	p + geom_line(aes(colour = clusterID, size= as.integer(counter)))
-	p + geom_line(aes(colour = clusterID, size= as.integer(counter)))
-	ggsave(getImageFile("(2.1)簇中心的月用电量折线图_簇数量函数作为线大小", curTaskName), width = 10, height = 8)
-	
-	# ---------------------------
-	# 线图
-	p <- ggplot(curdata, aes(factor(ym), value))
-	p <- p + xlab("年月") + ylab("簇中心的用电量")
-	p + geom_boxplot()
-	ggsave(getImageFile("(3.1)geom_boxplot", curTaskName))
-	
-	p <- ggplot(curdata, aes(factor(ym), sqrt(value)))
-	p <- p + xlab("年月") + ylab("簇中心的用电量")
-	p + geom_boxplot()
-	ggsave(getImageFile("(3.2)geom_boxplot_sqrt", curTaskName))
-	# ---------------------------
-	# 平行坐标图
+	#p + geom_line(aes(colour = clusterID))
+		
+	# 线的大小是簇数量的函数
+	p + geom_line(aes(colour = clusterID, size= counter_linesize))
+	ggsave(getImageFile("(2.2)簇中心的月用电量折线图_sqrt_簇数量函数作为线粗细", curTaskName), width = 40, height = 20)	
 
-	
 	cat("\t 对 cluster clusterInfo 进行图形化展现 <<<<< \n")
 	cat("-----------------------------------------------------------------------------\n")
 }
@@ -176,4 +130,6 @@ visualizingCluster_clusterSpecial_NotTsNotLadder(fileData_BadF3_clusterSpecial_N
 
 # BadF2ExcludeF3
 curTaskName <- paste(dataSetID, "BadF2ExcludeF3", sep="_")
-visualizingCluste                                                                                                                                                                                                                                                                                                      
+visualizingCluster_clusterSpecial_Ladder(fileData_BadF2ExcludeF3_clusterSpecial_Ladder, curTaskName)
+visualizingCluster_clusterSpecial_Ts(fileData_BadF2ExcludeF3_clusterSpecial_Ts, curTaskName)
+visualizingCluster_clusterSpecial_NotTsNotLadder(fileData_BadF2ExcludeF3_clusterSpecial_NotTsNotLadder, curTaskName)

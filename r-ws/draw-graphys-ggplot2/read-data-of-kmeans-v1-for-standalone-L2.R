@@ -29,7 +29,10 @@
 
 # FilePath
 # dataSetID <- "s98_L2k20_clusterCenters"  # s01
+# linux版本
 rootFilePathOfIn <- stringr::str_c("~/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
+# windows版本
+#rootFilePathOfIn <- stringr::str_c("J:/home/hadoop/workspace_github/hadoop-ws/r-ws/result-data/",dataSetID, "/")
 
 # 行: 数据集+单月/双月
 dimRows <- c("S98_GoodM1", "S98_GoodM2", "S98_BadF2ExcludeF3", "S98_BadF3")
@@ -148,9 +151,16 @@ loadCluster <- function(filename) {
 	# 将 "clusterID" 变为 factor?
 	# -----------------------------------------------------------------------------
 	# 横表变纵表
-	library(reshape)
+	library(reshape2)
 	# 'pointsNum'是没有必要的,但为了保留它作为单独的一列
-	vpm.v <- melt(vpm,  id = c("clusterID", "counter"), variable_name = "ym")	# colnames/ym -> value
+	#vpm.v <- melt(vpm,  id = c("clusterID", "counter"), variable_name = "ym")	# colnames/ym -> value
+	
+	# reshape2 中 variable_name 无效
+	vpm.v <- melt(vpm,  id = c("clusterID", "counter"))	
+	# 为vpm.v设置变量标签
+	newcolnames <- c("clusterID", "counter", "ym", "value")
+	names(vpm.v) <- c(newcolnames)
+	rm(newcolnames)
 	
 	# 画图的列
 	#vpm.v$ym <- as.factor(vpm.v$colnames)
