@@ -228,7 +228,7 @@ writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head)
 // 单独将簇中心信息写入文件
 writeAnalyzeResultMatrix_ClusterCenters2File(AnalyzeResultMatrix, head)
 // ----------------------------------------------------------------------------
-// 计算年用电量
+// 计算年用电量合计
 val YearSum_ParsedRDDMatrix = computeYearSum_ParsedRDDMatrix_Standalone(ParsedRDDMatrix) 
 // 打印出 L1*L2的年用电量
 def printYearSum(x:YearSum_ParsedRDDMatrixItem) = {
@@ -243,3 +243,20 @@ def printYearSum(x:YearSum_ParsedRDDMatrixItem) = {
 }*/
 // 运行打印函数
 YearSum_ParsedRDDMatrix.foreach(list => list.foreach(printYearSum))
+
+// ----------------------------------------------------------------------------
+// 计算约用电量合计
+val MonthSum_ParsedRDDMatrix = computeMonthSum_ParsedRDDMatrix_Standalone(ParsedRDDMatrix)
+// 打印出 L1*L2的月用电量合计
+def printMonthSum(x:MonthSum_ParsedRDDMatrixItem) = {
+	val id_L1 = x.item_L1.id
+	val id_L2 = x.item_L2.id
+	val monthSum = x.monthSumRef.monthSum_Vpm
+	
+	println(s"${id_L1}-${id_L2}: ${monthSum}")
+}
+/* def printMonthSumOfList(y:List[MonthSum_ParsedRDDMatrixItem]) = {
+	y.foreach(printMonthSum)
+}*/
+// 运行打印函数
+MonthSum_ParsedRDDMatrix.foreach(list => list.foreach(printMonthSum))
