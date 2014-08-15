@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------
 // 对用户进行分群: 独立模式
 //		并不依赖于 execute-tryKMeansSmart-ClusterCount.scala 的执行
 //
@@ -260,3 +260,4 @@ def printMonthSum(x:MonthSum_ParsedRDDMatrixItem) = {
 }*/
 // 运行打印函数
 MonthSum_ParsedRDDMatrix.foreach(list => list.foreach(printMonthSum))
+

@@ -389,7 +389,7 @@ def computeYearSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedR
 // 计算L1*L2的月用电量合计
 
 // 只对vpm进行计算，不计算vpmIndexed;但结构上保留
-case class MonthSum_ParsedRDDRef(monthSum_Vpm: Array[Double], monthSum_VpmIndexed:Array[Double])
+case class MonthSum_ParsedRDDRef(monthSum_Vpm: Array[Double]], monthSum_VpmIndexed:Array[Double])
 case class MonthSum_ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, monthSumRef:MonthSum_ParsedRDDRef)
 
 def computeMonthSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]): List[List[MonthSum_ParsedRDDMatrixItem]] = {	
@@ -406,7 +406,7 @@ def computeMonthSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[Parsed
 			val timeBegin = new java.util.Date()
 			println(s">>>>>>>>>\t 开始计算月用电量合计任务: ${item.item_L1.id}-${item.item_L2.id}: ${dateFormat.format(timeBegin)}")
 			
-			// 计算月用电量
+			// 计算某一个用户的年用电量
 			def addMonthSum(x:Array[Double], y:Array[Double], ):Array[Double] = {
 				val zipXY = x.zip(y)
 				return zipXy.map(z => z._1 + z._2)
@@ -427,4 +427,20 @@ def computeMonthSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[Parsed
 			return monthSum_ParsedRDDMatrixItem
 		}
 		
-		val result = list.map(y => computeM                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+		val result = list.map(y => computeMonthSum_ParsedRDD(y))
+		return result
+	}
+	
+	val monthSum_ParsedRDDMatrix = parsedRDDMatrix.map(x => computeMonthSum_ParsedRDDList(x))
+	
+	return monthSum_ParsedRDDMatrix
+}
+
+
+// 计算SQLMatrix
+val SqlMatrix = buildSQLMatrix(DataSetRef_L1, DataSetRef_L2)
+// 计算HiveRDDMatrix
+val HiveRDDMatrix = buildHiveRDDMatrix(SqlMatrix)
+// 变换为 ParsedRDDMatrix
+val ParsedRDDMatrix = transform2ParsedRDDMatrix(HiveRDDMatrix)
+
