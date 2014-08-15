@@ -17,3 +17,7 @@ select * from BIGDATA_CHANGE_PAYTYPE_PY_S01 limit 10;
 
 -- 修改 BIGDATA_USER_INFO_S01 的 volt_code_1 to volt_code
 --ALTER TABLE BIGDATA_USER_INFO_S01 CHANGE COLUMN volt_code_1 volt_code String AFTER elec_type_code;
+
+-- 修改阶梯电量电价表表名
+alter table bigdata_volume_of_prc_s01 rename to bigdata_volume_of_ladder_s01;
+alter table bigdata_volume_of_prc_s98 rename to bigdata_volume_of_ladder_s98;
