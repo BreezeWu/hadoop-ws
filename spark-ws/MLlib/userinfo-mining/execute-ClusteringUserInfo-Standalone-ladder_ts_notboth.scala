@@ -197,7 +197,7 @@ val AnalyzeResultMatrix = analyzeParsedRDDMatrix_Standalone(ParsedRDDMatrix, per
 // 计算 ParsedRDDMatrix 中各个RDD 的count
 val rddCountMatrix_ParsedRDD = ComputeRDDCount_ParsedRDDMatrix(ParsedRDDMatrix)
         //  List(List((11723,11723), (39,39), (995,995)), List((2037,2037), (1,1), (85,85)), List((324,324), (2,2), (52,52)), List((3624,3624), (20,20), (734,734)))
-        
+
 // ****************************************************************************
 // 交互式查询样本
 //	 	1.下面矩阵是 DataSetRefItem_L1 * DataSetRefItem_L2 的矩阵，即 4*3
@@ -227,4 +227,19 @@ writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head)
 
 // 单独将簇中心信息写入文件
 writeAnalyzeResultMatrix_ClusterCenters2File(AnalyzeResultMatrix, head)
-
+// ----------------------------------------------------------------------------
+// 计算年用电量
+val YearSum_ParsedRDDMatrix = computeYearSum_ParsedRDDMatrix_Standalone(ParsedRDDMatrix) 
+// 打印出 L1*L2的年用电量
+def printYearSum(x:YearSum_ParsedRDDMatrixItem) = {
+	val id_L1 = x.item_L1.id
+	val id_L2 = x.item_L2.id
+	val yearSum = x.yearSumRef.yearSum_Vpm
+	
+	println(s"${id_L1}-${id_L2}: ${yearSum}")
+}
+/* def printYearSumOfList(y:List[YearSum_ParsedRDDMatrixItem]) = {
+	y.foreach(printYearSum)
+}*/
+// 运行打印函数
+YearSum_ParsedRDDMatrix.foreach(list => list.foreach(printYearSum))

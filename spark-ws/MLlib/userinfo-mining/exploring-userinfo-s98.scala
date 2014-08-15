@@ -160,6 +160,57 @@ if (0 != selectNotTsNotLadderCount) {
 	selectNotTsNotLadder.take(10)
 }
 
+// ----------------------------------------------------------------------------
+// 计算L1*L2的年用电量
+
+// 只对vpm进行计算，不计算vpmIndexed;但结构上保留
+case class YearSum_ParsedRDDRef(yearSum_Vpm: Double], yearSum_VpmIndexed:Double)
+case class YearSum_ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, yearSumRef:YearSum_ParsedRDDRef)
+
+def computeYearSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]): List[List[YearSum_ParsedRDDMatrixItem]] = {	
+	def computeYearSum_ParsedRDDList(list:List[ParsedRDDMatrixItem]):List[YearSum_ParsedRDDMatrixItem] = {
+		def computeYearSum_ParsedRDD(item:ParsedRDDMatrixItem):YearSum_ParsedRDDMatrixItem = {
+			val parsedRDDRef = item.parsedRDDRef
+			val parsedRDD_vpm = parsedRDDRef.vpm
+			// val parsedRDD_vpmIndexed = parsedRDDRef.vpmIndexed
+
+			// 打印一些信息
+			println("----------------------------------------------------------------------------")
+			// 时间信息
+			val dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")    // "dd-MM-yyyy" "yyyy-MM-dd" "yyyy-MM-dd-HH-mm-ss"
+			val timeBegin = new java.util.Date()
+			println(s">>>>>>>>>\t 开始计算年用电量任务: ${item.item_L1.id}-${item.item_L2.id}: ${dateFormat.format(timeBegin)}")
+			
+			// 计算某一个用户的年用电量
+			def computerYearSum_OneUser(x:Array[Double]):Double = {
+				x.foldLeft(0.0)((x,y) => x+y )
+			}
+			
+			// 计算结果
+			val yearSum_Vpm = parsedRDD_vpm.map(x => computerYearSum_OneUser(x.toArray)).reduce(
+				(y1, y2) => y1 + y2
+			)
+			// 创建结果对象(x)
+			val yearSum_ParsedRDDRef = YearSum_ParsedRDDRef(yearSum_Vpm,0)
+			
+			// 打印一些信息
+			val timeEnd = new java.util.Date()
+			println(s"开始计算年用电量任务: ${item.item_L1.id}-${item.item_L2.id}: ${dateFormat.format(timeBegin)} -> ${dateFormat.format(timeEnd)}\t <<<<<<<<<")
+			println("----------------------------------------------------------------------------")
+			
+			// 结果对象			
+			val yearSum_ParsedRDDMatrixItem = YearSum_ParsedRDDMatrixItem(item.item_L1, item.item_L2, yearSum_ParsedRDDRef)
+			return yearSum_ParsedRDDMatrixItem
+		}
+		
+		val result = list.map(y => computeYearSum_ParsedRDD(y))
+		return result
+	}
+	
+	val yearSum_ParsedRDDMatrix = parsedRDDMatrix.map(x => computeYearSum_ParsedRDDList(x))
+	
+	return yearSum_ParsedRDDMatrix
+}
 
 
 
