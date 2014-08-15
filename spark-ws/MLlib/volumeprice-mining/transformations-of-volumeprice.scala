@@ -6,7 +6,7 @@
  * 分时电量电价表, Item_of_ts
  *
  * 引入
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/transformations-of-volumeprice.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
  */
  
 // index + data

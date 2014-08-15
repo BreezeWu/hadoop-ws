@@ -7,10 +7,10 @@
  * 分时电量电价表, table_volume_of_ts
  *
  * 引入依赖
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/hiveselect-of-volumeprice.scala
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/transformations-of-volumeprice.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
  * 引入
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/create-rdd-of-volumeprice.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice.scala
  */
 
 val datasetID = "s01"
@@ -27,7 +27,7 @@ val table_flag_of_ladder_ts = s"bigdata_ts_or_prcscope_${datasetID}_unique"    /
  * hive的select SQL语句
  */
 // 引入依赖
-//:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/hiveselect-of-volumeprice.scala
+//:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
 
 val table_b = table_flag_of_ladder_ts
 

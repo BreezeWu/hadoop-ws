@@ -3,7 +3,7 @@
  * hive的select SQL语句
  * 
  * 引入
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volume-price-mining/hiveselect-of-volumeprice.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
  */
 
 // ****************************************************************************
