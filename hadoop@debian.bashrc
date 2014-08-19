@@ -201,8 +201,8 @@ export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-example
 
 # spark-1.0
 # hive yarn hadoop-2.2.0
-export SPARK_HOME=/home/hadoop/workspace_github/spark-branch-1.0
-export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.0.3-SNAPSHOT-hadoop2.2.0.jar
+#export SPARK_HOME=/home/hadoop/workspace_github/spark-branch-1.0
+#export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.0.3-SNAPSHOT-hadoop2.2.0.jar
 
 # spark-bin-1.0
 #export SPARK_HOME=/opt/spark/spark-1.0.0-bin-hadoop2
