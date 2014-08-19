@@ -4,8 +4,42 @@
 
 cd ${SPARK_HOME}
 
+# 链接 hive配置文件
+cd ${SPARK_HOME}/conf
+ln -s /opt/hive/apache-hive-0.13.1-bin/conf/hive-site.xml hive-site.xml
+
+# -----------------------------------------------------------------------------
+# maven 方式编译
 export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
+
+# hadoop-2.2.0 + yarn 功能
 mvn -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+
+# 编译具有hive功能的
+mvn -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+
+# -----------------------------------------------------------------------------
+# sbt 方式编译
+# 若是编译1.0版本,使用下面语句
+#  SPARK_HIVE=true SPARK_YARN=true SPARK_HADOOP_VERSION=2.2.0 sbt/sbt assembly
+
+# 若是编译1.1版本,使用下面语句
+sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 assembly
+# 编译结果 ~/workspace_github/spark/assembly/target/scala-2.10/spark-assembly-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+
+# -----------------------------------------------------------------------------
+# 编译docs
+
+cd docs
+jekyll
+# 编译结果 /home/hadoop/workspace_github/spark/target/javaunidoc
+# 编译结果 /home/hadoop/workspace_github/spark/target/scala-2.10/unidoc
+
+# -----------------------------------------------------------------------------
+# 构建 idea 环境
+
+./sbt/sbt gen-idea
+# 编译结果 未执行成功!
 
 # -----------------------------------------------------------------------------
 # 启动服务	on YARN

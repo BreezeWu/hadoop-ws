@@ -187,8 +187,9 @@ export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
 # -----------------------------------------------------------------------------
 # scala
+export SCALA_HOME=/opt/scala/scala-2.10.4
 #export SCALA_HOME=/opt/scala/scala-2.11.0
-export SCALA_HOME=/opt/scala/scala-2.11.2
+#export SCALA_HOME=/opt/scala/scala-2.11.2
 export PATH=${SCALA_HOME}/bin:${PATH}
 
 # -----------------------------------------------------------------------------
@@ -347,6 +348,17 @@ export PATH=${H2O_HOME}/bin:${PATH}
 #export AWS_ACCESS_KEY_ID=
 #export AWS_SECRET_ACCESS_KEY=
 # 
+
+# -----------------------------------------------------------------------------
+# goagent 作为linux代理服务器  
+#export http_proxy="http://localhost:8087"
+#export https_proxy="http://localhost:8087"
+
+# 参见 http://my.oschina.net/tsl0922/blog/134755
+# https需要添加CA.crt到系统
+# sudo cp ~/link-goagent/local/CA.crt /usr/share/ca-certificates/goagent.crt
+# sudo chmod a+r /usr/share/ca-certificates/goagent.crt
+# sudo dpkg-reconfigure ca-certificates
 
 # -----------------------------------------------------------------------------
 # git
