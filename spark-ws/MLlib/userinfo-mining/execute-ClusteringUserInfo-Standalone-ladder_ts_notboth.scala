@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // 对用户进行分群: 独立模式
 //		并不依赖于 execute-tryKMeansSmart-ClusterCount.scala 的执行
 //
@@ -11,7 +11,7 @@
 // ****************************************************************************
 // (1)样本数据  暂无样本数据脚本
 // (2)全量数据
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-s98-ladder_ts_notboth.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-ladder_ts_notboth.scala
 
 // 2. 加载函数
 // 聚类函数
@@ -145,7 +145,7 @@ def analyzeParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrix
 // 将 AnalyzeResultMatrix 的簇样本信息写入文件
 def writeAnalyzeResultMatrix_Sample2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String) = {
 	def writeSampleOfAnalyzeResultList(list:List[AnalyzeResultMatrixItem]) = {
-		def writeSampleOfAnalyzeResult(item:AnalyzeResultMatrixItem):AnalyzeResultMatrixItem = {
+		def writeSampleOfAnalyzeResult(item:AnalyzeResultMatrixItem) = {
 			val clusterSet = item.clusterSet
 			val k = clusterSet.k 
 			val filenameID = s"k${k}_${item.item_L1.id}_${item.item_L2.id}"
@@ -245,7 +245,7 @@ def printYearSum(x:YearSum_ParsedRDDMatrixItem) = {
 YearSum_ParsedRDDMatrix.foreach(list => list.foreach(printYearSum))
 
 // ----------------------------------------------------------------------------
-// 计算约用电量合计
+// 计算月用电量合计
 val MonthSum_ParsedRDDMatrix = computeMonthSum_ParsedRDDMatrix_Standalone(ParsedRDDMatrix)
 // 打印出 L1*L2的月用电量合计
 def printMonthSum(x:MonthSum_ParsedRDDMatrixItem) = {

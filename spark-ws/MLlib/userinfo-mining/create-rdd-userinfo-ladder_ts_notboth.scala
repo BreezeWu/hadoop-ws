@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------------
 // 从hive获取数据 S98
 //		
-//	在spark-shell中执行
+//	在spark-shell中执行 
+//      val taskNamePre = "s98" // s01 # 这个会用来构造表名
 //		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-s98-ladder_ts_notboth.scala
 
 //	用户月用电量数据: 
@@ -337,7 +338,7 @@ def ComputeRDDCount_ParsedRDDMatrix(parsedRDDMatrix: List[List[ParsedRDDMatrixIt
 // 计算L1*L2的年用电量合计
 
 // 只对vpm进行计算，不计算vpmIndexed;但结构上保留
-case class YearSum_ParsedRDDRef(yearSum_Vpm: Double], yearSum_VpmIndexed:Double)
+case class YearSum_ParsedRDDRef(yearSum_Vpm: Double, yearSum_VpmIndexed:Double)
 case class YearSum_ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, yearSumRef:YearSum_ParsedRDDRef)
 
 def computeYearSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]): List[List[YearSum_ParsedRDDMatrixItem]] = {	
@@ -389,7 +390,7 @@ def computeYearSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedR
 // 计算L1*L2的月用电量合计
 
 // 只对vpm进行计算，不计算vpmIndexed;但结构上保留
-case class MonthSum_ParsedRDDRef(monthSum_Vpm: Array[Double]], monthSum_VpmIndexed:Array[Double])
+case class MonthSum_ParsedRDDRef(monthSum_Vpm: Array[Double], monthSum_VpmIndexed:Array[Double])
 case class MonthSum_ParsedRDDMatrixItem(item_L1:DataSetRefItem_L1, item_L2: DataSetRefItem_L2, monthSumRef:MonthSum_ParsedRDDRef)
 
 def computeMonthSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]): List[List[MonthSum_ParsedRDDMatrixItem]] = {	
@@ -407,9 +408,9 @@ def computeMonthSum_ParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[Parsed
 			println(s">>>>>>>>>\t 开始计算月用电量合计任务: ${item.item_L1.id}-${item.item_L2.id}: ${dateFormat.format(timeBegin)}")
 			
 			// 计算某一个用户的年用电量
-			def addMonthSum(x:Array[Double], y:Array[Double], ):Array[Double] = {
+			def addMonthSum(x:Array[Double], y:Array[Double]):Array[Double] = {
 				val zipXY = x.zip(y)
-				return zipXy.map(z => z._1 + z._2)
+				return zipXY.map(z => z._1 + z._2)
 			}
 			
 			// 计算结果
