@@ -3,7 +3,7 @@
 //		
 //	在spark-shell中执行 
 //      val taskNamePre = "s98" // s01 # 这个会用来构造表名
-//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-s98-ladder_ts_notboth.scala
+//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-rdd-userinfo-ladder_ts_notboth.scala
 
 //	用户月用电量数据: 
 //			第一层划分，数据四大类						DataSetRef
