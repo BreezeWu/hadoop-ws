@@ -196,7 +196,12 @@ export PATH=${SCALA_HOME}/bin:${PATH}
 # spark
 # spark-1.1
 # hive yarn hadoop-2.2.0
-export SPARK_HOME=/home/hadoop/workspace_github/spark-master-sbt
+#export SPARK_HOME=/home/hadoop/workspace_github/spark-master-sbt
+#export SPARK_HOME=/home/hadoop/workspace_github/spark-master-maven
+#export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+
+# spark-1.1.0-SNAPSHOT-20140718
+export SPARK_HOME=/home/hadoop/workspace_github/spark-1.0.0-SNAPSHOT-20140718
 export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
 
 # spark-1.0
