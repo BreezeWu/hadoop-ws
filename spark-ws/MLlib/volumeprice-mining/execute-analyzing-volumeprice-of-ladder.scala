@@ -66,24 +66,11 @@ def computeYearMoney(v:Double):YearMoney = {
 
 // ----------------------------------------------------------------------------
 // 3. 从RDD中计算 VolumePriceInfoItem
-val rdd = mappedData_volumeprice_of_ladder
-
-val item = rdd.first
-val index = item.index
-val data = item.data
-
+val originRDD = mappedData_volumeprice_of_ladder
 // (1) 将数据变成key-value格式: cons_no是key => org.apache.spark.rdd.RDD[(String, (String, Array[Double]))]
-val pairRDD = rdd.map(x => (x.index.cons_no, Tuple2(x.index.ym, x.data)))
-// 
-
-val first = pairRDD.first
-
+val pairRDD = originRDD.map(x => (x.index.cons_no, Tuple2(x.index.ym, x.data)))
 // (2) 将 pairRDD 按照 cons_no 分组  =>  org.apache.spark.rdd.RDD[(String, Iterable[(String, Array[Double])])]
 val groupedRDD = pairRDD.groupByKey().cache
-
-val first = groupedRDD.first
-val item = first
-
 // (3) 对分组数据计算出 VolumePriceInfoItem
 // 函数: 对每一个用户的数据 (String, Iterable[(String, Array[Double])]), 计算 VolumePriceInfoItem
 def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])])):YearVolumePriceInfoItem = {
