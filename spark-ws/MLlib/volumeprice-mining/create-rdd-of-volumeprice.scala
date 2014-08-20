@@ -12,6 +12,8 @@
  * 引入
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice.scala
  */
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
 
 val datasetID = "s01"
 // 阶梯电量电价表
@@ -52,6 +54,28 @@ val rddFromHive_volumeprice_of_ladder  = hiveContext.hql(hivesql_of_volumeprice_
 val rddFromHive_volumeprice_of_ts  = hiveContext.hql(hivesql_of_volumeprice_of_ts)
 
 // ----------------------------------------------------------------------------
+/*
+// 创建新表
+val createtable_of_volumeprice_of_ladder = s"CREATE TABLE BIGDATA_VOLUMEPRICE_${datasetID}_of_ladder AS ${hivesql_of_volumeprice_of_ladder}"
+val result_createtable_of_ladder = hiveContext.hql(createtable_of_volumeprice_of_ladder)
+
+val createtable_of_volumeprice_of_ts = s"CREATE TABLE BIGDATA_VOLUMEPRICE_${datasetID}_of_ts AS ${hivesql_of_volumeprice_of_ts}"
+val result_createtable_of_ts = hiveContext.hql(createtable_of_volumeprice_of_ts)
+
+// 从创建的新表那里获得数据
+val sql_of_volumeprice_of_ladder = s"select * from BIGDATA_VOLUMEPRICE_${datasetID}_of_ladder"
+val rddFromHive_volumeprice_of_ladder = hiveContext.hql(sql_of_volumeprice_of_ladder)
+
+val sql_of_volumeprice_of_ts = s"select * from BIGDATA_VOLUMEPRICE_${datasetID}_of_ts"
+val rddFromHive_volumeprice_of_ts = hiveContext.hql(sql_of_volumeprice_of_ts)
+*/
+// ----------------------------------------------------------------------------
+// 从 SchemaRDD(rddFromHive) 变换为 MappedRDD:org.apache.spark.rdd.RDD[VolumePriceItemLadder 或者 VolumePriceItemTs]
+val mappedData_volumeprice_of_ladder = rddFromHive_volumeprice_of_ladder.map(r => row2VolumePriceItemLadder(r))
+val mappedData_volumeprice_of_ts = rddFromHive_volumeprice_of_ts.map(r => row2VolumePriceItemTs(r))
+
+/*
+// ----------------------------------------------------------------------------
 // 从 SchemaRDD(rddFromHive) 变换为 MappedRDD:org.apache.spark.rdd.RDD[Item_of_*]
 val mappedData_volumeprice_of_ladder = rddFromHive_volumeprice_of_ladder.map(r => row2Item_of_ladder(r))
 val mappedData_volumeprice_of_ts = rddFromHive_volumeprice_of_ts.map(r => row2Item_of_ts(r))
@@ -64,6 +88,5 @@ val indexData_volumeprice_of_ts = mappedData_volumeprice_of_ts.map(x => x.conver
 // 选取 data, 转变为Vector, 构建matrices
 val parsedData_volumeprice_of_ladder = indexData_volumeprice_of_ladder.map(x => Vectors.dense(x.data)).cache
 val parsedData_volumeprice_of_ts = indexData_volumeprice_of_ts.map(x => Vectors.dense(x.data)).cache
-
-
+*/
 

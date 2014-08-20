@@ -5,71 +5,51 @@
  * 阶梯电量电价表, Item_of_ladder
  * 分时电量电价表, Item_of_ts
  *
+ * 注意:  必须使用 spark-1.0.0-SNAPSHOT-20140718.tar.gz 这个版本
+ *
  * 引入
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
  */
  
 // index + data
-case class IndexData(index:Array[String], data:Array[Double])
+case class IndexVolumePriceItem(cons_no:String, ym:String)
+case class VolumePriceItemLadder(index:IndexVolumePriceItem, data:Array[Double])
+case class VolumePriceItemTs(index:IndexVolumePriceItem, data:Array[Double])
 
-// 阶梯电量电价表: 用户号, 年月, 一阶电量, 一阶电价, 二阶电量, 二阶电价, 三阶电量, 三阶电价,
-case class Item_of_ladder(cons_no:String, ym:String, volume1:Int, price1:Double, 
-    volume2:Int, price2:Double, volume3:Int, price3:Double) {
-    
-    // 转换为 index + data
-    def convert2IndexData():IndexData = {
-        IndexData(Array(cons_no,ym), Array(volume1, price1, volume2, price2, volume3, price3))
-    }
-}
-    
-// 分时电量电价表: 用户号, 年月, 尖峰电量, 尖峰电价, 峰电量, 峰电价, 平电量, 平电价, 谷电量, 谷电价, 脊骨电量, 脊骨电价
-// 当前数据没有 尖峰和脊骨 信息
-case class Item_of_ts(cons_no:String, ym:String, 
-    volume_top:Int, price_top:Double, 
-    volume_high:Int, price_high:Double, volume_median:Int, price_median:Double, volume_low:Int, price_low:Double, 
-    volume_bottom:Int, price_bottom:Double) {
-    
-    // 转换为 index + data
-    def convert2IndexData():IndexData = {
-        IndexData(
-            Array(cons_no,ym), 
-            Array(volume_top, price_top,
-                volume_high, price_high, volume_median, price_median, volume_low, price_low, 
-                volume_bottom, price_bottom)
-        )
-    }
+// 转换函数
+// row --> VolumePriceItemLadder
+def row2VolumePriceItemLadder(p:org.apache.spark.sql.Row) = {
+	// 定义函数:对一个org.apache.spark.sql.Row中每一个列的处理函数
+	// 函数原型为: g: (y: Any)Double
+	def g(y:Any):Double = y match {
+		case null => 0			// 将null转换为0
+		case i:Int => i.toDouble	// 将Int转换为Double 
+		case d:Double => d
+	}
+	/*
+	VolumePriceItemLadder(
+	    IndexVolumePriceItem(p(0).toString,p(1).toString),
+	    Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)))
+	)*/
+	val p_ = p
+	VolumePriceItemLadder(
+	    IndexVolumePriceItem(p_(0).toString,p_(1).toString),
+	    Array(g(p_(2)), g(p_(3)), g(p_(4)), g(p_(5)), g(p_(6)), g(p_(7)))	    
+	)
 }
 
-// ----------------------------------------------------------------------------
-/**
- * 从 hive hiveContext row 转换到 case class
- */
-def Any2String(x:Any):String = x match {
-    case null => ""			// 将null转换为0
-    case s:String => s
+// row --> VolumePriceItem_Ts
+def row2VolumePriceItemTs(p:org.apache.spark.sql.Row) = {
+	// 定义函数:对一个org.apache.spark.sql.Row中每一个列的处理函数
+	// 函数原型为: g: (y: Any)Double
+	def g(y:Any):Double = y match {
+		case null => 0			// 将null转换为0
+		case i:Int => i.toDouble	// 将Int转换为Double 
+		case d:Double => d
+	}
+	VolumePriceItemTs(
+	    IndexVolumePriceItem(p(0).toString,p(1).toString),
+	    Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)))
+	)
 }
-def Any2Int(x:Any):Int = x match {
-    case null => 0			// 将null转换为0
-    case i:Int => i
-}
-def Any2Double(x:Any):Double = x match {
-    case null => 0			// 将null转换为0.0
-    case i:Int => i.toDouble
-    case d:Double => d
-}
-
-def row2Item_of_ladder(r:org.apache.spark.sql.Row):Item_of_ladder = {
-    Item_of_ladder(Any2String(r(0)), Any2String(r(1)),
-        Any2Int(r(2)), Any2Double(r(3)), Any2Int(r(4)), Any2Double(r(5)), Any2Int(r(6)), Any2Double(r(7))
-        )
-}
-def row2Item_of_ts(r:org.apache.spark.sql.Row):Item_of_ts = {   
-    Item_of_ts(Any2String(r(0)), Any2String(r(1)),
-        Any2Int(r(2)), Any2Double(r(3)),
-        Any2Int(r(4)), Any2Double(r(5)), Any2Int(r(6)), Any2Double(r(7)), Any2Int(r(8)), Any2Double(r(9)),
-        Any2Int(r(10)), Any2Double(r(11))
-        )
-}
-
-
 
