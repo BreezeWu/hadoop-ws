@@ -12,13 +12,14 @@
  * 引入依赖
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
  * 引入并执行
+ *      val datasetID = "s01" // s98
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-2.getmappedData.scala
  */
 
 //引入依赖
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
 
-val datasetID = "s01"
+//val datasetID = "s01"
 // 阶梯电量电价表
 val table_volumeprice_of_ladder = s"bigdata_volume_of_ladder_${datasetID}"
 // 分时电量电价表

@@ -1,27 +1,43 @@
 // ----------------------------------------------------------------------------
 /**
  * 执行分析: 阶梯电量电
+ * 一. 计算 yearVolumePriceInfoRDD
+ * 二. 基于yearVolumePriceInfoRDD, 创建表 "VolumePriceInfo_of_Ladder"
  * 
  * 阶梯电量电价, 变量 mappedData_volumeprice_of_ladder
  * 分时电量电价, 变量 mappedData_volumeprice_of_ts
  *
  * 引入依赖
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
+ *      val datasetID = "s01" // s98
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-2.getmappedData.scala
  * 引入并执行
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/execute-analyzing-volumeprice-of-ladder.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-1.computeYearVolumePriceInfo.scala
  *
  */
 
+// ****************************************************************************
+// 一. 计算 yearVolumePriceInfoRDD
+// ****************************************************************************
 // ----------------------------------------------------------------------------
 // 1. 每个用户的计算结果
 
-// 一年累计 三档+total
+// 单用户信息
+// 月用电量 三档
 case class MonthVolume(v1:Double, v2:Double, v3:Double)
+
+// 累计信息
+// 一年累计用电量 三档
 case class YearVolume(v1:Double, v2:Double, v3:Double)
-case class YearMoney(total:Double, money1:Double, money2:Double, money3:Double)
 // 一年分档发生的月份: mL0是第一个用电量不为0的月份; mL1是达到第一档的月份; mL2是达到第二档的月份
 case class YearSplit(mL0:String = null, mL1:String = null, mL2:String = null)
+// 一年用电量的费用
+case class YearMoney(total:Double, money1:Double, money2:Double, money3:Double)
+def buildYearMoney(money1:Double, money2:Double, money3:Double):YearMoney = {
+    val total = money1 + money2 + money3
+    YearMoney(total, money1, money2, money3)
+}
+
 // id即cons_no
 case class YearVolumePriceInfoItem(id:String, yearVolume:YearVolume, yearSplit:YearSplit, yearMoney:YearMoney)
 
@@ -66,11 +82,12 @@ def computeYearMoney(v:Double):YearMoney = {
 
 // ----------------------------------------------------------------------------
 // 3. 从RDD中计算 VolumePriceInfoItem
+// 3.1. 从RDD中计算 VolumePriceInfoItem : 定义函数 computeYearVolumePriceInfo
 val originRDD = mappedData_volumeprice_of_ladder
 // (1) 将数据变成key-value格式: cons_no是key => org.apache.spark.rdd.RDD[(String, (String, Array[Double]))]
 val pairRDD = originRDD.map(x => (x.index.cons_no, Tuple2(x.index.ym, x.data)))
 // (2) 将 pairRDD 按照 cons_no 分组  =>  org.apache.spark.rdd.RDD[(String, Iterable[(String, Array[Double])])]
-val groupedRDD = pairRDD.groupByKey().cache
+val groupedRDD = pairRDD.groupByKey()
 // (3) 对分组数据计算出 VolumePriceInfoItem
 // 函数: 对每一个用户的数据 (String, Iterable[(String, Array[Double])]), 计算 VolumePriceInfoItem
 def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])])):YearVolumePriceInfoItem = {
@@ -162,7 +179,39 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
 }
 
 // ----------------------------------------------------------------------------
-// 3. 从RDD中计算 VolumePriceInfoItem 执行计算
+// 3.2. 从RDD中计算 VolumePriceInfoItem : 调用 computeYearVolumePriceInfo
 val yearVolumePriceInfoRDD = groupedRDD.map(x => computeYearVolumePriceInfo(x))
 //val result = yearVolumePriceInfoRDD.take(40)
+
+// ****************************************************************************
+//  二. 基于yearVolumePriceInfoRDD, 创建表 VolumePriceInfo
+// ****************************************************************************
+// ----------------------------------------------------------------------------
+// 数据样本
+/*
+YearVolumePriceInfoItem(0259649786,YearVolume(1976.0,0.0,0.0),YearSplit(201302,null,null),YearMoney(988.0,988.0,0.0,0.0))
+ YearVolumePriceInfoItem(0268425993,YearVolume(2591.0,1900.0,239.0),YearSplit(201301,201303,201307),YearMoney(2836.0,1080.0,660.0,1096.0))
+ */
+
+// ----------------------------------------------------------------------------
+// 准备SQLContext环境, 然后后续就可以使用 rdd.registerTempTable("tablename")来创建虚拟表
+// 参见spark api docs中的 SchemaRDD
+import org.apache.spark.sql.SQLContext
+val sqlContext = new SQLContext(sc)
+// Importing the SQL context gives access to all the SQL functions and implicit conversions.
+import sqlContext._
+
+// Any RDD containing case classes can be registered as a table.  The schema of the table is
+// automatically inferred using scala reflection.
+// rdd.registerTempTable("records")
+// ----------------------------------------------------------------------------
+// 注册为表 => ExistingRdd [id#28,yearVolume#29,yearSplit#30,yearMoney#31]
+val tablenameOfVolumePriceInfo_of_Ladder = "VolumePriceInfo_of_Ladder"
+//yearVolumePriceInfoRDD.registerTempTable(tablenameOfVolumePriceInfo_of_Ladder) // 新API
+yearVolumePriceInfoRDD.registerAsTable(tablenameOfVolumePriceInfo_of_Ladder)   // 旧API
+
+// 查看表的数据结构
+// val records = sqlContext.sql("SELECT * FROM VolumePriceInfo")
+// record
+
 
