@@ -286,4 +286,52 @@ val yearVolumePriceRangeIndexRDD = yearVolumePriceInfoRDD.map(x => map2RangeInde
 val s1 = yearVolumePriceInfoRDD.take(1000)
 val s2 = s1.map(x => map2RangeIndex(x))
 
+/*
+scala> yearVolumePriceRangeIndexRDD.first
+14/08/21 16:34:15 INFO spark.SparkContext: Starting job: first at <console>:147
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Got job 24 (first at <console>:147) with 1 output partitions (allowLocal=true)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Final stage: Stage 47(first at <console>:147)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Parents of final stage: List(Stage 48)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Missing parents: List()
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting Stage 47 (MappedRDD[31] at map at <console>:144), which has no missing parents
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting 1 missing tasks from Stage 47 (MappedRDD[31] at map at <console>:144)
+14/08/21 16:34:15 INFO cluster.YarnClientClusterScheduler: Adding task set 47.0 with 1 tasks
+14/08/21 16:34:15 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2226 on executor 7: master-hadoop (PROCESS_LOCAL)
+14/08/21 16:34:15 INFO scheduler.TaskSetManager: Serialized task 47.0:0 as 16667 bytes in 1 ms
+14/08/21 16:34:16 WARN scheduler.TaskSetManager: Lost TID 2226 (task 47.0:0)
+14/08/21 16:34:16 WARN scheduler.TaskSetManager: Loss was due to java.lang.ExceptionInInitializerError
+java.lang.ExceptionInInitializerError
+	at $line93.$read$$iwC.<init>(<console>:6)
+	at $line93.$read.<init>(<console>:43)
+	at $line93.$read$.<init>(<console>:47)
+	at $line93.$read$.<clinit>(<console>)
+	at $line142.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.map2RangeIndex(<console>:112)
+	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
+	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
+	at scala.collection.Iterator$$anon$11.next(Iterator.scala:328)
+	at scala.collection.Iterator$$anon$10.next(Iterator.scala:312)
+	at scala.collection.Iterator$class.foreach(Iterator.scala:727)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1157)
+	at scala.collection.generic.Growable$class.$plus$plus$eq(Growable.scala:48)
+	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:103)
+	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:47)
+	at scala.collection.TraversableOnce$class.to(TraversableOnce.scala:273)
+	at scala.collection.AbstractIterator.to(Iterator.scala:1157)
+	at scala.collection.TraversableOnce$class.toBuffer(TraversableOnce.scala:265)
+	at scala.collection.AbstractIterator.toBuffer(Iterator.scala:1157)
+	at scala.collection.TraversableOnce$class.toArray(TraversableOnce.scala:252)
+	at scala.collection.AbstractIterator.toArray(Iterator.scala:1157)
+	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
+	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
+	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
+	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:112)
+	at org.apache.spark.scheduler.Task.run(Task.scala:51)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:187)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+14/08/21 16:34:16 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2227 on executor 8: master-hadoop (PROCESS_LOCAL)
+*/
+
 
