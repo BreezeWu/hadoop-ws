@@ -1,4 +1,4 @@
-// ----------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------
 /**
  * 执行统计分析: 阶梯电量电
  * 
@@ -13,13 +13,62 @@
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-2.getmappedData.scala
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-1.computeYearVolumePriceInfo.scala
  * 引入并执行
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-01.rangeYear-v1.scala
  *
  */
+// 样本数据测试
+//val s1 = yearVolumePriceInfoRDD.take(1000)
+//val s2 = s1.map(x => map2RangeIndex(x))
 
-// ****************************************************************************
-// 一. 求最小最大 YearVolume, YearSplit, YearMoney => extremeYearVolumePriceInfo
-// ****************************************************************************
+/*
+   这个版本执行 analyzing-ladder-2.statistic-02.distribution.scala 会报下面错误
+scala> yearVolumePriceRangeIndexRDD.first
+14/08/21 16:34:15 INFO spark.SparkContext: Starting job: first at <console>:147
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Got job 24 (first at <console>:147) with 1 output partitions (allowLocal=true)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Final stage: Stage 47(first at <console>:147)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Parents of final stage: List(Stage 48)
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Missing parents: List()
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting Stage 47 (MappedRDD[31] at map at <console>:144), which has no missing parents
+14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting 1 missing tasks from Stage 47 (MappedRDD[31] at map at <console>:144)
+14/08/21 16:34:15 INFO cluster.YarnClientClusterScheduler: Adding task set 47.0 with 1 tasks
+14/08/21 16:34:15 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2226 on executor 7: master-hadoop (PROCESS_LOCAL)
+14/08/21 16:34:15 INFO scheduler.TaskSetManager: Serialized task 47.0:0 as 16667 bytes in 1 ms
+14/08/21 16:34:16 WARN scheduler.TaskSetManager: Lost TID 2226 (task 47.0:0)
+14/08/21 16:34:16 WARN scheduler.TaskSetManager: Loss was due to java.lang.ExceptionInInitializerError
+java.lang.ExceptionInInitializerError
+	at $line93.$read$$iwC.<init>(<console>:6)
+	at $line93.$read.<init>(<console>:43)
+	at $line93.$read$.<init>(<console>:47)
+	at $line93.$read$.<clinit>(<console>)
+	at $line142.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.map2RangeIndex(<console>:112)
+	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
+	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
+	at scala.collection.Iterator$$anon$11.next(Iterator.scala:328)
+	at scala.collection.Iterator$$anon$10.next(Iterator.scala:312)
+	at scala.collection.Iterator$class.foreach(Iterator.scala:727)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1157)
+	at scala.collection.generic.Growable$class.$plus$plus$eq(Growable.scala:48)
+	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:103)
+	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:47)
+	at scala.collection.TraversableOnce$class.to(TraversableOnce.scala:273)
+	at scala.collection.AbstractIterator.to(Iterator.scala:1157)
+	at scala.collection.TraversableOnce$class.toBuffer(TraversableOnce.scala:265)
+	at scala.collection.AbstractIterator.toBuffer(Iterator.scala:1157)
+	at scala.collection.TraversableOnce$class.toArray(TraversableOnce.scala:252)
+	at scala.collection.AbstractIterator.toArray(Iterator.scala:1157)
+	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
+	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
+	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
+	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:112)
+	at org.apache.spark.scheduler.Task.run(Task.scala:51)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:187)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+14/08/21 16:34:16 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2227 on executor 8: master-hadoop (PROCESS_LOCAL)
+*/
+
 // ----------------------------------------------------------------------------
 // 数据样本
 /*
@@ -27,6 +76,36 @@ YearVolumePriceInfoItem(0259649786,YearVolume(1976.0,0.0,0.0),YearSplit(201302,n
  YearVolumePriceInfoItem(0268425993,YearVolume(2591.0,1900.0,239.0),YearSplit(201301,201303,201307),YearMoney(2836.0,1080.0,660.0,1096.0))
  */
 
+// ****************************************************************************
+//  一. 基于yearVolumePriceInfoRDD, 创建表 VolumePriceInfo
+// ****************************************************************************
+// ----------------------------------------------------------------------------
+// 创建表 VolumePriceInfo
+
+// ----------------------------------------------------------------------------
+// 准备SQLContext环境, 然后后续就可以使用 rdd.registerTempTable("tablename")来创建虚拟表
+// 参见spark api docs中的 SchemaRDD
+import org.apache.spark.sql.SQLContext
+val sqlContext = new SQLContext(sc)
+// Importing the SQL context gives access to all the SQL functions and implicit conversions.
+import sqlContext._
+
+// Any RDD containing case classes can be registered as a table.  The schema of the table is
+// automatically inferred using scala reflection.
+// rdd.registerTempTable("records")
+// ----------------------------------------------------------------------------
+// 注册为表 => ExistingRdd [id#28,yearVolume#29,yearSplit#30,yearMoney#31]
+val tablenameOfVolumePriceInfo_of_Ladder = "VolumePriceInfo_of_Ladder"
+//yearVolumePriceInfoRDD.registerTempTable(tablenameOfVolumePriceInfo_of_Ladder) // 新API
+yearVolumePriceInfoRDD.registerAsTable(tablenameOfVolumePriceInfo_of_Ladder)   // 旧API
+
+// 查看表的数据结构
+// val records = sqlContext.sql("SELECT * FROM VolumePriceInfo")
+// record
+
+// ****************************************************************************
+// 二. 求最小最大 YearVolume, YearSplit, YearMoney => extremeYearVolumePriceInfo
+// ****************************************************************************
 // ----------------------------------------------------------------------------
 // 最小最大的年电量
 val minYearVolumeCols = "min(yearVolume.v1),min(yearVolume.v2),min(yearVolume.v3)"  // 其实不用计算,应该就是0
@@ -206,132 +285,4 @@ val rangeYearMoney = buildRangeYearMoney(extremeYearVolumePriceInfo.min.yearMone
 val broadcastRef_rangeYearVolume = sc.broadcast(rangeYearVolume)
 val broadcastRef_rangeYearSplit = sc.broadcast(rangeYearSplit)
 val broadcastRef_rangeYearMoney = sc.broadcast(rangeYearVolume)
-// ****************************************************************************
-//  三. 基于 yearVolumePriceInfoRDD , 分别在区间 rangeYearVolume, rangeYearSplit, rangeYearMoney 执行统计
-// ****************************************************************************
-// ----------------------------------------------------------------------------
-// 样本数据
-// val first = yearVolumePriceInfoRDD.first
-// first: YearVolumePriceInfoItem = YearVolumePriceInfoItem(7130391510,YearVolume(123.0,0.0,0.0),YearSplit(201302,null,null),YearMoney(61.5,61.5,0.0,0.0))
-
-// ----------------------------------------------------------------------------
-// 求一个值在Range中位置 假定为"左闭右开区间"
-// r.start r.last r.step r.numRangeElements r.indices
-def GetRangeIndex(r:scala.collection.immutable.Range, d:Double):Int = {
-    val start = r.start
-    val last = r.last
-    val step = r.step
-    val numRangeElements = r.numRangeElements
-    
-    if (d < start) return -1
-    if (d > last) return numRangeElements
-    
-    val quotient = ((d - start) / step).toInt
-    val remainder = (d - start) % step
-    
-    // 区间的索引从1开始
-    val index = quotient + 1
-    //val index = if (remainder == 0) quotient else quotient
-    
-    return index
-}
-
-def GetRangeIndex_YearSplit(r:scala.collection.immutable.Range, ym:String):Int = {
-    if (null == ym) return -1
-    
-    val index = r.indexOf(ym.toInt)
-    // 区间的索引从1开始
-    val finalIndex = index+1
-    
-    return finalIndex
-}
-// ----------------------------------------------------------------------------
-// 将 yearVolumePriceInfoRDD 变换为 对应的Range的区间索引 : 数据准备与函数定义
-
-case class RangeIndexItem(i1:Int, i2:Int, i3:Int)
-//case class YearVolumePriceInfoItem(id:String, yearVolume:YearVolume, yearSplit:YearSplit, yearMoney:YearMoney)
-case class YearVolumePriceInfoItem_RangeIndex(id:String, yearVolume:RangeIndexItem, yearSplit:RangeIndexItem, yearMoney:RangeIndexItem)
-
-def map2RangeIndex(item:YearVolumePriceInfoItem):YearVolumePriceInfoItem_RangeIndex = {
-    val id = item.id
-    val yearVolume = item.yearVolume
-    val yearSplit = item.yearSplit
-    val yearMoney = item.yearMoney
-    
-    val rangeYearVolume = broadcastRef_rangeYearVolume.value
-    val rangeYearSplit = broadcastRef_rangeYearSplit.value
-    val rangeYearMoney = broadcastRef_rangeYearMoney.value
-    
-    val rangeIndex_yearVolume = RangeIndexItem(
-            GetRangeIndex(rangeYearVolume.r1, yearVolume.v1),
-            GetRangeIndex(rangeYearVolume.r2, yearVolume.v2),
-            GetRangeIndex(rangeYearVolume.r3, yearVolume.v3)  )
-    val rangeIndex_yearSplit = RangeIndexItem(
-            GetRangeIndex_YearSplit(rangeYearSplit.r1, yearSplit.mL0),
-            GetRangeIndex_YearSplit(rangeYearSplit.r2, yearSplit.mL1),
-            GetRangeIndex_YearSplit(rangeYearSplit.r3, yearSplit.mL2)  )
-    val rangeIndex_yearMoney = RangeIndexItem(
-            GetRangeIndex(rangeYearMoney.r1, yearMoney.money1),
-            GetRangeIndex(rangeYearMoney.r2, yearMoney.money2),
-            GetRangeIndex(rangeYearMoney.r3, yearMoney.money3)  )
-    
-    return YearVolumePriceInfoItem_RangeIndex(id, rangeIndex_yearVolume, rangeIndex_yearSplit, rangeIndex_yearMoney)
-}
-
-// ----------------------------------------------------------------------------
-// 将 yearVolumePriceInfoRDD 变换为 对应的Range的区间索引 : 执行函数
-val yearVolumePriceRangeIndexRDD = yearVolumePriceInfoRDD.map(x => map2RangeIndex(x))
-
-// 样本数据测试
-val s1 = yearVolumePriceInfoRDD.take(1000)
-val s2 = s1.map(x => map2RangeIndex(x))
-
-/*
-scala> yearVolumePriceRangeIndexRDD.first
-14/08/21 16:34:15 INFO spark.SparkContext: Starting job: first at <console>:147
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Got job 24 (first at <console>:147) with 1 output partitions (allowLocal=true)
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Final stage: Stage 47(first at <console>:147)
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Parents of final stage: List(Stage 48)
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Missing parents: List()
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting Stage 47 (MappedRDD[31] at map at <console>:144), which has no missing parents
-14/08/21 16:34:15 INFO scheduler.DAGScheduler: Submitting 1 missing tasks from Stage 47 (MappedRDD[31] at map at <console>:144)
-14/08/21 16:34:15 INFO cluster.YarnClientClusterScheduler: Adding task set 47.0 with 1 tasks
-14/08/21 16:34:15 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2226 on executor 7: master-hadoop (PROCESS_LOCAL)
-14/08/21 16:34:15 INFO scheduler.TaskSetManager: Serialized task 47.0:0 as 16667 bytes in 1 ms
-14/08/21 16:34:16 WARN scheduler.TaskSetManager: Lost TID 2226 (task 47.0:0)
-14/08/21 16:34:16 WARN scheduler.TaskSetManager: Loss was due to java.lang.ExceptionInInitializerError
-java.lang.ExceptionInInitializerError
-	at $line93.$read$$iwC.<init>(<console>:6)
-	at $line93.$read.<init>(<console>:43)
-	at $line93.$read$.<init>(<console>:47)
-	at $line93.$read$.<clinit>(<console>)
-	at $line142.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC.map2RangeIndex(<console>:112)
-	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
-	at $line143.$read$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$iwC$$anonfun$1.apply(<console>:144)
-	at scala.collection.Iterator$$anon$11.next(Iterator.scala:328)
-	at scala.collection.Iterator$$anon$10.next(Iterator.scala:312)
-	at scala.collection.Iterator$class.foreach(Iterator.scala:727)
-	at scala.collection.AbstractIterator.foreach(Iterator.scala:1157)
-	at scala.collection.generic.Growable$class.$plus$plus$eq(Growable.scala:48)
-	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:103)
-	at scala.collection.mutable.ArrayBuffer.$plus$plus$eq(ArrayBuffer.scala:47)
-	at scala.collection.TraversableOnce$class.to(TraversableOnce.scala:273)
-	at scala.collection.AbstractIterator.to(Iterator.scala:1157)
-	at scala.collection.TraversableOnce$class.toBuffer(TraversableOnce.scala:265)
-	at scala.collection.AbstractIterator.toBuffer(Iterator.scala:1157)
-	at scala.collection.TraversableOnce$class.toArray(TraversableOnce.scala:252)
-	at scala.collection.AbstractIterator.toArray(Iterator.scala:1157)
-	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
-	at org.apache.spark.rdd.RDD$$anonfun$27.apply(RDD.scala:1056)
-	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
-	at org.apache.spark.SparkContext$$anonfun$runJob$4.apply(SparkContext.scala:1096)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:112)
-	at org.apache.spark.scheduler.Task.run(Task.scala:51)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:187)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
-	at java.lang.Thread.run(Thread.java:745)
-14/08/21 16:34:16 INFO scheduler.TaskSetManager: Starting task 47.0:0 as TID 2227 on executor 8: master-hadoop (PROCESS_LOCAL)
-*/
-
 

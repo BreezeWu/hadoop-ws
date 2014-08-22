@@ -51,8 +51,8 @@ val rddFromHive_volumeprice_of_ts = hiveContext.hql(sql_of_volumeprice_of_ts)
 val mappedData_volumeprice_of_ladder = rddFromHive_volumeprice_of_ladder.map(r => row2VolumePriceItemLadder(r))
 val mappedData_volumeprice_of_ts = rddFromHive_volumeprice_of_ts.map(r => row2VolumePriceItemTs(r))
 
-val count_of_ladder = mappedData_volumeprice_of_ladder.count
-val count_of_ts = mappedData_volumeprice_of_ts.count
+//val count_of_ladder = mappedData_volumeprice_of_ladder.count
+//val count_of_ts = mappedData_volumeprice_of_ts.count
 
 /*
 // ----------------------------------------------------------------------------

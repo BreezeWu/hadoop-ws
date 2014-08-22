@@ -11,6 +11,7 @@
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/transformations-of-volumeprice.scala
  *      val datasetID = "s01" // s98
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-2.getmappedData.scala
+ *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-1.computeYearVolumePriceInfo.scala
  * 引入并执行
  *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-1.computeYearVolumePriceInfo.scala
  *
@@ -104,15 +105,20 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
     // sortedList: List[(String, Array[Double])] = List((201301,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201302,Array(11.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201303,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201304,Array(44.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201305,Array(26.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201306,Array(35.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201307,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201308,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201309,Array(7.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201310,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201311,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)), (201312,Array(0.0, 0.5, 0.0, 0.55, 0.0, 0.8)))
 
     // 空 accumulator: totalVolume,YearSplit
+    val nullAcc:(YearVolume, YearSplit) = null
     val zeroAcc = Tuple2(YearVolume(0.0, 0.0, 0.0),YearSplit(null:String,null:String,null:String))
     val zeroItem = (null:String, MonthVolume(0.0, 0.0, 0.0))
     val zeroObj = Tuple2(zeroItem,  zeroAcc)
     
+    // ------------------------------------------------------------------------
     // 为每一个成员添加 zeroAcc, 并且只获取其月电量信息
     def item2Tuple2(x:(String, Array[Double])) = {
         Tuple2(x._1, MonthVolume((x._2)(0), (x._2)(2), (x._2)(4)))
     }
-    val zeroAccList = sortedList.map(x => Tuple2(item2Tuple2(x),zeroAcc))
+    
+    //val zeroAccList = sortedList.map(x => Tuple2(item2Tuple2(x),zeroAcc))
+    // 因为mergeCombiner函数从来不使用右边的 (YearVolume, YearSplit), 为了降低内存使用,将上面语句修改为
+    val zeroAccList = sortedList.map(x => Tuple2(item2Tuple2(x),nullAcc))
     
     // ------------------------------------------------------------------------
     // 从左向右执行计算 foldLeft[B](z: B)(op: (A, B) => B): B
@@ -122,7 +128,7 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
         // val x = ((201305,MonthVolume(26.0,0.0,0.0)),(YearVolume(0.0,0.0,0.0),YearSplit(null,null,null)))
         // val y = ((201306,MonthVolume(35.0,0.0,0.0)),(YearVolume(0.0,0.0,0.0),YearSplit(null,null,null)))
         
-        //val item_x = x._1
+        //val item_x = x._1             // 不取左边参数的item
         val acc_x = x._2        
         //val itemYm_x = item_x._1      // 年月
         //val itemMonthVolume_x = item_x._2   // 该月份中的阶梯电价信息
@@ -130,7 +136,7 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
         val accYearSplit_x = acc_x._2   // YearSplit
         
         val item_y = y._1
-        //val acc_y = y._2        
+        //val acc_y = y._2              // 不取右边参数的Accumulator
         val itemYm_y = item_y._1      // 年月
         val itemMonthVolume_y = item_y._2   // 该月份中的阶梯电价信息
         //val accYearVolume_y = acc_y._1  // 累计用电量
@@ -159,8 +165,10 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
         val newYearSplit = YearSplit(mL0_, mL1_, mL2_)
         
         // 结果对象
+        // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item
+        val nullItem:(String, MonthVolume) = null
         val newAcc = Tuple2(newAccYearVolume,newYearSplit)
-        val newObj = Tuple2(item_y, newAcc)
+        val newObj = Tuple2(nullItem, newAcc) // val newObj = Tuple2(item_y, newAcc)
         return newObj
     }
     
@@ -182,36 +190,3 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
 // 3.2. 从RDD中计算 VolumePriceInfoItem : 调用 computeYearVolumePriceInfo
 val yearVolumePriceInfoRDD = groupedRDD.map(x => computeYearVolumePriceInfo(x))
 //val result = yearVolumePriceInfoRDD.take(40)
-
-// ****************************************************************************
-//  二. 基于yearVolumePriceInfoRDD, 创建表 VolumePriceInfo
-// ****************************************************************************
-// ----------------------------------------------------------------------------
-// 数据样本
-/*
-YearVolumePriceInfoItem(0259649786,YearVolume(1976.0,0.0,0.0),YearSplit(201302,null,null),YearMoney(988.0,988.0,0.0,0.0))
- YearVolumePriceInfoItem(0268425993,YearVolume(2591.0,1900.0,239.0),YearSplit(201301,201303,201307),YearMoney(2836.0,1080.0,660.0,1096.0))
- */
-
-// ----------------------------------------------------------------------------
-// 准备SQLContext环境, 然后后续就可以使用 rdd.registerTempTable("tablename")来创建虚拟表
-// 参见spark api docs中的 SchemaRDD
-import org.apache.spark.sql.SQLContext
-val sqlContext = new SQLContext(sc)
-// Importing the SQL context gives access to all the SQL functions and implicit conversions.
-import sqlContext._
-
-// Any RDD containing case classes can be registered as a table.  The schema of the table is
-// automatically inferred using scala reflection.
-// rdd.registerTempTable("records")
-// ----------------------------------------------------------------------------
-// 注册为表 => ExistingRdd [id#28,yearVolume#29,yearSplit#30,yearMoney#31]
-val tablenameOfVolumePriceInfo_of_Ladder = "VolumePriceInfo_of_Ladder"
-//yearVolumePriceInfoRDD.registerTempTable(tablenameOfVolumePriceInfo_of_Ladder) // 新API
-yearVolumePriceInfoRDD.registerAsTable(tablenameOfVolumePriceInfo_of_Ladder)   // 旧API
-
-// 查看表的数据结构
-// val records = sqlContext.sql("SELECT * FROM VolumePriceInfo")
-// record
-
-
