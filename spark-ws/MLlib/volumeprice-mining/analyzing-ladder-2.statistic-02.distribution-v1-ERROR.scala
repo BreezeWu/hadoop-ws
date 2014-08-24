@@ -320,15 +320,15 @@ val acc3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc2,s1(2))
 s1(0)
 s1(1)
 s1(2)
-printAccumulator(acc0)
-printAccumulator(acc1)
-printAccumulator(acc2)
-printAccumulator(acc3)
+printAccumulator(acc0._2)
+printAccumulator(acc1._2)
+printAccumulator(acc2._2)
+printAccumulator(acc3._2)
 
 val acc1_2 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1,s1(0))
 val acc1_3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1_2,s1(0))
-printAccumulator(acc1_2)
-printAccumulator(acc1_3)
+printAccumulator(acc1_2._2)
+printAccumulator(acc1_3._2)
 
 val acc1 = acc1_3
 

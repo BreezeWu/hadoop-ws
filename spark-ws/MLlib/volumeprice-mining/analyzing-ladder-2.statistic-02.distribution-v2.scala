@@ -25,6 +25,7 @@ val datasetID = "s01" // s98
 write3RangeCountObj2File(rangeCountAccObj_yearVolume, datasetID + "_yearVolume")
 write3RangeCountObj2File(rangeCountAccObj_yearSplit, datasetID + "_yearSplit")
 write3RangeCountObj2File(rangeCountAccObj_yearMoney, datasetID + "_yearMoney")
+
  *
  */
 
@@ -222,9 +223,6 @@ val zeroRangeCountAccObj_yearMoney = Convert3Ranges2ZeroRangeCountAccObj(
 
 // zero 对象: YearVolumePriceInfo_RangeCountAccObj
 val zeroYearVolumePriceInfo_RangeCountAccObj = YearVolumePriceInfo_RangeCountAccObj(zeroRangeCountAccObj_yearVolume, zeroRangeCountAccObj_yearSplit, zeroRangeCountAccObj_yearMoney)
-// zero 对象: Tuple2(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj)
-//val zeroObj_RangeIndexCount_RangeCountAccObj = Tuple2(zeroYearVolumePriceInfoItem_RangeIndexCount, zeroYearVolumePriceInfo_RangeCountAccObj)
-val zeroObj_RangeIndexCount_RangeCountAccObj = Tuple2(null:YearVolumePriceInfoItem_RangeIndexCount, zeroYearVolumePriceInfo_RangeCountAccObj)
 
 // ------------------------------------------------------------------------
 // 定义函数: 基于Counter对象进行统计: 统计合并函数
@@ -233,7 +231,7 @@ val zeroObj_RangeIndexCount_RangeCountAccObj = Tuple2(null:YearVolumePriceInfoIt
 // 生成newAcc
 // 计数器: ((Int, Int), Long)  当前值: (Int, Long)
 def buildNewCounter(x:((Int, Int), Long),y:(Int, Long)) = {
-     x match { case((start:Int, y._1), count:Long) => ((start, y._1),count+y._2); case other => other} 
+     x match { case ((start:Int, y._1), count:Long) => ((start, y._1),count+y._2); case other => other} 
 }
 /*
 def buildNewCounter(x:((Int, Int), Long),y:(Int, Long)):((Int, Int), Long) = {
@@ -243,65 +241,8 @@ def buildNewCounter(x:((Int, Int), Long),y:(Int, Long)):((Int, Int), Long) = {
 }
 */
     
-// 从左向右执行计算 foldLeft[B](z: B)(op: (A, B) => B): B
-// 这个函数供fold调用,但实现有问题: 只考虑了分区内部的计算,未考虑将两个分区的结果进行合并 --> 改为通过aggregate调用
-def mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator_v1_ERROR(
-    x:(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj),
-    y:(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj)
-    ):(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj) = {
-    
-    //val item_x = x._1     // 不取左边参数的item
-    val acc_x = x._2
-    val acc_yearVolume = acc_x.yearVolume
-    val acc_yearSplit = acc_x.yearSplit
-    val acc_yearMoney = acc_x.yearMoney
-
-    val item_y = y._1
-    //val acc_y = y._2      // 不取右边参数的Accumulator
-    val item_yearVolume = item_y.yearVolume
-    val item_yearSplit = item_y.yearSplit
-    val item_yearMoney = item_y.yearMoney
-    
-    // acc_yearVolume
-    val newCounter1_yearVolume = (acc_yearVolume.counter1).map(x => buildNewCounter(x,item_yearVolume.c1))
-    val newCounter2_yearVolume = (acc_yearVolume.counter2).map(x => buildNewCounter(x,item_yearVolume.c2))
-    val newCounter3_yearVolume = (acc_yearVolume.counter3).map(x => buildNewCounter(x,item_yearVolume.c3))    
-    val newAcc_yearVolume = RangeCountAccObj(newCounter1_yearVolume,newCounter2_yearVolume,newCounter3_yearVolume)
-    
-    // acc_yearSplit
-    val newCounter1_yearSplit = (acc_yearSplit.counter1).map(x => buildNewCounter(x,item_yearSplit.c1))
-    val newCounter2_yearSplit = (acc_yearSplit.counter2).map(x => buildNewCounter(x,item_yearSplit.c2))
-    val newCounter3_yearSplit = (acc_yearSplit.counter3).map(x => buildNewCounter(x,item_yearSplit.c3))
-    val newAcc_yearSplit = RangeCountAccObj(newCounter1_yearSplit,newCounter2_yearSplit,newCounter3_yearSplit)
-    
-    // acc_yearMoney
-    val newCounter1_yearMoney = (acc_yearMoney.counter1).map(x => buildNewCounter(x,item_yearMoney.c1))
-    val newCounter2_yearMoney = (acc_yearMoney.counter2).map(x => buildNewCounter(x,item_yearMoney.c2))
-    val newCounter3_yearMoney = (acc_yearMoney.counter3).map(x => buildNewCounter(x,item_yearMoney.c3))
-    val newAcc_yearMoney = RangeCountAccObj(newCounter1_yearMoney,newCounter2_yearMoney,newCounter3_yearMoney)
-    
-    // 结果对象
-    val newAcc = YearVolumePriceInfo_RangeCountAccObj(newAcc_yearVolume,newAcc_yearSplit,newAcc_yearMoney)
-    // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item :::: 这是做不到的!!!!
-    //val nullItem:YearVolumePriceInfoItem_RangeIndexCount = null
-    //val newObj = Tuple2(nullItem, newAcc)
-    
-    // 使用nullItem会出现错误,所以,结果对象的item使用右边参数的item
-    // 这里失败的原因是因为这个函数是给RDD调用的,而RDD的各个分区合并时,就需要使用第一个参数了!
-    // 比较:  文件"analyzing-ladder-1.computeYearVolumePriceInfo.scala"中的def mergeCombiner
-    val newObj = Tuple2(item_y, newAcc)
-    
-    return newObj
-    
-    // 测试代码
-    // val x = zeroObj_RangeIndexCount_RangeCountAccObj; val y = Tuple2(yearVolumePriceRangeIndexCounterRDD.first,null:YearVolumePriceInfo_RangeCountAccObj)
-    // ......
-    // val list = acc_yearVolume.counter1
-    // val newAccList =  list.map(x => buildNewAcc(x,(0,1)))
-}
-
-// 这个函数供fold调用,但实现有问题: 只考虑了分区内部的计算,未考虑将两个分区的结果进行合并 --> 改为通过aggregate调用
-// 这个函数供fold调用,但实现有问题: 只考虑了分区内部的计算,未考虑将两个分区的结果进行合并 --> 改为通过aggregate调用
+// 从左向右执行计算 def aggregate[U](zeroValue: U)(seqOp: (U, T) ⇒ U, combOp: (U, U) ⇒ U)(implicit arg0: ClassTag[U]): U
+// 这个函数供aggregate调用: (seqOp: (U, T) ⇒ U
 def mergeCombiner_VolumePriceRangeIndexCounterRDD_seqOp(
     acc:YearVolumePriceInfo_RangeCountAccObj,
     item:YearVolumePriceInfoItem_RangeIndexCount
@@ -316,8 +257,7 @@ def mergeCombiner_VolumePriceRangeIndexCounterRDD_seqOp(
     val itemearMoney = item.yearMoney
     
     // 左边的参数可以被修改,所以,不再调用 buildNewCounter, 而是直接修改
-    
-    val newCounter1_yearVolume = 
+    // 先不实现
     
     // acc_yearVolume
     val newCounter1_yearVolume = (acc_yearVolume.counter1).map(x => buildNewCounter(x,itemearVolume.c1))
@@ -338,59 +278,75 @@ def mergeCombiner_VolumePriceRangeIndexCounterRDD_seqOp(
     val newAcc_yearMoney = RangeCountAccObj(newCounter1_yearMoney,newCounter2_yearMoney,newCounter3_yearMoney)
     
     // 结果对象
-    val newAcc = YearVolumePriceInfo_RangeCountAccObj(newAcc_yearVolume,newAcc_yearSplit,newAcc_yearMoney)
-    
-    // 这是一个 在每一个 partition 内部调用的函数, 所以可以将item设置为null
-    // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item
-    val nullItem:YearVolumePriceInfoItem_RangeIndexCount = null
-    val newObj = Tuple2(nullItem, newAcc)
-    
-    return newObj
+    val newAcc = YearVolumePriceInfo_RangeCountAccObj(newAcc_yearVolume,newAcc_yearSplit,newAcc_yearMoney)   
+    return newAcc
     
     // 测试代码
-    // val x = zeroObj_RangeIndexCount_RangeCountAccObj; val y = Tuple2(yearVolumePriceRangeIndexCounterRDD.first,null:YearVolumePriceInfo_RangeCountAccObj)
+    // val acc = zeroYearVolumePriceInfo_RangeCountAccObj; val item = yearVolumePriceRangeIndexCounterRDD.first
     // ......
     // val list = acc_yearVolume.counter1
     // val newAccList =  list.map(x => buildNewAcc(x,(0,1)))
 }
+// 这个函数供aggregate调用: combOp: (U, U) ⇒ U)
+def mergeCombiner_VolumePriceRangeIndexCounterRDD_combOp(
+    acc1:YearVolumePriceInfo_RangeCountAccObj,
+    acc2:YearVolumePriceInfo_RangeCountAccObj
+    ):YearVolumePriceInfo_RangeCountAccObj = {
+    
+    val acc1_yearVolume = acc1.yearVolume
+    val acc1_yearSplit = acc1.yearSplit
+    val acc1_yearMoney = acc1.yearMoney
+    
+    val acc2_yearVolume = acc2.yearVolume
+    val acc2_yearSplit = acc2.yearSplit
+    val acc2_yearMoney = acc2.yearMoney    
+    // 左边的参数可以被修改,所以,不再调用 buildNewCounter, 而是直接修改
+    // 先不实现
+    
+    def add2Counter(acc1Counter:List[((Int, Int), Long)],
+                    acc2Counter:List[((Int, Int), Long)]
+                    ):List[((Int, Int), Long)] = {
+        val zip = acc1Counter.zip(acc2Counter)
+        
+        // 此时 (x._1._1, x._1._2) 和 (y._1._1, y._1._2) 是相同的
+        return zip.map(x => x match { case (x:((Int, Int), Long), y:((Int, Int), Long)) => 
+                    Tuple2((x._1._1, x._1._2), x._2 + y._2)
+                })
+    }
+       
+    // yearVolume
+    val newCounter1_yearVolume = add2Counter(acc1_yearVolume.counter1, acc2_yearVolume.counter1)
+    val newCounter2_yearVolume = add2Counter(acc1_yearVolume.counter2, acc2_yearVolume.counter2)
+    val newCounter3_yearVolume = add2Counter(acc1_yearVolume.counter3, acc2_yearVolume.counter3)   
+    val newAcc_yearVolume = RangeCountAccObj(newCounter1_yearVolume,newCounter2_yearVolume,newCounter3_yearVolume)
+    
+    // yearSplit
+    val newCounter1_yearSplit = add2Counter(acc1_yearSplit.counter1, acc2_yearSplit.counter1)
+    val newCounter2_yearSplit = add2Counter(acc1_yearSplit.counter2, acc2_yearSplit.counter2)
+    val newCounter3_yearSplit = add2Counter(acc1_yearSplit.counter3, acc2_yearSplit.counter3)
+    val newAcc_yearSplit = RangeCountAccObj(newCounter1_yearSplit,newCounter2_yearSplit,newCounter3_yearSplit)
+    
+    // yearMoney
+    val newCounter1_yearMoney = add2Counter(acc1_yearMoney.counter1, acc2_yearMoney.counter1)
+    val newCounter2_yearMoney = add2Counter(acc1_yearMoney.counter2, acc2_yearMoney.counter2)
+    val newCounter3_yearMoney = add2Counter(acc1_yearMoney.counter3, acc2_yearMoney.counter3)
+    val newAcc_yearMoney = RangeCountAccObj(newCounter1_yearMoney,newCounter2_yearMoney,newCounter3_yearMoney)
+    
+    // 结果对象
+    val newAcc = YearVolumePriceInfo_RangeCountAccObj(newAcc_yearVolume,newAcc_yearSplit,newAcc_yearMoney)   
+    return newAcc
+}
 // ----------------------------------------------------------------------------
 // 执行函数
-// (1) 因为后面mergeCombiner_*时从来不使用右边参数的 accumulator, 所以每个对象添加一个空统计对象
-val yearVolumePriceRangeIndexCounterRDD_nullAccumulator = yearVolumePriceRangeIndexCounterRDD.map(x => (x, nullYearVolumePriceInfo_RangeCountAccObj))
-
-// (2) fold
-val resultObj_RangeIndexCount_RangeCountAccObj = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.fold(zeroObj_RangeIndexCount_RangeCountAccObj)((x,y) => mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(x,y))
-
-// 测试语句
-val s1 = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.take(100)
-val zero = zeroObj_RangeIndexCount_RangeCountAccObj
-
-val acc0 = zero
-val acc1 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc0,s1(0))
-val acc2 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1,s1(1))
-val acc3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc2,s1(2))
-
-s1(0)
-s1(1)
-s1(2)
-printAccumulator(acc0)
-printAccumulator(acc1)
-printAccumulator(acc2)
-printAccumulator(acc3)
-
-val acc1_2 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1,s1(0))
-val acc1_3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1_2,s1(0))
-printAccumulator(acc1_2)
-printAccumulator(acc1_3)
-
-val acc1 = acc1_3
+// aggregate
+val result_YearVolumePriceInfo_RangeCountAccObj = yearVolumePriceRangeIndexCounterRDD.aggregate(zeroYearVolumePriceInfo_RangeCountAccObj)(
+    (u,t) => mergeCombiner_VolumePriceRangeIndexCounterRDD_seqOp(u,t),
+    (u1,u2) => mergeCombiner_VolumePriceRangeIndexCounterRDD_combOp(u1,u2))
 
 // (3) 打印结果 或 写入文件
-val result_RangeCountAccObj = resultObj_RangeIndexCount_RangeCountAccObj._2
-
-val rangeCountAccObj_yearVolume = result_RangeCountAccObj.yearVolume
-val rangeCountAccObj_yearSplit = result_RangeCountAccObj.yearSplit
-val rangeCountAccObj_yearMoney = result_RangeCountAccObj.yearMoney
+val rangeCountAccObj_yearVolume = result_YearVolumePriceInfo_RangeCountAccObj.yearVolume
+val rangeCountAccObj_yearSplit = result_YearVolumePriceInfo_RangeCountAccObj.yearSplit
+val rangeCountAccObj_yearMoney = result_YearVolumePriceInfo_RangeCountAccObj.yearMoney
 
 def print3RangeCountObj(rangeCountAccObj3: RangeCountAccObj, name:String) = {
     val acc1 = rangeCountAccObj3.counter1

@@ -166,6 +166,8 @@ def computeYearVolumePriceInfo(item:(String, Iterable[(String, Array[Double])]))
         
         // 结果对象
         // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item
+        // 这里可以成功是因为这个函数并不给RDD使用,而是一个List
+        // 比较:  文件"analyzing-ladder-2.statistic-02.distribution.scala"中的mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator
         val nullItem:(String, MonthVolume) = null
         val newAcc = Tuple2(newAccYearVolume,newYearSplit)
         val newObj = Tuple2(nullItem, newAcc) // val newObj = Tuple2(item_y, newAcc)
