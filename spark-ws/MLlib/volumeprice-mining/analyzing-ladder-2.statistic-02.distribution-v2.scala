@@ -16,7 +16,7 @@ val datasetID = "s01" // s98
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-01.rangeYear-v2.scala
 
 // 引入并执行
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-02.distribution.scala
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-02.distribution-v2.scala
 
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/util.scala
 // ----------------------------------------------------------------------------
