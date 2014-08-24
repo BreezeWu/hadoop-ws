@@ -15,9 +15,16 @@ val datasetID = "s01" // s98
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-1.computeYearVolumePriceInfo.scala
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-01.rangeYear-v2.scala
 
- * 引入并执行
+// 引入并执行
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/analyzing-ladder-2.statistic-02.distribution.scala
 
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/util.scala
+// ----------------------------------------------------------------------------
+// 写入文件
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/util.scala
+write3RangeCountObj2File(rangeCountAccObj_yearVolume, datasetID + "_yearVolume")
+write3RangeCountObj2File(rangeCountAccObj_yearSplit, datasetID + "_yearSplit")
+write3RangeCountObj2File(rangeCountAccObj_yearMoney, datasetID + "_yearMoney")
  *
  */
 
@@ -237,17 +244,18 @@ def buildNewCounter(x:((Int, Int), Long),y:(Int, Long)):((Int, Int), Long) = {
 */
     
 // 从左向右执行计算 foldLeft[B](z: B)(op: (A, B) => B): B
+// 这个函数供fold调用,但实现有问题: 只考虑了分区内部的计算,未考虑将两个分区的结果进行合并 --> 改为通过aggregate调用
 def mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(
     x:(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj),
     y:(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj)
     ):(YearVolumePriceInfoItem_RangeIndexCount, YearVolumePriceInfo_RangeCountAccObj) = {
-
+    
     //val item_x = x._1     // 不取左边参数的item
     val acc_x = x._2
     val acc_yearVolume = acc_x.yearVolume
     val acc_yearSplit = acc_x.yearSplit
     val acc_yearMoney = acc_x.yearMoney
-    
+
     val item_y = y._1
     //val acc_y = y._2      // 不取右边参数的Accumulator
     val item_yearVolume = item_y.yearVolume
@@ -273,10 +281,16 @@ def mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(
     val newAcc_yearMoney = RangeCountAccObj(newCounter1_yearMoney,newCounter2_yearMoney,newCounter3_yearMoney)
     
     // 结果对象
-    // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item
-    val nullItem:YearVolumePriceInfoItem_RangeIndexCount = null
     val newAcc = YearVolumePriceInfo_RangeCountAccObj(newAcc_yearVolume,newAcc_yearSplit,newAcc_yearMoney)
-    val newObj = Tuple2(nullItem, newAcc)
+    // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item :::: 这是做不到的!!!!
+    //val nullItem:YearVolumePriceInfoItem_RangeIndexCount = null
+    //val newObj = Tuple2(nullItem, newAcc)
+    
+    // 使用nullItem会出现错误,所以,结果对象的item使用右边参数的item
+    // 这里失败的原因是因为这个函数是给RDD调用的,而RDD的各个分区合并时,就需要使用第一个参数了!
+    // 比较:  文件"analyzing-ladder-1.computeYearVolumePriceInfo.scala"中的def mergeCombiner
+    val newObj = Tuple2(item_y, newAcc)
+    
     return newObj
     
     // 测试代码
@@ -294,10 +308,122 @@ val yearVolumePriceRangeIndexCounterRDD_nullAccumulator = yearVolumePriceRangeIn
 // (2) fold
 val resultObj_RangeIndexCount_RangeCountAccObj = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.fold(zeroObj_RangeIndexCount_RangeCountAccObj)((x,y) => mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(x,y))
 
-//val s1 = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.take(10000)
-//val s2 = s1.fold(zeroObj_RangeIndexCount_RangeCountAccObj)((x,y) => mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(x,y))
+// 测试语句
+val s1 = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.take(100)
+val zero = zeroObj_RangeIndexCount_RangeCountAccObj
 
+val acc0 = zero
+val acc1 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc0,s1(0))
+val acc2 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1,s1(1))
+val acc3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc2,s1(2))
+
+s1(0)
+s1(1)
+s1(2)
+printAccumulator(acc0)
+printAccumulator(acc1)
+printAccumulator(acc2)
+printAccumulator(acc3)
+
+val acc1_2 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1,s1(0))
+val acc1_3 = mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(acc1_2,s1(0))
+printAccumulator(acc1_2)
+printAccumulator(acc1_3)
+
+val acc1 = acc1_3
+
+// (3) 打印结果 或 写入文件
+val result_RangeCountAccObj = resultObj_RangeIndexCount_RangeCountAccObj._2
+
+val rangeCountAccObj_yearVolume = result_RangeCountAccObj.yearVolume
+val rangeCountAccObj_yearSplit = result_RangeCountAccObj.yearSplit
+val rangeCountAccObj_yearMoney = result_RangeCountAccObj.yearMoney
+
+def print3RangeCountObj(rangeCountAccObj3: RangeCountAccObj, name:String) = {
+    val acc1 = rangeCountAccObj3.counter1
+    val acc2 = rangeCountAccObj3.counter2
+    val acc3 = rangeCountAccObj3.counter3
+    
+    // 将((Int, Int), Long)) 转换为 (Int, (Int, Int), Long))
+    def convert2interval(list:List[((Int, Int), Long)]):List[(Int, (Int, Int), Long)] = {
+        val length = list.length
+        
+        val range = 0 until length by 1
+        
+        // for comprehension       
+        val result = for {
+            //i <- range; item <- list        // 这是List中的List
+            i <- range              // 这是List
+        } yield {
+            val item = list(i)      // 没有 item<-list 时需要该行语句
+            val begin = item._1._1;
+            val index = item._1._2;
+            val count = item._2;
+            
+            val end = if(i==length -1) // 最后一个 
+                        Int.MaxValue   // 最大Int
+                      else 
+                        list(i+1)._1._1;
+                        
+            val obj = Tuple3(index, Tuple2(begin, end), count)
+            obj
+        }
+        
+        return result.toList       // 转换为List
+        
+        /*
+        // 改写的 for
+        val result = range.map(i => list.map(item => {
+            val begin = item._1._1;
+            val index = item._1._2;
+            val count = item._2;
+            
+            val end = if(i==length -1) // 最后一个 
+                        9999999   // 随便一个很大的整数
+                      else 
+                        list(i+1)._1._1;
+                        
+            val obj = Tuple3(index, Tuple2(begin, end), count)
+            obj
+        } ))
+        */        
+    }
+    
+    ////val map2String = (x:((Int, Int), Long)) => x match { case ((v:Int, index:Int), count:Long) => s"${v},${index},${count}"}
+    //val convertAndPrint = (x:((Int, Int), Long)) => x match { case ((v:Int, index:Int), count:Long) => val str = s"${v},${index},${count}"; println(str)}
+    
+    
+    val convertAndPrint = (x:(Int, (Int, Int), Long)) => x match { case ((index:Int, (begin:Int, end:Int), count:Long)) => val str = s"${index},${begin},${end},${count}"; println(str)}
+    
+    val colsDesc = "索引,起始值(含),终止值(不含),计数"
+    println("----------------------------------------------------------------")
+    println(s"\n${name}.counter1 \n${colsDesc}")
+    convert2interval(acc1).foreach(convertAndPrint)
+    println(s"\n${name}.counter2 \n${colsDesc}")
+    convert2interval(acc2).foreach(convertAndPrint)
+    println(s"\n${name}.counter3 \n${colsDesc}")
+    convert2interval(acc3).foreach(convertAndPrint)
+}
+
+// 执行函数
+print3RangeCountObj(rangeCountAccObj_yearVolume, "yearVolume")
+print3RangeCountObj(rangeCountAccObj_yearSplit, "yearSplit")
+print3RangeCountObj(rangeCountAccObj_yearMoney, "yearMoney")
+
+
+// ------------------------------------------------------------------------------
+// 曾经的错误日志:
 /*
+
+    // 因为后面mergeCombiner_*时从来不使用左边参数的 item, 所以每个对象添加一个空item
+    //val nullItem:YearVolumePriceInfoItem_RangeIndexCount = null
+    //val newObj = Tuple2(nullItem, newAcc)
+    
+    会导致出现下面错误!!!  (但通过take(Int.MaxValue)后则没有问题)
+    
+    // 这里失败的原因是因为这个函数是给RDD调用的,而RDD的各个分区合并时,就需要使用第一个参数了!
+    // 比较:  文件"analyzing-ladder-1.computeYearVolumePriceInfo.scala"中的def mergeCombiner
+    
 scala> val resultObj_RangeIndexCount_RangeCountAccObj = yearVolumePriceRangeIndexCounterRDD_nullAccumulator.fold(zeroObj_RangeIndexCount_RangeCountAccObj)((x,y) => mergeCombiner_VolumePriceRangeIndexCounterRDD_Accumulator(x,y))
 14/08/22 15:52:04 INFO spark.SparkContext: Starting job: fold at <console>:162
 14/08/22 15:52:04 INFO scheduler.DAGScheduler: Got job 2 (fold at <console>:162) with 200 output partitions (allowLocal=false)
