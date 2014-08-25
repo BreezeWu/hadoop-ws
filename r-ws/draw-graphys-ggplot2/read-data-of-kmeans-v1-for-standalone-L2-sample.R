@@ -1,31 +1,31 @@
+ï»¿# -----------------------------------------------------------------------------
+# è¯»å–sparkåˆ†æå¤„ç†åçš„æ•°æ®,ä¾›ç”»å›¾ç¨‹åºä½¿ç”¨
 # -----------------------------------------------------------------------------
-# ¶ÁÈ¡spark·ÖÎö´¦ÀíºóµÄÊı¾İ,¹©»­Í¼³ÌĞòÊ¹ÓÃ
-# -----------------------------------------------------------------------------
-# ÔËĞĞ·½·¨: ÔÚR»·¾³ÖĞ,Ê¹ÓÃÏÂÃæÓï¾ä
+# è¿è¡Œæ–¹æ³•: åœ¨Rç¯å¢ƒä¸­,ä½¿ç”¨ä¸‹é¢è¯­å¥
 # 		source("J:/home/hadoop/workspace_github/hadoop-ws/r-ws/draw-graphys-ggplot2/read-data-of-kmeans-v1-for-standalone-L2-sample.R")
-# µÃµ½ÈçÏÂÊı¾İ¶ÔÏó
-#	1. Êı¾İ¼¯ GoodM1
-#	2. Êı¾İ¼¯ GoodM2
-#	3. Êı¾İ¼¯ BadF2ExcludeF3
-#	4. Êı¾İ¼¯ BadF3
+# å¾—åˆ°å¦‚ä¸‹æ•°æ®å¯¹è±¡
+#	1. æ•°æ®é›† GoodM1
+#	2. æ•°æ®é›† GoodM2
+#	3. æ•°æ®é›† BadF2ExcludeF3
+#	4. æ•°æ®é›† BadF3
 #
-#  ÌØ±ğ×¢Òâ£º
-#  loadSampleData	:	¼ÓÔØ SampleData µÄº¯Êı, µ«Ö»ÊÊÓÃÓÚÑù±¾Êı¾İ
+#  ç‰¹åˆ«æ³¨æ„ï¼š
+#  loadSampleData	:	åŠ è½½ SampleData çš„å‡½æ•°, ä½†åªé€‚ç”¨äºæ ·æœ¬æ•°æ®
 # -----------------------------------------------------------------------------
 
 # *****************************************************************************
-# Ò²¿ÉÒÔµ÷ÕûÎªÃ¿´ÎÊÖ¶¯Ñ¡ÔñÎÄ¼ş
+# ä¹Ÿå¯ä»¥è°ƒæ•´ä¸ºæ¯æ¬¡æ‰‹åŠ¨é€‰æ‹©æ–‡ä»¶
 #	mydata = read.table(file.choose(), header=FALSE, sep=",")
 # *****************************************************************************
 
 # FilePath
 dataSetID <- "s98_L2k20"
-rootFilePathOfIn <- "F:/¹¤×÷Ä¿Â¼2014/Ö°³¡Ö®Êı¾İÍÚ¾ò/Êı¾İÍÚ¾ò_ÈÎÎñ.µçÁ¦/DMÖ®µçÁ¦.ÁÉÄş/±¨¸æ.201408/Ñù±¾·ÖÎö-µÚ¶ş²ã¾ÛÀà/"
+rootFilePathOfIn <- "F:/å·¥ä½œç›®å½•2014/èŒåœºä¹‹æ•°æ®æŒ–æ˜/æ•°æ®æŒ–æ˜_ä»»åŠ¡.ç”µåŠ›/DMä¹‹ç”µåŠ›.è¾½å®/æŠ¥å‘Š.201408/æ ·æœ¬åˆ†æ-ç¬¬äºŒå±‚èšç±»/"
 
-# ĞĞ: Êı¾İ¼¯+µ¥ÔÂ/Ë«ÔÂ
+# è¡Œ: æ•°æ®é›†+å•æœˆ/åŒæœˆ
 #dimRows <- c("s98_GoodM1", "s98_GoodM2", "s98_BadF2ExcludeF3", "s98_BadF3")
 dimCols <- c("sample1", "sample2", "sample3", "sample4")	# , "sample5"
-# ÎÄ¼şÃû
+# æ–‡ä»¶å
 filesVector_s98 <- c(
 	#s98_GoodM1
 		# Ladder
@@ -51,10 +51,10 @@ filesVector_s98 <- c(
     "s98_L2k20_GoodM2_Ladder_sampledata_c17.csv",
     ".csv",
     # Ts
+    "s98_L2k20_GoodM2_Ts_sampledata_c0.csv",
+    "s98_L2k20_GoodM2_Ts_sampledata_c2.csv",
     "s98_L2k20_GoodM2_Ts_sampledata_c5.csv",
-    ".csv",
-    ".csv",
-    ".csv",
+    "s98_L2k20_GoodM2_Ts_sampledata_c17.csv",
     # NotTsNotLadder
     "s98_L2k20_GoodM2_NotTsNotLadder_sampledata_c7.csv",
     "s98_L2k20_GoodM2_NotTsNotLadder_sampledata_c19.csv",
@@ -98,7 +98,7 @@ filesVector_s98 <- c(
 
 filesVector <- filesVector_s98	# filesVector_s98_GoodM1
 
-# ¹¹½¨¾ØÕó
+# æ„å»ºçŸ©é˜µ
 dimRows <- c("s98_GoodM1_Ladder", "s98_GoodM1_Ts", "s98_GoodM1_NotTsNotLadder",
 						"s98_GoodM2_Ladder", "s98_GoodM2_Ts", "s98_GoodM2_NotTsNotLadder", 
 						"s98_BadF2ExcludeF3_Ladder", "s98_BadF2ExcludeF3_Ts", "s98_BadF2ExcludeF3_NotTsNotLadder", 
@@ -109,63 +109,63 @@ filesMatrix <- matrix(filesVector, byrow=TRUE, nrow=length(dimRows), ncol=length
 #str(filesMatrix)
 
 # *****************************************************************************
-# º¯Êı¶¨Òå
+# å‡½æ•°å®šä¹‰
 # *****************************************************************************
 # -----------------------------------------------------------------------------
-# ¼ÓÔØ SampleData µÄº¯Êı
+# åŠ è½½ SampleData çš„å‡½æ•°
 loadSampleData <- function(filename) {
-	# ¶ÁÈ¡ÎÄ¼ş
-	mysampledata = read.table(filename, header=FALSE, sep=",")  # read table file ,Ê×ĞĞÎŞÁĞÃû(header=FALSE)
+	# è¯»å–æ–‡ä»¶
+	mysampledata = read.table(filename, header=FALSE, sep=",")  # read table file ,é¦–è¡Œæ— åˆ—å(header=FALSE)
 	#str(mysampledata)
 
 	# -----------------------------------------------------------------------------
 	# vpm vpm201301,vpm201302,vpm201303,vpm201304,vpm201305,vpm201306,vpm201307,vpm201308,vpm201309,vpm201310,vpm201311,vpm201312,vpm201401,vpm201402,vpm201403,vpm201404,vpm201405,vpm201406
-	# È¡Ç°Ãæ 2+12 ÁĞ,¼´´Ó 201301~201312Õâ12¸öÔÂµÄÔÂÓÃµãÁ¿
+	# å–å‰é¢ 2+12 åˆ—,å³ä» 201301~201312è¿™12ä¸ªæœˆçš„æœˆç”¨ç‚¹é‡
 	vpm <- mysampledata[, c(1:(3+12))]
 	
-	# ÎªvpmÉèÖÃ±äÁ¿±êÇ©
+	# ä¸ºvpmè®¾ç½®å˜é‡æ ‡ç­¾
 	newcolnames <- c("cons_id", "cons_no", "sep", "201301", "201302", "201303", "201304", "201305", "201306", "201307", "201308", "201309", "201310", "201311", "201312")
 	names(vpm) <- c(newcolnames)	# names(vpm.clusterID) <- c(newcolnames,"clusterID")
 	rm(newcolnames)
 	
 	# -----------------------------------------------------------------------------
-	# ºá±í±ä×İ±í
+	# æ¨ªè¡¨å˜çºµè¡¨
 	library(reshape2)
-	# 'pointsNum'ÊÇÃ»ÓĞ±ØÒªµÄ,µ«ÎªÁË±£ÁôËü×÷Îªµ¥¶ÀµÄÒ»ÁĞ
+	# 'pointsNum'æ˜¯æ²¡æœ‰å¿…è¦çš„,ä½†ä¸ºäº†ä¿ç•™å®ƒä½œä¸ºå•ç‹¬çš„ä¸€åˆ—
 	# vpm.v <- melt(vpm,  id = c("cons_id", "cons_no", "sep"), variable_name = "ym")	# colnames/ym -> value
-	# reshape2 ÖĞ variable_name ÎŞĞ§
+	# reshape2 ä¸­ variable_name æ— æ•ˆ
 	vpm.v <- melt(vpm,  id = c("cons_id", "cons_no", "sep"))
 
-	# Îªvpm.vÉèÖÃ±äÁ¿±êÇ©
+	# ä¸ºvpm.vè®¾ç½®å˜é‡æ ‡ç­¾
 	newcolnames <- c("cons_id", "cons_no", "sep", "ym", "value")
 	names(vpm.v) <- c(newcolnames)
 	rm(newcolnames)
 	
-	# »­Í¼µÄÁĞ
+	# ç”»å›¾çš„åˆ—
 	#vpm.v$ym <- as.factor(vpm.v$colnames)
 	
 	# -----------------------------------------------------------------------------
-	#  ĞĞÁĞ×ª»»
-	#	vpm.t	´Óvpm½øĞĞ×ª»»
-	#vpm.t <- t(vpm)			# ÕâÖÖ·½·¨,Öµ±äÎªÁË character vector
+	#  è¡Œåˆ—è½¬æ¢
+	#	vpm.t	ä»vpmè¿›è¡Œè½¬æ¢
+	#vpm.t <- t(vpm)			# è¿™ç§æ–¹æ³•,å€¼å˜ä¸ºäº† character vector
 	vpm.t <- as.data.frame(t(vpm))	
 	
-	# ½« ĞĞÃû ³ÉÎªĞÂÁĞ ym
-	#vpm.t <- data.frame(vpm.t, factor(rownames(vpm)))	# ²»ĞèÒªÒò×Ó»¯,ËùÒÔÊ¹ÓÃÏÂÃæµÄÓï¾ä¼´¿É
+	# å°† è¡Œå æˆä¸ºæ–°åˆ— ym
+	#vpm.t <- data.frame(vpm.t, factor(rownames(vpm)))	# ä¸éœ€è¦å› å­åŒ–,æ‰€ä»¥ä½¿ç”¨ä¸‹é¢çš„è¯­å¥å³å¯
 	
-	#vpm.t <- data.frame(vpm.t, rownames(vpm.t))	# ×îºó¸½¼ÓµÄÁĞÃ÷ÊÇrownames.vpm.t. ËùÒÔ¸ÄÎªÏÂÃæÁ½¾ä
+	#vpm.t <- data.frame(vpm.t, rownames(vpm.t))	# æœ€åé™„åŠ çš„åˆ—æ˜æ˜¯rownames.vpm.t. æ‰€ä»¥æ”¹ä¸ºä¸‹é¢ä¸¤å¥
 	ym <- rownames(vpm.t)
 	vpm.t <- data.frame(vpm.t, ym)
 	
-	# ·µ»ØÖµ
+	# è¿”å›å€¼
 	mylist <- list(vpm, vpm.v, vpm.t)
 	return (mylist)
 }
 
 # *****************************************************************************
-# ÎÄ¼şÃû
+# æ–‡ä»¶å
 # *****************************************************************************
-# ±¾´ÎÒª¶ÁÈ¡µÄÎÄ¼şÃû
+# æœ¬æ¬¡è¦è¯»å–çš„æ–‡ä»¶å
 # GoodM1
 file_GoodM1_clusterSpecial_Ladder_s1 <- stringr::str_c(rootFilePathOfIn, filesMatrix[1,1])
 file_GoodM1_clusterSpecial_Ladder_s2 <- stringr::str_c(rootFilePathOfIn, filesMatrix[1,2])
@@ -186,7 +186,10 @@ file_GoodM2_clusterSpecial_Ladder_s1 <- stringr::str_c(rootFilePathOfIn, filesMa
 file_GoodM2_clusterSpecial_Ladder_s2 <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,2])
 file_GoodM2_clusterSpecial_Ladder_s3 <- stringr::str_c(rootFilePathOfIn, filesMatrix[4,3])
 
-file_GoodM2_clusterSpecial_Ts_s1 <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,1])
+file_GoodM2_clusterSpecial_Ts_s0 <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,1])
+file_GoodM2_clusterSpecial_Ts_s2 <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,2])
+file_GoodM2_clusterSpecial_Ts_s5 <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,3])
+file_GoodM2_clusterSpecial_Ts_s17 <- stringr::str_c(rootFilePathOfIn, filesMatrix[5,4])
 
 file_GoodM2_clusterSpecial_NotTsNotLadder_c7 <- stringr::str_c(rootFilePathOfIn, filesMatrix[6,1])
 file_GoodM2_clusterSpecial_NotTsNotLadder_c19 <- stringr::str_c(rootFilePathOfIn, filesMatrix[6,2])
@@ -224,7 +227,7 @@ file_BadF3_clusterSpecial_NotTsNotLadder_c12 <- stringr::str_c(rootFilePathOfIn,
 file_BadF3_clusterSpecial_NotTsNotLadder_c17 <- stringr::str_c(rootFilePathOfIn, filesMatrix[12,4])
 
 # *****************************************************************************
-# ¼ÓÔØÊı¾İµ½±äÁ¿ÖĞ
+# åŠ è½½æ•°æ®åˆ°å˜é‡ä¸­
 # *****************************************************************************
 # GoodM1
 fileData_GoodM1_clusterSpecial_Ladder_s1 <- loadSampleData(file_GoodM1_clusterSpecial_Ladder_s1)
@@ -246,7 +249,10 @@ fileData_GoodM2_clusterSpecial_Ladder_s1 <- loadSampleData(file_GoodM2_clusterSp
 fileData_GoodM2_clusterSpecial_Ladder_s2 <- loadSampleData(file_GoodM2_clusterSpecial_Ladder_s2)
 fileData_GoodM2_clusterSpecial_Ladder_s3 <- loadSampleData(file_GoodM2_clusterSpecial_Ladder_s3)
 
-fileData_GoodM2_clusterSpecial_Ts_s1 <- loadSampleData(file_GoodM2_clusterSpecial_Ts_s1)
+fileData_GoodM2_clusterSpecial_Ts_s0 <- loadSampleData(file_GoodM2_clusterSpecial_Ts_s0)
+fileData_GoodM2_clusterSpecial_Ts_s2 <- loadSampleData(file_GoodM2_clusterSpecial_Ts_s2)
+fileData_GoodM2_clusterSpecial_Ts_s5 <- loadSampleData(file_GoodM2_clusterSpecial_Ts_s5)
+fileData_GoodM2_clusterSpecial_Ts_s17 <- loadSampleData(file_GoodM2_clusterSpecial_Ts_s17)
 
 fileData_GoodM2_clusterSpecial_NotTsNotLadder_c7 <- loadSampleData(file_GoodM2_clusterSpecial_NotTsNotLadder_c7)
 fileData_GoodM2_clusterSpecial_NotTsNotLadder_c19 <- loadSampleData(file_GoodM2_clusterSpecial_NotTsNotLadder_c19)
