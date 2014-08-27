@@ -115,6 +115,19 @@ object True extends Bool {
 // As the examples in this section show, it is possible in Scala to define every operator as a method and treat every operation as an invocation of a method. In the interest of efficiency, the Scala compiler translates operations on value types directly to primitive instruction codes; this, however, is completely transparent to the programmer.
 
 // ----------------------------------
-// 3. ❱❛r✐❛❜❧❡s ❛♥❞ Pr♦♣❡rt✐❡s
+// 3. Variables and Properties
 
+// If every operation is a method invocation in Scala, what about variable dereferencing and assignment? In fact, when acting on class members these operations are also treated as method calls. For every denition of a variable var x: T in a class, Scala defines setter and getter methods as follows.
+def x: T
+def x_= (newval: T): unit
+// These methods reference and update a mutable memory cell, which is not accessible directly to Scala programs. Every mention of the name x in an expression is then interpreted as a call to the parameterless method x. Furthermore, every assignment x = e is interpreted as a method invocation x_=(e).
 
+// properties
+class Celsius {
+    private var d: Int = 0
+    def degree: Int = d
+    def degree_=(x: Int): Unit = if (x >= -273) d = x
+}
+
+// Clients can use the pair of methods defined by class Celsius as if it defined a variable:
+val c = new Celsius; c.degree = c.degree - 1
