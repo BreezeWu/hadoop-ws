@@ -9,16 +9,18 @@
  * 阶梯电量电价表, 变量table_volume_of_ladder
  * 分时电量电价表, 变量table_volume_of_ts
  *
- * 引入依赖
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
- * 引入并执行
- *      :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-1.createhivetable.scala
+//引入依赖
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
+// 选择数据集
+val datasetID = "s01"
+//引入并执行
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/create-rdd-of-volumeprice-1.createhivetable.scala
  */
 
 //引入依赖
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/volumeprice-mining/hiveselect-of-volumeprice.scala
  
-val datasetID = "s01"
+//val datasetID = "s01"
 // 阶梯电量电价表
 val table_volumeprice_of_ladder = s"bigdata_volume_of_ladder_${datasetID}"
 // 分时电量电价表
