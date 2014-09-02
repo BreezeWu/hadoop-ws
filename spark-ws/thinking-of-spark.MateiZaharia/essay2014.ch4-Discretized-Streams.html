@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>4.1 Introduction</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>4.1 Introduction</h1>
+
+<p>The motivation for large-scale stream processing is simple: <strong>much of “big data” is received in real time, and is most valuable at its time of arrival</strong>. For example, a social network may wish to detect trending conversation topics in minutes; a search site may wish to model which users visit a new page; and a service operator may wish to monitor program logs to detect failures in seconds. To enable these applications, there is a need for stream processing models that scale to large clusters.</p>
+
+<h2>Challenges</h2>
+
+<ol>
+<li>Indeed, fast recovery is more important in streaming than it was in batch jobs: while a 30 second delay to recover from a fault or straggler is a nuisance in a batch setting, it can mean losing the chance to make a key decision in a streaming setting.</li>
+</ol>
+
+<h2>Models</h2>
+
+<ol>
+<li><p><strong>Continuous operator model</strong>: Most distributed streaming systems, including <strong>Storm [14], TimeStream [87], MapReduce Online [34], and streaming databases [18, 26, 29]</strong>, are based on a continuous operator model, in which long-running, stateful operators receive each record, update internal state, and send new records. While this model is quite natural, it makes it difﬁcult to handle faults and stragglers.</p>
+
+<ul>
+<li>Speciﬁcally, given the continuous operator model, systems perform <strong>recovery</strong>
+through two approaches [58]: 
+
+<ul>
+<li><strong>replication</strong>, where there are two copies of each node [18, 93], </li>
+<li>or <strong>upstream backup</strong>, where nodes buffer sent messages and replay them to a new copy of a failed node [87, 34, 14]. </li>
+</ul></li>
+</ul>
+
+<p>Neither approach is attractive in large clusters: replication costs 2* the hardware, while upstream backup takes a long time to recover, as the whole system must wait for a new node to serially rebuild the failed node’s state by rerunning data through an operator. In addition, neither approach handles stragglers: in upstream backup, a straggler must be treated as a failure, incurring a costly recovery step, while replicated systems use synchronization protocols like Flux [93] to coordinate replicas, so a straggler will slow down both replicas.</p></li>
+<li><p><strong>discretized streams (D-Streams)</strong>: We propose a new stream processing model, discretized streams (D-Streams), that overcomes these challenges. Instead of managing long-lived operators, D-Streams structure streaming computations as a series of <strong>stateless, deterministic batch computations on small time intervals</strong>. For example, we might place the data received every second (or every 100ms) into an interval, and run a MapReduce operation on each interval to compute a count. Similarly, we can run a rolling count over several intervals by adding the new count from each interval to the old result. By structuring computations this way, D-Streams make </p>
+
+<ul>
+<li>(1) the <strong>state</strong> at each timestep fully deterministic given the input data, forgoing the need for synchronization protocols, and </li>
+<li>(2) the <strong>dependencies</strong> between this state and older data visible at a ﬁne granularity. We show that this enables powerful recovery mechanisms, similar to those in batch systems, that outperform replication and upstream backup.</li>
+</ul></li>
+</ol>
+
+<h2>Two challenges in realizing the D-Streammodel</h2>
+
+<ol>
+<li>The ﬁrst is making the <strong>latency (interval granularity) low</strong>. Traditional batch systems, such as Hadoop, fall short here because they keep state in replicated, on-disk storage systems between jobs. Instead, we build on the RDD data structure introduced in Chapter 2, which keeps data in memory and can recover it without replication by tracking the lineage graph of operations used to build it. With RDDs, we show that we can attain end-to-end latencies below a second. We believe that this is sufﬁcient for many real-world big data applications, <strong>where the timescale of the events tracked (e.g., trends in social media) is much higher</strong>.</li>
+<li>The second challenge is recovering quickly from faults and stragglers. Here, we use the determinism of D-Streams to provide a new recovery mechanism that has not been present in previous streaming systems: <strong>parallel recovery</strong> of a lost node’s state. When a node fails, each node in the cluster works to recompute part of the lost node’s RDDs, resulting in signiﬁcantly faster recovery than upstream backup without the cost of replication. Parallel recovery was hard to perform in continuous processing systems due to the complex state synchronization protocols needed even for basic replication (e.g., Flux [93]),1 but becomes simplewith the fully deterministic D-Stream model. In a similar way, D-Streams can recover from stragglers using speculative execution [36], while previous streaming systems do not handle them.</li>
+</ol>
+
+<h2>Advantage of our model </h2>
+
+<p>Finally, because D-Streams use the same processing model and data structures (RDDs) as batch jobs, a powerful advantage of our model is that streaming queries can seamlessly be combined with batch and interactive computation.</p>
+
+<h1>4.2 Goals and Background</h1>
+
+<p>Many important applications process large streams of data arriving in real time. Our work targets applications that need to run on tens to hundreds of machines, and tolerate a latency of several seconds. Some examples are:</p>
+
+<ol>
+<li><strong>Site activity statistics</strong>: Facebook built a distributed aggregation system called Puma that gives advertisers statistics about users clicking their pages within 10–30 seconds and processes 106 events/s [94].</li>
+<li><strong>Cluster monitoring</strong>: Datacenter operators often collect and mine program logs to detect problems, using systems like Flume [9] on hundreds of nodes [52].</li>
+<li><strong>Spam detection</strong>: A social network such as Twitter may wish to identify new spam campaigns in real time using statistical learning algorithms [102].</li>
+</ol>
+
+<p>For these applications, we believe that the <strong>0.5–2 second latency</strong> of D-Streams is adequate, as it is well below the timescale of the trends monitored. We purposely <strong>do not target applications with latency needs below a few hundred milliseconds, such as high-frequency trading</strong>.</p>
+
+<h3>Goals</h3>
+
+<ol>
+<li>Scalability to hundreds of nodes.</li>
+<li>Minimal cost beyond base processing—we do not wish to pay a 2* replication overhead, for example.</li>
+<li>Second-scale latency.</li>
+<li>Second-scale recovery from faults and stragglers.</li>
+</ol>
+
+<h1>4.3 Discretized Streams (D-Streams)</h1>
+
+<p>Most previous systems use the same <strong>continuous operator</strong> model. In this model streaming computations are divided into a set of long-lived stateful operators and each operator processes records as they arrive <strong>by updating internal state</strong> (e.g a table tracking page view counts over a window) and sending new records in response [29]. Figure 4.1(a) illustrates.</p>
+
+<h2>4.3.1 Computation Model</h2>
+
+<p>We treat a streaming computation as <strong>a series of deterministic batch computations on small time intervals</strong>. The data received in each interval is stored reliably across the cluster to form an <strong>input dataset for that interval</strong>. Once the time interval completes, this dataset is processed via <strong>deterministic parallel operations, such as map, reduce and groupBy</strong>, to produce new datasets representing either program outputs or intermediate state. </p>
+
+<ol>
+<li>In the former case, <strong>the results</strong> may be pushed to an external system in a distributed manner. </li>
+<li>In the latter case, <strong>the intermediate state</strong> is stored as resilient distributed datasets (RDDs), a fast storage abstraction that avoids replication by using lineage for recovery, as we shall explain. This state dataset may then <strong>be processed along with the next batch of input data</strong> to produce a <strong>new dataset of updated intermediate states</strong>. Figure 4.1(b) shows our model.</li>
+</ol>
+
+<p>We implemented our system, Spark Streaming, based on this model. We used Spark as our <strong>batch processing engine</strong> for each <strong>batch of data</strong>. Figure 4.2 shows a high-level sketch of the computation model in the context of Spark Streaming. This
+is explained in more detail later.
+In our API, users deﬁne programs by manipulating objects called discretized streams (D-Streams). A D-Stream is a sequence of immutable, partitioned datasets (RDDs) that can be acted on by deterministic transformations. These transformations yield new D-Streams, and may create intermediate state in the form of RDDs.</p>
+
+<p>Spark Streaming exposes D-Streams through a functional API similar to LINQ [115, 3] in the Scala programming language.4 The code for our program is:</p>
+
+<pre><code>{% highlight scala %}
+pageViews = readStream(&quot;http://...&quot;, &quot;1s&quot;)
+ones = pageViews.map(event =&gt; (event.url, 1))
+counts = ones.runningReduce((a, b) =&gt; a + b)
+{% endhighlight %}
+</code></pre>
+
+<p>This code creates a D-Stream called pageViews by reading an event stream over HTTP, and groups these into 1-second intervals. It then transforms the event stream to get a new D-Stream of (URL, 1) pairs called ones, and performs a running count of these with a stateful runningReduce transformation. The arguments to map and runningReduce are Scala function literals.</p>
+
+<p>To execute this program, Spark Streaming will receive <strong>the data stream</strong>, divide it into <strong>one second batches and store them in Spark’s memory as RDDs</strong> (see Figure 4.2).</p>
+
+<p>Additionally, it will invoke RDD transformations like map and reduce to process the RDDs. To execute these transformations, Spark will ﬁrst launch map tasks to process the events and generate the url-one pairs. Then it will launch reduce tasks that take both <strong>the results of the maps</strong> and <strong>the results of the previous interval’s reduces</strong>, stored in an RDD. These tasks will produce a new RDD with the updated counts. Each D-Stream in the program thus turns into a sequence of RDDs. </p>
+
+<p>Finally, to recover from faults and stragglers, both D-Streams and RDDs track their lineage, that is, the graph of deterministic operations used to build them. Spark tracks this information at the level of partitions within each distributed dataset, as shown in Figure 4.3. When a node fails, it recomputes the RDD partitions that were on it by re-running the tasks that built them from the original input data stored reliably in the cluster. The system also periodically checkpoints state RDDs (e.g., by asynchronously replicating every tenth RDD) to prevent inﬁnite recomputation, but this does not need to happen for all data, because recovery is often fast: the lost partitions can be recomputed in parallel on separate nodes. In a similar way, if a node straggles, we can speculatively execute copies of its tasks on other nodes [36], because they will produce the same result.</p>
+
+<pre><code>D-Streams can parallelize recovery over hundreds of cores and **recover in 1–2 seconds even when checkpointing every 30s** (x4.6.2).
+</code></pre>
+
+<h2>4.3.2 Timing Considerations</h2>
+
+<h2>4.3.3 D-Stream API</h2>
+
+<p>Because D-Streams are <strong>primarily an execution strategy</strong> (describing how to break a computation into steps), they can be used to implement many of the standard operations in streaming systems, such as <strong>sliding windows</strong> and <strong>incrementa processing</strong> [29, 15], by simply batching their execution into small timesteps. To illustrate, we describe the operations in Spark Streaming, though other interfaces (e.g., SQL) could also be supported.</p>
+
+<ol>
+<li>Deﬁne input streams to be read from outside: The program can deﬁne input streams to be read from outside, which receive data either 
+
+<ul>
+<li>by having nodes listen on a port or </li>
+<li>by loading it periodically from a storage system (e.g., HDFS). </li>
+</ul></li>
+<li>It can then apply two types of operations to these streams:
+
+<ul>
+<li><strong>Transformations</strong>, which create a new D-Stream from one or more parent streams. These may be stateless, applying separately on the RDDs <strong>in each time interval</strong>, or they may produce state <strong>across intervals</strong>.</li>
+<li><strong>Output operations</strong>, which let the program write data to external systems. For example, the save operation will output each RDD in a D-Stream to a database.</li>
+</ul></li>
+<li>Finally, the user calls output operators to send results out of Spark Streaming into external systems (e.g., for display on a dashboard). We offer two such operators: <strong>save</strong>, which writes each RDD in a D-Stream to a storage system (e.g., HDFS or HBase), and <strong>foreachRDD</strong>, which runs a user code snippet (any Spark code) on each RDD. For example, a user can print the top K counts with counts.foreachRDD(rdd =&gt; print(rdd.top(K))).</li>
+</ol>
+
+<h3>在每一个time interval中(in each time interval)</h3>
+
+<p>D-Streams support the same <strong>stateless</strong> transformations available in typical batch frameworks [36, 115], including map, reduce, groupBy, and join. We provide all the operations in Spark. For example, a program could run a canonical MapReduce word count on each time interval of a D-Stream of words using the following code:</p>
+
+<pre><code>{% highlight scala %}
+pairs = words.map(w =&gt; (w, 1))
+counts = pairs.reduceByKey((a, b) =&gt; a + b)
+{% endhighlight %}
+</code></pre>
+
+<h3>在time intervals之上/之间(across intervals)</h3>
+
+<p>In addition, D-Streams provide several <strong>stateful</strong> transformations for computations spanning multiple intervals, based on standard stream processing techniques such as sliding windows [29, 15]. These include:</p>
+
+<ol>
+<li><p><strong>Windowing</strong>: The window operation groups all the records from a <strong>sliding window</strong> of past time intervals into one RDD. For example, calling <em>words.window(&ldquo;5s&rdquo;)</em> in the code above yields a D-Stream of RDDs containing the words in intervals [0, 5), [1, 6), [2, 7), etc. ~即将<strong>多个interval data</strong>组成<strong>window data</strong></p></li>
+<li><p><strong>Incremental aggregation</strong>: For the common use case of computing an aggregate, like a count or max, over a sliding window, D-Streams have several variants of an <strong>incremental reduceByWindow operation</strong>. The simplest one only takes an associative merge function for combining values. For instance, in the code above, one can write:</p>
+
+<p>{% highlight scala %}
+pairs.reduceByWindow(&ldquo;5s&rdquo;, (a, b) =&gt; a + b)
+{% endhighlight %}</p>
+
+<p>This computes a per-interval count for each time interval only once, but has to add the counts for the past ﬁve seconds repeatedly, as shown in Figure 4.4(a).
+If the aggregation function is also <strong>invertible</strong>, a more efﬁcient version also takes a function for <strong>“subtracting” values</strong> and maintains the state incrementally(Figure 4.4(b)):</p>
+
+<p>{% highlight scala %}
+pairs.reduceByWindow(&ldquo;5s&rdquo;, (a,b) =&gt; a+b, (a,b) =&gt; a-b)
+{% endhighlight %}</p></li>
+<li><p><strong>State tracking</strong>: Often, an application has <strong>to track states for various objects in response to a stream of events indicating state changes</strong>. For example, a program monitoring online video delivery may wish to track the number of active sessions, where a session starts when the system receives a “join” event for a new client and ends when it receives an “exit” event. It can then ask questions such as “how many sessions have a bitrate above X.”</p>
+
+<p>D-Streams provide a <strong>updateStateByKey</strong> operation that transforms streams of (Key, Event) records into streams of (Key, State) records based on three arguments:</p>
+
+<ul>
+<li>An initialize function for creating a State from the ﬁrst Event for a new key.</li>
+<li>An update function for returning a new State given an old State and an Event for its key.</li>
+<li>A timeout for dropping old states.</li>
+</ul>
+
+<p>For example, one could count the active sessions from a stream of (ClientID,Event) pairs called as follows:</p>
+
+<p>{% highlight scala %}
+sessions = events.track(
+(key, ev) =&gt; 1, // initialize function
+(key, st, ev) =&gt; (ev == Exit ? null : 1), // update function
+&ldquo;30s&rdquo;) // timeout
+counts = sessions.count() // a stream of ints
+{% endhighlight %}</p>
+
+<p>This code sets each client’s state to 1 if it is active and drops it by returning null from update when it leaves. Thus, sessions contains a (ClientID, 1) element for each active client, and counts counts the sessions.</p></li>
+</ol>
+
+<h2>4.3.4 Consistency Semantics</h2>
+
+<p>One beneﬁt of D-Streams is that they provide clean consistency semantics.
+Consistency of state across nodes can be a problem in streaming systems that process each record eagerly. </p>
+
+<h2>4.3.5 Uniﬁcation with Batch &amp; Interactive Processing</h2>
+
+<p>Because D-Streams follow the same processing model, data structures (RDDs), and fault tolerance mechanisms as batch systems, the two can seamlessly be combined. Spark Streaming provides several powerful features to unify streaming and batch processing.</p>
+
+<ol>
+<li>First, D-Streams can be combined with static RDDs computed using a standard Spark job. For instance, one can join a stream of message events against a precomputed spam ﬁlter, or compare them with historical data.</li>
+<li>Second, users can run a D-Stream program on previous historical data using a “batch mode.” This makes it easy compute a new streaming report on past data.</li>
+<li><p>Third, users run ad-hoc queries on D-Streams interactively by attaching a Scala  console to their Spark Streaming program and running arbitrary Spark operations on the RDDs there. For example, the user could query the most popular words in a time range by typing:</p>
+
+<p>{% highlight scala %}
+counts.slice(&ldquo;21:00&rdquo;, &ldquo;21:05&rdquo;).topK(10)
+{% endhighlight %}</p>
+
+<p>Discussions with developers who have written both ofﬂine (Hadoop-based) and online processing applications show that these features have signiﬁcant practical value.</p></li>
+</ol>
+
+<h2>4.3.6 Summary</h2>
+
+<p>To end our overview of D-Streams, we compare them with continuous operator systems in Table 4.1. The main difference is that D-Streams divide work into small, deterministic tasks operating on batches. This raises their minimum latency, but lets them employ highly efﬁcient recovery techniques. In fact, some continuous operator systems, like TimeStream and Borealis [87, 18], also delay records, in order to deterministically execute operators that have multiple upstream parents (by waiting for periodic “punctuations” in streams) and to provide consistency. This raises their latency past the millisecond scale and into the second scale of D-Streams.</p>
+
+<h1>4.4 System Architecture</h1>
+
+<p>As shown in the ﬁgure, Spark Streaming reuses many components of Spark, but we also modiﬁed and added multiple components to enable streaming. We discuss those changes in Section 4.4.2.</p>
+
+<h2>Spark Streaming consists of three components:</h2>
+
+<ol>
+<li>A <strong>master</strong> that tracks the D-Stream lineage graph and schedules <strong>tasks</strong> to compute new RDD partitions.</li>
+<li><strong>Worker</strong> nodes that receive data, store the partitions of input and computed
+RDDs, and execute tasks.</li>
+<li>A <strong>client library</strong> used to send data into the system.</li>
+</ol>
+
+<h2>4.4.1 Application Execution</h2>
+
+<h2>4.4.2 Optimizations for Stream Processing</h2>
+
+<h3>Sigiﬁcant optimizations and changes to this batch engine to support streaming:</h3>
+
+<ol>
+<li><strong>Network communication</strong>: We rewrote Spark’s data plane to use asynchronous I/O to let tasks with remote inputs, such as reduce tasks, fetch them faster.</li>
+<li><strong>Timestep pipelining</strong>: Because the tasks inside each timestep may not perfectly utilize the cluster (e.g., at the end of the timestep, there might only be a few tasks left running), we modiﬁed Spark’s scheduler to allow submitting tasks from the next timestep before the current one has ﬁnished. For example, consider our <strong>ﬁrst map + runningReduce</strong> job in Figure 4.3. Because the maps at each step are independent, we can begin <strong>running the maps for timestep 2 before timestep 1’s reduce ﬁnishes</strong>.</li>
+<li><strong>Task Scheduling</strong>: We made multiple optimizations to Spark’s task scheduler, such as hand-tuning the size of control messages, to be able to launch parallel jobs of hundreds of tasks every few hundred milliseconds.</li>
+<li><strong>Storage layer</strong>: We rewrote Spark’s storage layer to support asynchronous check-pointing of RDDs and to increase performance. Because RDDs are immutable, they can be checkpointed over the network without blocking computations on them and slowing jobs. The new storage layer also uses zero-copy I/O for this when possible.</li>
+<li><strong>Lineage cutoff</strong>: Because lineage graphs between RDDs in D-Streams can grow indeﬁnitely, we modiﬁed the scheduler <strong>to forget lineage after an RDD has been checkpointed</strong>, so that its state does not grow arbitrarily. Similarly, other data structures in Spark that grew without bound were given a <strong>periodic cleanup proces</strong>s.</li>
+<li><strong>Master recovery</strong>: Because streaming applications need to run 24/7, we added support for recovering the Spark master’s state if it fails (Section 4.5.3).</li>
+</ol>
+
+<h2>4.4.3 Memory Management</h2>
+
+<h1>4.5 Fault and Straggler Recovery</h1>
+
+<h2>4.5.1 Parallel Recovery</h2>
+
+<h2>4.5.2 Straggler Mitigation</h2>
+
+<h2>4.5.3 Master Recovery</h2>
+
+<h1>4.6 Evaluation</h1>
+
+<h1>4.7 Discussion</h1>
+
+<h1>4.8 Related Work</h1>
+
+<h1>4.9 Summary</h1>
+
+</body>
+
+</html>
+

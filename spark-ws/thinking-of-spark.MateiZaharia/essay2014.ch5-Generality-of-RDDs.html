@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>5.1 Introduction</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>5.1 Introduction</h1>
+
+<p>Nonetheless, the question remains: <strong>why were RDDs so general? Why were they able to approach the performance of specialized systems, and what are the limitations of the model?</strong></p>
+
+<p>In this chapter, we study these questions by exploring the generality of RDDs from two perspectives. </p>
+
+<ol>
+<li>First, from an expressiveness point of view, we show that RDDs can emulate any distributed system, and will do so efﬁciently in many cases unless the system is sensitive to network latency. In particular, adding data sharing to MapReduce enables this efﬁcient emulation. </li>
+<li>Second, from a systems point of view, we show that RDDs gave applications control over the most common bottleneck resources in cluster applications (speciﬁcally network and storage I/O), which makes it possible to express the same optimizations for these resources that specialized systems have, and hence achieve similar performance. </li>
+<li>Finally, these explorations of RDDs’ generality also identify limitations of the model where it may not emulate other distributed systems efﬁciently, and lead to several possible areas for extensions.</li>
+</ol>
+
+<h1>5.2 Expressiveness Perspective</h1>
+
+<h2>5.2.1 What Computations can MapReduce Capture?</h2>
+
+<h2>5.2.2 Lineage and Fault Recovery</h2>
+
+<h2>5.2.3 Comparison with BSP</h2>
+
+<h1>5.3 Systems Perspective</h1>
+
+<h2>5.3.1 Bottleneck Resources</h2>
+
+<h2>5.3.2 The Cost of Fault Tolerance</h2>
+
+<h1>5.4 Limitations and Extensions</h1>
+
+<h2>5.4.1 Latency</h2>
+
+<h2>5.4.2 Communication Patterns Beyond All-to-All</h2>
+
+<h2>5.4.3 Asynchrony</h2>
+
+<h2>5.4.4 Fine-Grained Updates</h2>
+
+<h2>5.4.5 Immutability and Version Tracking</h2>
+
+<h1>5.5 Related Work</h1>
+
+<h1>5.6 Summary</h1>
+
+</body>
+
+</html>
+
