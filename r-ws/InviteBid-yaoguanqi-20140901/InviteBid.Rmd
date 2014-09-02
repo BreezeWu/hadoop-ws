@@ -1,0 +1,279 @@
+---
+title: "国网物资招标采购价格分析"
+output: word_document
+---
+
+```{r,cache=TRUE,echo=FALSE}
+datafile_ln<-"/mnt/hgfs/Share/Rcode/InviteBid/招标采购信息_辽宁.csv"#数据文件
+datafile_jl<-"/mnt/hgfs/Share/Rcode/InviteBid/招标采购信息_吉林.csv"#吉林数据文件
+
+data_ln<-read.csv(datafile_ln,header=T,colClasses=c("character","character","factor","character","numeric",rep("character",9),"factor","character",rep("factor",4),"character","character",rep("numeric",4),"character",rep("character",3),"factor","character","character","character"))
+data_jl<-read.csv(datafile_jl,header=T,colClasses=c("character","character","factor","character","numeric",rep("character",9),"factor","character",rep("factor",4),"character","character",rep("numeric",4),"character",rep("character",3),"factor","character","character","character"))#吉林数据
+```
+
+```{r,echo=FALSE}
+#sigfields<-c("合同编号.电子商务.","供应商编码","供应商名称","质保期","付款方式","分标信息","分包信息","物料编码","物料描述","物料组","大类描述","中类描述","小类描述","数量","计量单位","单价.不含税.","分项净价.元.","交货日期","交货地点及交换方式","招标计划编号","日期","时间")
+
+# #转换日期格式
+# data_ln$"日期"<-gsub("\\.","-",data_ln$"日期")
+# data_ln$"日期"<-as.Date(data_ln$"日期")
+# data_ln$"交货日期"<-paste(substr(data_ln$"交货日期",3,4),substr(data_ln$"交货日期",6,7),sep="")
+# 
+# price<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/price.csv",header=T,colClasses=c("character","Date","numeric"))
+# 
+# #转换日期为字符串
+# price$日期<-as.character(price$日期)
+# 
+# #在数据列增加期货价格
+# data_ln$cuprice<-NA
+# data_ln$rbprice<-NA
+# library(sqldf)
+# for (i in 1:nrow(data_ln)){
+# cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i],"'",sep=""))
+# rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i],"'",sep=""))
+# 
+# if (length(cuprice[[1]])<1){
+# cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i]-1,"'",sep=""))
+# }
+# if (length(cuprice[[1]])<1){
+# cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i]-2,"'",sep=""))
+# }
+# if (length(rbprice[[1]])<1){
+# rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i]-1,"'",sep=""))
+# }
+# if (length(rbprice[[1]])<1){
+# rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_ln$'交货日期'[i],sep=''),"' and 日期='",data_ln$'日期'[i]-2,"'",sep=""))
+# }
+# if (length(cuprice[[1]])>0&length(rbprice[[1]])>0){
+# data_ln[i,c("cuprice","rbprice")]<-c(cuprice[[1]],rbprice[[1]])
+# }
+# }
+
+#write.csv(data_ln,"data_ln.csv")
+#data_ln<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/data_ln.csv",header=T,colClasses=c("character","character","character","character","factor","character","numeric",rep("character",9),"factor","character",rep("factor",4),"character","character",rep("numeric",4),"character",rep("character",3),"factor","character","character","character","numeric","character"))
+
+#data_ln<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/data_ln.csv",header=T)
+```
+
+```{r,echo=FALSE}
+ignoremin<-function(v,ratio,num){
+  sumv<-sum(v)
+  while (sum(v[-which(v==min(v))])/sumv>=ratio|length(v)>num) {
+  v<-v[-which(v==min(v))]
+  }
+  v
+}
+```
+
+## 大类
+```{r,results='asis',dev="Cairo_png",warning=FALSE,echo=FALSE}
+#每类物料采购金额比重
+
+pievalue<-"分项净价.元."
+dlpie<-tapply(data_ln[,pievalue],data_ln$"大类描述",sum)
+par(mar=c(0,0,0,0))
+pie(dlpie,col=rainbow(length(dlpie)))
+
+sumdlpie<-sum(dlpie)
+dlpie<-ignoremin(dlpie,0.8,10)
+
+```
+
+辽宁省物资采购以`r names(dlpie)`为主,这`r length(dlpie)`者占总采购金额的`r sum(dlpie)/sumdlpie*100`%。
+```{r,results='asis',dev="Cairo_png",warning=FALSE,echo=FALSE}
+xl<-NULL
+subtotal<-0
+for (i in names(dlpie)){
+  data_dl<-subset(data_ln,大类描述==i,select=c(pievalue,"中类描述","小类描述"))
+#data_dl<-data_ln[data_ln$"大类描述"==i,c(pievalue,"中类描述","小类描述")]
+data_dl$"中类描述"<-as.factor(as.character(data_dl$"中类描述"))
+zlpie<-tapply(data_dl[,pievalue],data_dl$"中类描述",sum)
+par(mar=c(0,0,0,0))
+pie(zlpie,col=rainbow(length(zlpie)))
+sumzlpie<-sum(zlpie)
+zlpie<-ignoremin(zlpie,0.8,10)
+cat("\n\r### 大类",i)
+cat("\n\r辽宁省物资采购中",i,"以",names(zlpie),"为主,这",length(zlpie),"者占",i,"总采购金额的",sum(zlpie)/sumzlpie*100,"%。\n\r")
+
+for (j in names(zlpie)){
+    data_zl<-subset(data_dl,中类描述==j,select=c(pievalue,"小类描述"))
+  #data_zl<-data_dl[data_dl$"中类描述"==j,c(pievalue,"小类描述")]
+data_zl$"小类描述"<-as.factor(as.character(data_zl$"小类描述"))
+xlpie<-tapply(data_zl[,pievalue],data_zl$"小类描述",sum)
+par(mar=c(0,0,0,0))
+pie(xlpie,col=rainbow(length(xlpie)))
+sumxlpie<-sum(xlpie)
+xlpie<-ignoremin(xlpie,0.8,10)
+cat("\n\r#### 中类",j)
+cat("\n\r辽宁省物资采购中",j,"以",names(xlpie),"为主,这",length(xlpie),"者占",j,"总采购金额的",sum(xlpie)/sumxlpie*100,"%。\n\r")
+  xl<-c(xl,names(xlpie))
+subtotal<-subtotal+sum(xlpie)
+}
+}
+```
+重要的小类包括：`r xl`，共`r length(xl)`个小类,占采购总金额的`r subtotal/sum(data_ln[,pievalue])*100`%。
+
+每小类分别比较价格
+
+220kV变压器
+
+```{r,echo=FALSE}
+exprstr<-paste(paste("小类描述=='",xl,"'",sep=""),collapse="|")
+data_sig<-subset(data_ln,eval(parse(text=exprstr)))
+data_jl<-subset(data_jl,eval(parse(text=exprstr)))
+```
+重要的物资招标记录共`r nrow(data_sig)`条。
+```{r,results='asis',echo=FALSE,dev='Cairo_png'}
+data_sig$"物料编码"<-as.factor(as.character(data_sig$"物料编码"))
+data_sig$"小类描述"<-as.character(data_sig$"小类描述")
+data_jl$"物料编码"<-as.factor(as.character(data_jl$"物料编码"))
+
+wl_p<-NULL
+for (i in levels(data_sig$"物料编码")){
+  data_wl<-subset(data_sig,物料编码==i)
+  data_wl_jl<-subset(data_jl,物料编码==i)
+  if (nrow(data_wl_jl)<1){
+    jl_price<-NA
+  }else{
+    jl_price<-mean(data_wl_jl$"单价.不含税.")
+  }
+    wl_price<-mean(data_wl$"单价.不含税.")
+    wl_p<-rbind(wl_p,c(i,data_wl$"物料描述"[1],data_wl$"小类描述"[1],wl_price,jl_price,wl_price-jl_price,(wl_price-jl_price)/jl_price*100))
+
+}
+colnames(wl_p)<-c("物料编码","物料描述","小类描述","辽宁均价","吉林均价","价差","价差率")
+wl_p<-wl_p[order(abs(as.numeric(wl_p[,"价差率"])),decreasing=T),]
+par(mar=c(2,2,2,2))
+barplot(as.numeric(wl_p[,"价差率"]),col=rainbow(nrow(wl_p)))
+boxplot(as.numeric(wl_p[,"价差率"]))
+summary(as.numeric(wl_p[,"价差率"]))
+
+ wl_p_part<-subset(wl_p,as.numeric(wl_p[,"价差率"])>=50|as.numeric(wl_p[,"价差率"])<=-50)
+ barplot(as.numeric(wl_p_part[,"价差率"]),col=rainbow(nrow(wl_p_part)))
+
+wl_p<-wl_p[order(abs(as.numeric(wl_p[,"价差"])),decreasing=T),]
+par(mar=c(2,2,2,2))
+barplot(as.numeric(wl_p[,"价差"]),col=rainbow(nrow(wl_p)))
+boxplot(as.numeric(wl_p[,"价差"]))
+summary(as.numeric(wl_p[,"价差"]))
+
+wl_p_part<-subset(wl_p,as.numeric(wl_p[,"价差"])>=100000|as.numeric(wl_p[,"价差"])<=-100000)
+barplot(as.numeric(wl_p_part[,"价差"]),col=rainbow(nrow(wl_p_part)))
+```
+价差率均值`r mean(as.numeric(wl_p[,"价差率"]))`,接近于0，大部分物资价差率不大，
+
+50%的物资价差集中在-7.696%---7.09%
+
+变压器
+```{r,dev='Cairo_png',echo=FALSE}
+wl_p_byq<-subset(wl_p,wl_p[,"小类描述"]=="220kV变压器"|wl_p[,"小类描述"]=="500kV变压器"|wl_p[,"小类描述"]=="66kV变压器")
+par(mar=c(2,2,2,2))
+barplot(as.numeric(wl_p_byq[,"价差"]),col=rainbow(nrow(wl_p_byq)))
+barplot(as.numeric(wl_p_byq[,"价差率"]),col=rainbow(nrow(wl_p_byq)))
+
+```
+
+```{r,echo=FALSE}
+exprstr<-paste(paste("物料编码=='",wl_p_byq[,"物料编码"],"'",sep=""),collapse="|")
+data_byq_all<-subset(data_sig,eval(parse(text=exprstr)))
+
+```
+
+
+```{r,dev='Cairo_png',echo=FALSE}
+for (i in wl_p_byq[,"物料编码"]){
+  
+  data_byq<-subset(data_byq_all,data_byq_all[,"物料编码"]==i)
+  
+  data_byq_jl<-subset(data_jl,data_jl[,"物料编码"]==i)
+  
+  if (nrow(data_byq_jl)>1){
+    #两样本均值差异
+    byq_info<-subset(wl_p_byq,wl_p_byq[,"物料编码"]==i)
+    
+    print(byq_info[,c("物料编码","物料描述")])
+    print(nrow(data_byq))
+    print(t.test(as.numeric(data_byq$"单价.不含税."),as.numeric(data_byq_jl$"单价.不含税.")))
+        
+  }
+}
+```
+
+```{r,echo=FALSE}
+ #转换日期格式
+#  data_byq_all$"日期"<-gsub("\\.","-",data_byq_all$"日期")
+#  data_byq_all$"日期"<-as.Date(data_byq_all$"日期")
+#  data_byq_all$"交货日期"<-paste(substr(data_byq_all$"交货日期",3,4),substr(data_byq_all$"交货日期",6,7),sep="")
+# # 
+#  price<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/price.csv",header=T,colClasses=c("character","Date","numeric"))
+# # 
+# # #转换日期为字符串
+#  price$日期<-as.character(price$日期)
+# # 
+# # #在数据列增加期货价格
+#  data_byq_all$cuprice<-NA
+#  data_byq_all$rbprice<-NA
+#  library(sqldf)
+#  for (i in 1:nrow(data_byq_all)){
+#  cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i],"'",sep=""))
+#  rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i],"'",sep=""))
+#  
+#  if (length(cuprice[[1]])<1){
+#  cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i]-1,"'",sep=""))
+#  }
+#  if (length(cuprice[[1]])<1){
+#  cuprice<-sqldf(paste("select 结算价 from price where 合约='",paste('cu',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i]-2,"'",sep=""))
+#  }
+#  if (length(rbprice[[1]])<1){
+#  rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i]-1,"'",sep=""))
+#  }
+#  if (length(rbprice[[1]])<1){
+#  rbprice<-sqldf(paste("select 结算价 from price where 合约='",paste('rb',data_byq_all$'交货日期'[i],sep=''),"' and 日期='",data_byq_all$'日期'[i]-2,"'",sep=""))
+#  }
+#  if (length(cuprice[[1]])>0&length(rbprice[[1]])>0){
+#  data_byq_all[i,c("cuprice","rbprice")]<-c(cuprice[[1]],rbprice[[1]])
+#  }
+#  }
+#write.csv(data_byq_all,"data_byq_all.csv")
+data_byq_all<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/data_byq_all.csv",header=T,colClasses=c("character","character","character","factor","character","numeric",rep("character",9),"factor","character",rep("factor",4),"character","character",rep("numeric",4),"character",rep("character",3),"factor","character","character","character","numeric","numeric"))
+
+```
+
+```{r,echo=FALSE}
+
+#data_byq_all$"物料编码"<-as.factor(as.character(data_byq_all$"物料编码"))
+#byq_code<-levels(data_byq_all[,"物料编码"])
+data_byq_all<-data_byq_all[!is.na(data_byq_all$"cuprice"),]
+for (i in wl_p_byq[,"物料编码"]){
+  data_byq<-subset(data_byq_all,data_byq_all[,"物料编码"]==i)
+  print(i)
+  print(wl_p_byq[which(wl_p_byq[,"物料编码"]==i),"物料描述"])
+  print(nrow(data_byq))
+print(cor(data_byq[,c("单价.不含税.","cuprice")]))
+print(cor(data_byq[,c("单价.不含税.","rbprice")]))
+
+data_byq$curb<-data_byq$cuprice*0.3+data_byq$rbprice*0.35
+print(cor(data_byq[,c("单价.不含税.","curb")]))
+}
+```
+
+
+```{r,echo=FALSE}
+# price<-read.csv("/mnt/hgfs/Share/Rcode/InviteBid/price.csv",header=T,row.names=1,colClasses="character")
+# 
+# year<-2014
+# priceyear<-read.csv(paste("/mnt/hgfs/Share/Rcode/InviteBid/",year,".csv",sep=""),header=T,colClasses="character")
+# 
+# pricesub<-subset(priceyear,substr(priceyear[,"合约"],1,2)=="cu"|substr(priceyear[,"合约"],1,2)=="rb")
+# for (i in 1:nrow(pricesub)){
+# price[pricesub[i,"日期"],pricesub[i,"合约"]]<-pricesub[i,"结算价"]
+# }
+```
+
+data_byq_all$cu<-as.numeric(data_byq_all$cu)
+
+data_byq_all<-data_byq_all[!is.na(data_byq_all$"cu"),]
+
+计算招标价与期货价格的相关性
+
+对用户
