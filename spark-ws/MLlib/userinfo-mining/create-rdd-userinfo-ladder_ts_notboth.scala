@@ -146,12 +146,15 @@ val DataSetRef_L1 = List(
 	DataSetRefItem_L1(3, "BadF3", "bigdata_user_info_s98_onebigtable_zero_and_null_f3")
 )*/
 
+val tablePrefix = "bigdata_user_info_"
+val tablePostfix = "_onebigtable_"
 // 根据 taskNamePre 构建 DataSetRef_L1
+// 如 "bigdata_user_info_s01_onebigtable_good_m1", "bigdata_user_info_s98_onebigtable_good_m1"
 val DataSetRef_L1 = List(
-	DataSetRefItem_L1(0, "GoodM1", s"bigdata_user_info_${taskNamePre}_onebigtable_good_m1"),
-	DataSetRefItem_L1(1, "GoodM2", s"bigdata_user_info_${taskNamePre}_onebigtable_good_m2"),
-	DataSetRefItem_L1(2, "BadF2ExcludeF3", s"bigdata_user_info_${taskNamePre}_onebigtable_zero_and_null_f2_exclude_f3"),
-	DataSetRefItem_L1(3, "BadF3", s"bigdata_user_info_${taskNamePre}_onebigtable_zero_and_null_f3")
+	DataSetRefItem_L1(0, "GoodM1", s"${tablePrefix}{taskNamePre}{tablePostfix}good_m1"),
+	DataSetRefItem_L1(1, "GoodM2", s"${tablePrefix}{taskNamePre}{tablePostfix}good_m2"),
+	DataSetRefItem_L1(2, "BadF2ExcludeF3", s"${tablePrefix}{taskNamePre}{tablePostfix}zero_and_null_f2_exclude_f3"),
+	DataSetRefItem_L1(3, "BadF3", s"${tablePrefix}{taskNamePre}{tablePostfix}zero_and_null_f3")
 )
 
 // 第一层与第二层交叉的SQL
