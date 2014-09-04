@@ -310,6 +310,38 @@ def transform2ParsedRDDMatrix(hiveRDDMatrix:List[List[HiveRDDMatrixItem]]):List[
 }
 
 // ----------------------------------------------------------------------------
+// 从HiveRDDMatrix 变换为 ParsedRDDMatrix : 百分比
+// ----------------------------------------------------------------------------
+def transform2ParsedRDDMatrix_percent(hiveRDDMatrix:List[List[HiveRDDMatrixItem]], percent:Int = 100):List[List[ParsedRDDMatrixItem]] = {	
+	def transformHiveRDDList(list:List[HiveRDDMatrixItem]):List[ParsedRDDMatrixItem] = {
+		def transformHiveRDD(item:HiveRDDMatrixItem):ParsedRDDMatrixItem = {
+			val hiveDataRef = item.hiveDataRef
+			val hiveData_vpm = hiveDataRef.vpm
+			val hiveData_vpmIndexed = hiveDataRef.vpmIndexed
+			
+			// 变换 rddFromHive_* (应用数据)
+			val parsedData_vpm = hiveData_vpm.map(x => sqlRow2Double_percent(x, percent)).	// 去掉null,转换为Double
+				map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
+				
+			// 变换 rddFromHiveIndexed_* (应用数据)
+			val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => row2ConsVPM_percent(r, percent))
+
+			// 结果对象			
+			val parsedRDDMatrixItem = ParsedRDDMatrixItem(item.item_L1, item.item_L2, VpmParsedRDDRef(parsedData_vpm,parsedData_vpmIndexed))
+			
+			return parsedRDDMatrixItem
+		}
+		
+		val result = list.map(y => transformHiveRDD(y))
+		return result
+	}
+	
+	val parsedRDDMatrix = hiveRDDMatrix.map(x => transformHiveRDDList(x))
+	
+	return parsedRDDMatrix
+}
+
+// ----------------------------------------------------------------------------
 // 打印 ParsedRDDMatrix 中各自的数量
 def ComputeRDDCount_ParsedRDDMatrix(parsedRDDMatrix: List[List[ParsedRDDMatrixItem]]):List[List[(Long,Long)]] = {
 	def ComputeRDDCount_ParsedRDDList(list:List[ParsedRDDMatrixItem]):List[(Long,Long)] = {
@@ -447,6 +479,9 @@ val SqlMatrix = buildSQLMatrix(DataSetRef_L1, DataSetRef_L2)
 val HiveRDDMatrix = buildHiveRDDMatrix(SqlMatrix)
 // 变换为 ParsedRDDMatrix
 val ParsedRDDMatrix = transform2ParsedRDDMatrix(HiveRDDMatrix)
+// 变换为 ParsedRDDMatrix: 百分比
+val percent = 1000
+val ParsedRDDMatrix_percent = transform2ParsedRDDMatrix_percent(HiveRDDMatrix)
 
 /*
 val hiveData = HiveRDDMatrix(0)(0).hiveDataRef.vpmIndexed
@@ -455,7 +490,11 @@ val firstHiveData = hiveData.first
 val parsedData = ParsedRDDMatrix(0)(0).parsedRDDRef.vpmIndexed
 val firstParsedData = parsedData.first
 
+val parsedData_percent = ParsedRDDMatrix_percent(0)(0).parsedRDDRef.vpmIndexed
+val firstParsedData_percent = parsedData_percent.first
+
 firstHiveData
 firstParsedData.vpm
+firstParsedData_percent.vpm
 */
 

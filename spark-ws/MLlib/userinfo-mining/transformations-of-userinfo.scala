@@ -95,3 +95,36 @@ def row2ConsVPM(p:org.apache.spark.sql.Row) = {
 	)
 }
 //val parsedDataIndexed_GoodM1  = rddFromHiveIndexed_GoodM1.map(r => row2ConsVPM(r))
+
+
+// ------------------------------------
+  /**
+   * 转换 org.apache.spark.sql.Row 中的值(Any)为 Double: 百分值
+   *
+   * 原型为: sqlRow2Double: (row: org.apache.spark.sql.Row)Seq[Double]
+   */
+  def sqlRow2Double_percent(row:org.apache.spark.sql.Row, range:Int = 100):Seq[Double] = {
+    val doubleRow = row.map(y => any2Double(y))
+
+    val maxValue = doubleRow.reduce((a,b) => if(a > b) a else b)
+    val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+
+    return percentRow
+  }
+
+  // 转换函数: 从hive中的用户每年用电量表到数据对象的映射: 百分值
+  def row2ConsVPM_percent(p:org.apache.spark.sql.Row, range:Int = 100) = {
+	def g(y:Any):Double = y match {
+		case null => 0			// 将null转换为0
+		case i:Int => i.toDouble	// 将Int转换为Double 
+		case d:Double => d
+	} 
+  
+    val index = Index(p(0).toString,p(1).toString)
+    val array = Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
+
+    val maxValue = array.reduce((a,b) => if(a > b) a else b)
+    val newArray = array.map( x => (((x*range)/maxValue).toInt.toDouble))
+
+    ConsVPM(index, newArray)
+  }
