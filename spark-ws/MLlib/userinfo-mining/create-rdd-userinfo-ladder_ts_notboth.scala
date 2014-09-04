@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // 从hive获取数据 S98
 //		
 //	在spark-shell中执行 
@@ -151,10 +151,10 @@ val tablePostfix = "_onebigtable_"
 // 根据 taskNamePre 构建 DataSetRef_L1
 // 如 "bigdata_user_info_s01_onebigtable_good_m1", "bigdata_user_info_s98_onebigtable_good_m1"
 val DataSetRef_L1 = List(
-	DataSetRefItem_L1(0, "GoodM1", s"${tablePrefix}{taskNamePre}{tablePostfix}good_m1"),
-	DataSetRefItem_L1(1, "GoodM2", s"${tablePrefix}{taskNamePre}{tablePostfix}good_m2"),
-	DataSetRefItem_L1(2, "BadF2ExcludeF3", s"${tablePrefix}{taskNamePre}{tablePostfix}zero_and_null_f2_exclude_f3"),
-	DataSetRefItem_L1(3, "BadF3", s"${tablePrefix}{taskNamePre}{tablePostfix}zero_and_null_f3")
+	DataSetRefItem_L1(0, "GoodM1", s"${tablePrefix}${taskNamePre}${tablePostfix}good_m1"),
+	DataSetRefItem_L1(1, "GoodM2", s"${tablePrefix}${taskNamePre}${tablePostfix}good_m2"),
+	DataSetRefItem_L1(2, "BadF2ExcludeF3", s"${tablePrefix}${taskNamePre}${tablePostfix}zero_and_null_f2_exclude_f3"),
+	DataSetRefItem_L1(3, "BadF3", s"${tablePrefix}${taskNamePre}${tablePostfix}zero_and_null_f3")
 )
 
 // 第一层与第二层交叉的SQL
@@ -447,4 +447,15 @@ val SqlMatrix = buildSQLMatrix(DataSetRef_L1, DataSetRef_L2)
 val HiveRDDMatrix = buildHiveRDDMatrix(SqlMatrix)
 // 变换为 ParsedRDDMatrix
 val ParsedRDDMatrix = transform2ParsedRDDMatrix(HiveRDDMatrix)
+
+/*
+val hiveData = HiveRDDMatrix(0)(0).hiveDataRef.vpmIndexed
+val firstHiveData = hiveData.first
+
+val parsedData = ParsedRDDMatrix(0)(0).parsedRDDRef.vpmIndexed
+val firstParsedData = parsedData.first
+
+firstHiveData
+firstParsedData.vpm
+*/
 

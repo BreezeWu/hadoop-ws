@@ -1,11 +1,13 @@
 // ----------------------------------------------------------------------------
+/*
 // 对用户进行分群: 独立模式
 //		并不依赖于 execute-tryKMeansSmart-ClusterCount.scala 的执行
 //
 //	在spark-shell中执行 
-//      val taskNamePre = "s98" // s01 # 这个会用来构造表名
-//		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-ClusteringUserInfo-Standalone-ladder_ts_notboth.scala
 
+val taskNamePre = "s98" // s01 # 这个会用来构造表名
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-ClusteringUserInfo-Standalone-ladder_ts_notboth.scala
+*/
 // ****************************************************************************
 // 1. 加载数据与函数
 // ****************************************************************************

@@ -1,7 +1,7 @@
 ===================
 # 在 spark-shell 中 运行
     // spark-shell的启动
-    //  [集群]   SPARK_EXECUTOR_INSTANCES=12 SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+    //  [集群]   SPARK_EXECUTOR_INSTANCES=7 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
     //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
 
 # 执行方法请参见脚本
