@@ -10,25 +10,28 @@
 cd ~/workspace_github/hadoop-ws/spark-ws/ideaProjects/DataMining-of-StationGrid-2014/out/artifacts/DataMining_of_StationGrid_2014_jar
 
 # 完整命令
-spark-submit --master local --class org.wuhz.spark.demo.WordCount --executor-memory 500m DataMining-of-StationGrid-2014.jar hdfs://master-hadoop:9000/user/hadoop/input/words-data
+spark-submit --master local --class org.wuhz.spark.demo.WordCount --executor-memory ${memory} --num-executors ${instances} DataMining-of-StationGrid-2014.jar hdfs://master-hadoop:9000/user/hadoop/input/words-data
 
 # 执行(参数形式)
 export input_data=hdfs://master-hadoop:9000/user/hadoop/input/words-data/*
 export task_jar=DataMining-of-StationGrid-2014.jar
 #export task_main_class=org.wuhz.spark.sg.volumetrends.Analyzing
 export task_main_class=org.wuhz.spark.demo.WordCount
+export memory=800m
+export instances=7 #13
+export cores=1
 
 # local模式
-spark-submit --master local --class ${task_main_class} --executor-memory 500m ${task_jar} ${input_data}
+spark-submit --master local --class ${task_main_class} --executor-memory ${memory} ${task_jar} ${input_data}
 
 # spark://模式
-spark-submit --master spark://master-hadoop:7077 --class ${task_main_class} --executor-memory 500m ${task_jar} ${input_data}
+spark-submit --master spark://master-hadoop:7077 --class ${task_main_class} --executor-memory ${memory} --num-executors ${instances} ${task_jar} ${input_data}
 
 # yarn-client模式
-spark-submit --master yarn-client --class ${task_main_class} --executor-memory 500m ${task_jar} ${input_data}
+spark-submit --master yarn-client --class ${task_main_class} --executor-memory ${memory} --num-executors ${instances} --executor-cores ${cores} ${task_jar} ${input_data}
 
 # yarn-cluster模式
-spark-submit --master yarn-cluster --class ${task_main_class} --executor-memory 500m ${task_jar} ${input_data}
+spark-submit --master yarn-cluster --class ${task_main_class} --executor-memory ${memory} --num-executors ${instances} --executor-cores ${cores} ${task_jar} ${input_data}
 
 volumetrends
 ---------------
@@ -36,10 +39,16 @@ volumetrends
 export input_data=
 export task_jar=DataMining-of-StationGrid-2014.jar
 export task_main_class=org.wuhz.spark.sg.volumetrends.Executer
+export memory=800m
+export instances=7 #13
+export cores=1
 
 # 第一个参数是数据集标志: s01/s98
 # 第二个参数是原值还是百分比标志: 1-原值 100/1000/1000: 转换为相对值,值区间是100/1000/10000
-spark-submit --master local --class ${task_main_class} --executor-memory 500m ${task_jar} ${input_data} s01 10000
+# local
+spark-submit --master local[8] --class ${task_main_class} --executor-memory ${memory}  ${task_jar} ${input_data} s01 10000
+# yarn-client
+spark-submit --master yarn-client --class ${task_main_class} --executor-memory 800m --num-executors 13 --executor-cores ${cores} ${task_jar} ${input_data} s01 10000
 
 volumetrends: 在spark-shell中运行(搞不成啮!!!!)
 ---------------
