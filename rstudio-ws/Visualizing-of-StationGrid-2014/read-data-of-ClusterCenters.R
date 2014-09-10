@@ -3,7 +3,8 @@
 # -----------------------------------------------------------------------------
 # 运行方法: 在R环境中,使用下面语句
 #   	source("~/workspace_github/hadoop-ws/rstudio-ws/Visualizing-of-StationGrid-2014/read-data-of-ClusterCenters.R")
-#
+#    或者：  
+#     source("read-data-of-ClusterCenters.R")
 # -----------------------------------------------------------------------------
 
 # *****************************************************************************
@@ -69,7 +70,7 @@ filenames <- paste(rootFilePathOfIn, filesVector, sep="")
 # 		适用于 _metrics_unsorted 和 _metrics_sorted
 loadClusterCenters <- function(filename) {
   # 读取文件
-  filedata = read.table(filename, header=TRUE, sep=",")	 # read table file ,首行无列名(header=FALSE)
+  filedata = read.table(filename, header=FALSE, sep=",")	 # read table file ,首行无列名(header=FALSE)
   # filedata
     
   # 为 filedata 设置变量标签
@@ -80,7 +81,7 @@ loadClusterCenters <- function(filename) {
   org <- filedata  
   # -----------------------------------------------------------------------------
   # 横表变纵表
-  library(reshape)
+  library(reshape2)
   # 'pointsNum'是没有必要的,但为了保留它作为单独的一列
   v <- melt(org,  id = c("clusterID", "counter"), variable_name = "ym")	# colnames/ym -> value
   

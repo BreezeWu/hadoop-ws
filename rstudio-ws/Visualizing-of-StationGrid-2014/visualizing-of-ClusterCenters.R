@@ -48,6 +48,24 @@ visualizingClusterCenters <- function(fileDataOfClusterCenters, curTaskName) {
   curdata$clusterID <- as.factor(curdata$clusterID)
   #curdata
   
+   # ---------------------------
+  # 每个簇一个折线
+  rownum <- nrow(org)
+  for(r in 1:rownum) {
+    one <- org[r,]
+    # 横表变纵表
+    one.v <- melt(one,  id = c("clusterID", "counter"), variable_name = "ym")
+    
+    p <- ggplot(one.v, aes(x=ym, y=value, group=clusterID))
+    p <- p + xlab("month") + ylab("relative volume per month")
+    p + geom_line(aes(colour = clusterID))
+    
+    namePostfix <- paste(curTaskName, r-1, sep="_c")
+    ggsave(getImageFile("(2.1)簇中心折线图", namePostfix), width = 10, height = 8)
+  }
+  
+  # ---------------------------
+  
   # ---------------------------
   # 基于 y 变量的 value
   p <- ggplot(curdata, aes(x=clusterID, y=counter))
@@ -83,16 +101,16 @@ visualizingClusterCenters <- function(fileDataOfClusterCenters, curTaskName) {
   # 折线图
   p <- ggplot(curdata, aes(x=ym, y=value, group=clusterID))
   #p <- p + xlab("年月") + ylab("簇中心的用电量相对比例")			# 中文有问题
-  p <- p + xlab("month") + ylab("volume center")
+  p <- p + xlab("month") + ylab("relative volume per month")
   p + geom_line()
   p + geom_line(aes(colour = clusterID))
   #p + geom_line(aes(colour = clusterID, size=clusterID))
   #p + geom_line(aes(colour = clusterID, size= as.integer(clusterID) %% 5))
   ggsave(getImageFile("(2.1)簇中心折线图", curTaskName), width = 10, height = 8)
-  
+   
   p <- ggplot(curdata, aes(x=ym, y=sqrt(value), group=clusterID))
   #p <- p + xlab("年月") + ylab("簇中心的用电量")			# 中文有问题
-  p <- p + xlab("month") + ylab("volume center")
+  p <- p + xlab("month") + ylab("relative volume per month")
   p + geom_line(aes(colour = clusterID))
   ggsave(getImageFile("(2.2)簇中心折线图_sqrt", curTaskName), width = 10, height = 8)
   # ---------------------------

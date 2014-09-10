@@ -57,8 +57,8 @@ visualizingSampleData <- function(fileDataOfSampleData, curTaskName) {
   # ---------------------------
   # 折线图
   p <- ggplot(curdata, aes(x=ym, y=value, group=cons_id))
-  #p <- p + xlab("年月") + ylab("样本数据的用电量")			# 中文有问题
-  p <- p + xlab("month") + ylab("volume center")
+  #p <- p + xlab("年月") + ylab("relative volume per month")			# 中文有问题
+  p <- p + xlab("month") + ylab("relative volume per month")
   p + geom_line()
   p + geom_line(aes(colour = cons_id))
   #p + geom_line(aes(colour = cons_id, size=cons_id))
@@ -66,19 +66,19 @@ visualizingSampleData <- function(fileDataOfSampleData, curTaskName) {
   ggsave(getImageFile("(2.1)样本数据的折线图", curTaskName), width = 10, height = 8)
   
   p <- ggplot(curdata, aes(x=ym, y=sqrt(value), group=cons_id))
-  #p <- p + xlab("年月") + ylab("样本数据的用电量")			# 中文有问题
-  p <- p + xlab("month") + ylab("volume center")
+  #p <- p + xlab("年月") + ylab("relative volume per month")			# 中文有问题
+  p <- p + xlab("month") + ylab("relative volume per month")
   p + geom_line(aes(colour = cons_id))
   ggsave(getImageFile("(2.2)样本数据的折线图_sqrt", curTaskName), width = 10, height = 8)
   # ---------------------------
   # 线图
   p <- ggplot(curdata, aes(factor(ym), value))
-  p <- p + xlab("年月") + ylab("样本数据的用电量")
+  p <- p + xlab("年月") + ylab("relative volume per month")
   p + geom_boxplot()
   ggsave(getImageFile("(3.1)geom_boxplot", curTaskName), width = 10, height = 8)
   
   p <- ggplot(curdata, aes(factor(ym), sqrt(value)))
-  p <- p + xlab("年月") + ylab("样本数据的用电量")
+  p <- p + xlab("年月") + ylab("relative volume per month")
   p + geom_boxplot()
   ggsave(getImageFile("(3.2)geom_boxplot_sqrt", curTaskName), width = 10, height = 8)
   
