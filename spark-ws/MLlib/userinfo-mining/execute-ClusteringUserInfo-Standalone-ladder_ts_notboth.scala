@@ -145,14 +145,14 @@ def analyzeParsedRDDMatrix_Standalone(parsedRDDMatrix: List[List[ParsedRDDMatrix
 
 // ----------------------------------------------------------------------------
 // 将 AnalyzeResultMatrix 的簇样本信息写入文件
-def writeAnalyzeResultMatrix_Sample2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String) = {
+def writeAnalyzeResultMatrix_Sample2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String, pwd:String) = {
 	def writeSampleOfAnalyzeResultList(list:List[AnalyzeResultMatrixItem]) = {
 		def writeSampleOfAnalyzeResult(item:AnalyzeResultMatrixItem) = {
 			val clusterSet = item.clusterSet
 			val k = clusterSet.k 
 			val filenameID = s"k${k}_${item.item_L1.id}_${item.item_L2.id}"
 			
-			writeClusterSetSample2File(clusterSet, sampleNum, filenameHead + filenameID)
+			writeClusterSetSample2File(clusterSet, sampleNum, filenameHead + filenameID, pwd)
 			// 结果对象 : 无	
 		}
 		
@@ -166,14 +166,14 @@ def writeAnalyzeResultMatrix_Sample2File(analyzeResultMatrix:List[List[AnalyzeRe
 }
 // ----------------------------------------------------------------------------
 // 将 AnalyzeResultMatrix 的簇中心信息写入文件
-def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String) = {
+def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[AnalyzeResultMatrixItem]], sampleNum:Int, filenameHead:String, pwd:String) = {
 	def writeClusterCentersOfAnalyzeResultList(list:List[AnalyzeResultMatrixItem]) = {
 		def writeClusterCentersOfAnalyzeResult(item:AnalyzeResultMatrixItem) = {
 			val clusterSet = item.clusterSet
 			val k = clusterSet.k 
 			val filenameID = s"k${k}_${item.item_L1.id}_${item.item_L2.id}"
 			
-			writeClusterSetCenters2File(clusterSet, filenameHead + filenameID)
+			writeClusterSetCenters2File(clusterSet, filenameHead + filenameID, pwd)
 			// 结果对象 : 无	
 		}
 		
