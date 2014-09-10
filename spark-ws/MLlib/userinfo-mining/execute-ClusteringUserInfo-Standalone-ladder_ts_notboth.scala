@@ -223,12 +223,16 @@ getSampleFromClusterSet(x,x.k+1,2) // 从簇0中寻找2个样本  应该报错!
 
 // ----------------------------------------------------------------------------
 val head = taskNamePre + "_L2"
+val env = System.getenv()
+val pwd = env.get("PWD")
 // 将簇样本信息写入文件
 val sampleNum = 200
-writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head)
+//writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head)
+writeAnalyzeResultMatrix_Sample2File(AnalyzeResultMatrix, sampleNum, head, pwd)
 
 // 单独将簇中心信息写入文件
-writeAnalyzeResultMatrix_ClusterCenters2File(AnalyzeResultMatrix, head)
+//writeAnalyzeResultMatrix_ClusterCenters2File(AnalyzeResultMatrix, head)
+writeAnalyzeResultMatrix_ClusterCenters2File(AnalyzeResultMatrix, head, pwd)
 // ----------------------------------------------------------------------------
 // 计算年用电量合计
 val YearSum_ParsedRDDMatrix = computeYearSum_ParsedRDDMatrix_Standalone(ParsedRDDMatrix) 

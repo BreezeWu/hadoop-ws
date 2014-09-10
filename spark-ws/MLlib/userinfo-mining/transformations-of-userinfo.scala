@@ -120,7 +120,7 @@ def row2ConsVPM(p:org.apache.spark.sql.Row) = {
     //val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
     
     val percentRow = if (maxValue ==0 ) {
-        doubleRow.map(x => 0)
+        doubleRow.map(x => 0.0)
     } else {
         doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
     }

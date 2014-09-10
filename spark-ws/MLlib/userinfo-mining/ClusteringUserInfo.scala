@@ -275,7 +275,18 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
     
     filewriter.write("\n----------------------------------------------------------------------------")
     filewriter.write("\n\t 打印每个簇及其样本信息 \n")
-    
+
+  // 函数: 打印某个簇及其样本
+  def writerOneClusterSample(oneCluster:OneCluster, sampleNum:Int)
+  {
+    filewriter.write(s"\n\t簇ID:\t 计数")
+    filewriter.write(s"\n\t${oneCluster.clusterID}:\t ${oneCluster.counter}\n")
+    filewriter.write(s"\n\t样本数据\n")
+
+    val sampleData = oneCluster.points.take(sampleNum)
+    sampleData.foreach(x => filewriter.write("\n" + x.getPrintLine()))
+  }
+
     // 函数: 打印某个簇及其样本(单独一个文件)
     def writerOneClusterSample2File(oneCluster:OneCluster, sampleNum:Int, filepathPrefix:String)
     {
