@@ -22,7 +22,7 @@ export instances=7 #13
 export cores=1
 
 # local模式
-spark-submit --master local --class ${task_main_class} --executor-memory ${memory} ${task_jar} ${input_data}
+spark-submit --master local[6] --class ${task_main_class} --executor-memory ${memory} ${task_jar} ${input_data}
 
 # spark://模式
 spark-submit --master spark://master-hadoop:7077 --class ${task_main_class} --executor-memory ${memory} --num-executors ${instances} ${task_jar} ${input_data}

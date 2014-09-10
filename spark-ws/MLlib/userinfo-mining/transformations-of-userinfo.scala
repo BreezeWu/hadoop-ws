@@ -21,6 +21,16 @@ def f(x:org.apache.spark.sql.Row) = {
 	x.map(y => g(y))
 }
 
+  /**
+   * 将Any 转换为 Double
+   * @param y
+   * @return
+   */
+  def any2Double(y:Any):Double = y match {
+    case null => 0			// 将null转换为0
+    case i:Int => i.toDouble	// 将Int转换为Double
+    case d:Double => d
+  }
 // ------------------------------------
 // 数据变换函数运用举例
 // 双月数据 m1
@@ -41,7 +51,7 @@ def f(x:org.apache.spark.sql.Row) = {
 // you can use custom classes that implement the Product interface.
 
 // 索引和VPM
-case class Index(cons_id:String, cons_no:String)
+case class Index(cons_id:String, cons_no:String, maxVpm:Double = -1.0)
 /*
 case class VPM(v1:Double, v2:Double, v3:Double, v4:Double, v5:Double, v6:Double, v7:Double, v8:Double, v9:Double, v10:Double, v11:Double, v12:Double)
 case class ConsVPM(index:Index, vpm:VPM)
@@ -52,7 +62,7 @@ def VPM2Array(x:VPM):Array[Double] = {
 */
 case class ConsVPM(index:Index, vpm:Array[Double]) {
     def getPrintLine():String = {
-        val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ||"
+        val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ${this.index.maxVpm},||"
         val line = this.vpm.foldLeft(headStr)((x,y) => x + ", " + y)
         return line     
     }
@@ -107,7 +117,13 @@ def row2ConsVPM(p:org.apache.spark.sql.Row) = {
     val doubleRow = row.map(y => any2Double(y))
 
     val maxValue = doubleRow.reduce((a,b) => if(a > b) a else b)
-    val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    //val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    
+    val percentRow = if (maxValue ==0 ) {
+        doubleRow.map(x => 0)
+    } else {
+        doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    }
 
     return percentRow
   }
@@ -120,11 +136,17 @@ def row2ConsVPM(p:org.apache.spark.sql.Row) = {
 		case d:Double => d
 	} 
   
-    val index = Index(p(0).toString,p(1).toString)
     val array = Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
 
     val maxValue = array.reduce((a,b) => if(a > b) a else b)
-    val newArray = array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    //val newArray = array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    val newArray = if (maxValue ==0 ) {
+      array.map( x => 0.0)
+    } else {
+      array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    }
+
+    val index = Index(p(0).toString,p(1).toString, maxValue)
 
     ConsVPM(index, newArray)
   }

@@ -219,9 +219,10 @@ def printClusterSetSample(clusterSet:ClusterSet, sampleNum:Int) = {
 
 // -----------------------------------------------------------------------
 // 打印簇以及样本
-def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String):Unit = {
-    val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + filename + "_sampledata_" + sampleNum + "_" + ".txt"
+def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:String, dir:String = null):Unit = {
+    val rootpath = if (dir != null) dir else "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
+    val filepath = rootpath + "/" + filename + "_sampledata_" + sampleNum + ".txt"
+    val filepath_prefix = rootpath + "/" + filename + "_sampledata_" + sampleNum
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()
@@ -275,15 +276,20 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
     filewriter.write("\n----------------------------------------------------------------------------")
     filewriter.write("\n\t 打印每个簇及其样本信息 \n")
     
-    // 打印某个簇及其样本
-    def writerOneClusterSample(oneCluster:OneCluster, sampleNum:Int)
+    // 函数: 打印某个簇及其样本(单独一个文件)
+    def writerOneClusterSample2File(oneCluster:OneCluster, sampleNum:Int, filepathPrefix:String)
     {
-        filewriter.write(s"\n\t簇ID:\t 计数")
-        filewriter.write(s"\n\t${oneCluster.clusterID}:\t ${oneCluster.counter}\n")
-        filewriter.write(s"\n\t样本数据\n")
-        
-        val sampleData = oneCluster.points.take(sampleNum)
-        sampleData.foreach(x => filewriter.write("\n" + x.getPrintLine()))
+      val filepath_inner = filepathPrefix + "_ID" + oneCluster.clusterID + "_" + oneCluster.counter + ".csv"
+
+      val file_inner = new java.io.File(filepath_inner)
+      val isCreated_inner = file_inner.createNewFile()
+      val filewriter_inner = new java.io.FileWriter(file_inner)
+
+      val sampleData = oneCluster.points.take(sampleNum)
+      sampleData.foreach(x => filewriter_inner.write(x.getPrintLine() + "\n"))
+
+      filewriter_inner.flush()
+      filewriter_inner.close()
     }
     
     filewriter.write("\n----------------------------------------------------------------------------")
@@ -291,7 +297,8 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
     // 打印簇样本
     for (oneCluster <- clusterArray) {
         filewriter.write("\n--------------------------------------")
-        writerOneClusterSample(oneCluster, sampleNum)
+      writerOneClusterSample(oneCluster, sampleNum)
+      writerOneClusterSample2File(oneCluster, sampleNum, filepath_prefix)
     }
     filewriter.write("\n=====================================================================================")
     
@@ -301,9 +308,9 @@ def writeClusterSetSample2File(clusterSet:ClusterSet, sampleNum:Int, filename:St
 
 // -----------------------------------------------------------------------
 // 打印簇中心信息
-def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String):Unit = {
-    val rootpath = "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
-    val filepath = rootpath + filename + "_clusterCenters" + ".csv"
+def writeClusterSetCenters2File(clusterSet:ClusterSet, filename:String, dir:String = null):Unit = {
+    val rootpath = if (dir != null) dir else "/home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/result-data/"
+    val filepath = rootpath + "/" + filename + "_clusterCenters" + ".csv"
     
     val file = new java.io.File(filepath)
     val newfile = file.createNewFile()

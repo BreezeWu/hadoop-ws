@@ -189,7 +189,7 @@ def writeAnalyzeResultMatrix_ClusterCenters2File(analyzeResultMatrix:List[List[A
 
 // ----------------------------------------------------------------------------
 // 在 ParsedRDDMatrix 上执行分析任务
-val perfectK = 3;
+val perfectK = 20;
 val maxIterations = 20 // 当前没有生效
 
 // 执行分析

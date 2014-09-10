@@ -3,11 +3,16 @@
 //	在spark-shell中执行  (注意"1.加载数据"的语句 和  taskNamePre 的设置即可)
 //		:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/execute-tryKMeansSmart-ClusterCount.scala.scala
 
+val datasetID="s01" //s01 s98
 // 1. 加载数据 
 // (1)样本数据
 //:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s01.scala
 // (2)全量数据
-:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98.scala
+//:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-s98.scala
+
+// 百分比方式
+:load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/create-parsedData-userinfo-percent.scala
+
 
 // 2. 加载函数
 // 聚类函数
@@ -16,11 +21,11 @@
 :load  /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/ComputeClusterCount.scala
 
 // 设置变量
-val taskNamePre = "s98"
+val taskNamePre = datasetID
 // ----------------------------------------------------------------------------
 // 任务1： 寻找最佳K
 val minK = 2
-val maxK = 200
+val maxK = 1000
 val maxIterations = 20 // 当前没有生效
 
 def taskName_GoodM1(taskNamePre:String) = taskNamePre + "_" + "GoodM1"

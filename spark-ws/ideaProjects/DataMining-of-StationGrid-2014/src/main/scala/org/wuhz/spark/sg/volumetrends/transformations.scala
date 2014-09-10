@@ -9,11 +9,11 @@ package org.wuhz.spark.sg.volumetrends
 // you can use custom classes that implement the Product interface.
 
 // 索引
-case class Index(cons_id:String, cons_no:String)
+case class Index(cons_id:String, cons_no:String, maxVpm:Double= -1.0)
 // 用户每年的月用电量
 case class ConsVPM(index:Index, vpm:Array[Double]) {
   def getPrintLine():String = {
-    val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ||"
+    val headStr = s"${this.index.cons_id}, ${this.index.cons_no}, ${this.index.maxVpm},||"
     val line = this.vpm.foldLeft(headStr)((x,y) => x + ", " + y)
     return line
   }
@@ -88,7 +88,13 @@ rddFromHive.first.map(y => any2Double(y))
     val doubleRow = row.map(y => any2Double(y))
 
     val maxValue = doubleRow.reduce((a,b) => if(a > b) a else b)
-    val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    //val percentRow = doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    
+    val percentRow = if (maxValue ==0 ) {
+        doubleRow.map(x => 0.0)
+    } else {
+        doubleRow.map(x => ((x*range)/maxValue).toInt.toDouble)
+    }
 
     return percentRow
   }
@@ -98,11 +104,16 @@ rddFromHive.first.map(y => any2Double(y))
     val p = row
     val g = any2Double(_)
 
-    val index = Index(p(0).toString,p(1).toString)
     val array = Array(g(p(2)), g(p(3)), g(p(4)), g(p(5)), g(p(6)), g(p(7)), g(p(8)), g(p(9)), g(p(10)), g(p(11)), g(p(12)), g(p(13)))
-
     val maxValue = array.reduce((a,b) => if(a > b) a else b)
-    val newArray = array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    //val newArray = array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    val newArray = if (maxValue ==0 ) {
+      array.map( x => 0.0)
+    } else {
+      array.map( x => (((x*range)/maxValue).toInt.toDouble))
+    }
+
+    val index = Index(p(0).toString,p(1).toString, maxValue)
 
     ConsVPM(index, newArray)
   }

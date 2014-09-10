@@ -135,7 +135,7 @@ object objCreateRDD {
 
         // 变换 rddFromHive_* (应用数据)
         val parsedData_vpm = hiveData_vpm.map(x => objUtil.sqlRow2Double(x)).	// 去掉null,转换为Double
-          map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
+          map(x => Vectors.dense(x.toArray)).cache()		// 转变为Vector, 构建matrices
 
         // 变换 rddFromHiveIndexed_* (应用数据)
         val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => objUtil.row2ConsVPM(r))
@@ -168,7 +168,7 @@ object objCreateRDD {
 
         // 变换 rddFromHive_* (应用数据)
         val parsedData_vpm = hiveData_vpm.map(x => objUtil.sqlRow2Double_percent(x, percent)).	// 去掉null,转换为Double
-          map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
+          map(x => Vectors.dense(x.toArray)).cache()		// 转变为Vector, 构建matrices
 
         // 变换 rddFromHiveIndexed_* (应用数据)
         val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => objUtil.row2ConsVPM_percent(r, percent))

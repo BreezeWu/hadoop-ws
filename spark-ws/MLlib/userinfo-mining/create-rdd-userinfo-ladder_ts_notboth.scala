@@ -289,7 +289,7 @@ def transform2ParsedRDDMatrix(hiveRDDMatrix:List[List[HiveRDDMatrixItem]]):List[
 			
 			// 变换 rddFromHive_* (应用数据)
 			val parsedData_vpm = hiveData_vpm.map(x => f(x)).	// 去掉null,转换为Double
-				map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
+				map(x => Vectors.dense(x.toArray)).cache()		// 转变为Vector, 构建matrices
 				
 			// 变换 rddFromHiveIndexed_* (应用数据)
 			val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => row2ConsVPM(r))
@@ -321,7 +321,7 @@ def transform2ParsedRDDMatrix_percent(hiveRDDMatrix:List[List[HiveRDDMatrixItem]
 			
 			// 变换 rddFromHive_* (应用数据)
 			val parsedData_vpm = hiveData_vpm.map(x => sqlRow2Double_percent(x, percent)).	// 去掉null,转换为Double
-				map(x => Vectors.dense(x.toArray))		// 转变为Vector, 构建matrices
+				map(x => Vectors.dense(x.toArray)).cache()		// 转变为Vector, 构建matrices
 				
 			// 变换 rddFromHiveIndexed_* (应用数据)
 			val parsedData_vpmIndexed  = hiveData_vpmIndexed.map(r => row2ConsVPM_percent(r, percent))
@@ -478,10 +478,12 @@ val SqlMatrix = buildSQLMatrix(DataSetRef_L1, DataSetRef_L2)
 // 计算HiveRDDMatrix
 val HiveRDDMatrix = buildHiveRDDMatrix(SqlMatrix)
 // 变换为 ParsedRDDMatrix
-val ParsedRDDMatrix = transform2ParsedRDDMatrix(HiveRDDMatrix)
+//val ParsedRDDMatrix = transform2ParsedRDDMatrix(HiveRDDMatrix)
 // 变换为 ParsedRDDMatrix: 百分比
 val percent = 1000
 val ParsedRDDMatrix_percent = transform2ParsedRDDMatrix_percent(HiveRDDMatrix)
+
+val ParsedRDDMatrix = ParsedRDDMatrix_percent
 
 /*
 val hiveData = HiveRDDMatrix(0)(0).hiveDataRef.vpmIndexed
