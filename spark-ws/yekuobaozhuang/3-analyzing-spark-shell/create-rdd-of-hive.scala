@@ -21,9 +21,17 @@ val first = rddFromHive.first
 // 从 SchemaRDD 变换为 MappedRDD:org.apache.spark.rdd.RDD[MPVolumeItem]
 val mappedRddData = rddFromHive.map(r => row2MPVolumeItem(r))
 
-//val count_of_ladder = mappedData_volumeprice_of_ladder.count
-//val count_of_ts = mappedData_volumeprice_of_ts.count
+// ----------------------------------------------------------------------------
+// 转换为 parquetFile 或 Obj File
+rddFromHive.saveAsParquetFile("rddFromHive-parquet")
+mappedRddData.saveAsParquetFile("mappedRddData-MPVolumeItem-obj")
 
+// ----------------------------------------------------------------------------
+// 求每年的月用电量平均值, 并将其转换为平均值的百分比
+// 注意: 不是 convertMPVolumeItem2Percent() !
+val mappedRddData_percent = mappedRddData.map(r => convertMPVolumeItem2AveragePercent(r)).cache()
+
+val first = mappedRddData_percent.first
 /*
 // ----------------------------------------------------------------------------
 // 从 SchemaRDD(rddFromHive) 变换为 MappedRDD:org.apache.spark.rdd.RDD[Item_of_*]

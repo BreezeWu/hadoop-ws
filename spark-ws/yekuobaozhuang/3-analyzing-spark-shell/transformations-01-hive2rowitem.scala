@@ -41,6 +41,7 @@ case class Index(left:IndexLeft, right:IndexRight)
 //case class MonthVolume(m1:Double, m2:Double, m3:Double, m4:Double, m5:Double, m6:Double, m7:Double, m8:Double, m9:Double, m10:Double, m11:Double, m12:Double)
 // 一年各月用电量(Array)
 type TwelveVolumes = scala.collection.immutable.IndexedSeq[Double] //Array[Double]
+val zeroTwelveVolumes = for(i<- Range(0,12)) yield 0.0
 // 逐年的月用电量
 case class YearsVolumes(y2010:TwelveVolumes, y2011:TwelveVolumes, y2012:TwelveVolumes, y2013:TwelveVolumes, y2014:TwelveVolumes)
 // 数据集元素
@@ -63,15 +64,18 @@ def row2MPVolumeItem(r:org.apache.spark.sql.Row):MPVolumeItem = {
 		case f:Float => f.toString
 		case d:Double => d.toString
 		case s:String => s.toString
-		case other => other.toString
+    case Array(x, _*) => new java.lang.String(y.asInstanceOf[Array[Byte]], "utf-8")
+    case other => other.toString
 	}
-	
-	def testType(y:Any) = y match { 
+
+	def testType(y:Any) = y match {
 		case i:Int => print("Int")
 		case l:Long => print("Long")
 		case f:Float => print("Float")
 		case d:Double => print("Double")
 		case s:String => print("String")
+    //case a:Array[Int] => print("Array")
+    case Array(x,y,z,_*) => print("Array(x,y,z,_*)")
 		case other => print("other")
 	}
 	
@@ -86,7 +90,9 @@ def row2MPVolumeItem(r:org.apache.spark.sql.Row):MPVolumeItem = {
 	
 	// ------------------------------------
 	// 转换index 为 IndexInfo
-	val indexLeft = IndexLeft(index(0), index(1), index(2), index(3), index(4), index(5), index(6), index(7), index(8), index(9), index(10), index(11), index(12), index(13), index(14), index(15), index(16), index(17), index(18), index(19))
+	val indexLeft = IndexLeft(index(0), index(1), index(2), index(3), index(4), index(5), index(6),
+    index(7), index(8), index(9), index(10), index(11), index(12), index(13), index(14), index(15),
+    index(16), index(17), index(18), index(19))
 	val indexRight = IndexRight(index(20), index(21), index(22), index(23), index(24), index(25))
 	
 	// ------------------------------------
