@@ -1,6 +1,7 @@
 // ----------------------------------------------------------------------------
 // --------------------------
 // 聚类数据: (1) 只取参与计算的数据；(2) 转变为Vector, 构建matrices
+import org.apache.spark.mllib.linalg.Vectors
 val averageRdd = mappedRddData_percent.map(x => x.average).map(y => Vectors.dense(y.toArray)).cache()
 val averagepercentRdd = mappedRddData_percent.map(x => x.averagePercent).map(y => Vectors.dense(y.toArray)).cache()
 
@@ -11,11 +12,11 @@ val pwd = env.get("PWD")
 // ----------------------------------------------------------------------------
 // 任务1： 寻找最佳K
 val minK = 2
-val maxK = 1000
+val maxK = 2000 //1000
 val maxIterations = 20 // 当前没有生效
 
 val resultAccount = tryKMeansSmart(data,minK,maxK,maxIterations)
-val resultW2HDFS = writeAccount2LocalFile(resultAccount, "yekuobaozhuang", pwd)
+val resultW2LocalFile = writeAccount2LocalFile(resultAccount, "yekuobaozhuang", pwd)
 // ----------------------------------------------------------------------------
 // 任务2： 计算簇数量（方式一，利用任务1的计算结果获得最佳K和最佳模型)
 // --------------------------
@@ -46,7 +47,7 @@ resultClusterCountInfo_Standalone.account
 // ----------------------------------------------------------------------------
 // 统一回显一下HDFS路径
 // 任务1
-resultW2HDFS
+resultW2LocalFile
 // 任务2, 方式一
 resultWClusterCountInfo2HDFS._2
 // 任务2, 方式二

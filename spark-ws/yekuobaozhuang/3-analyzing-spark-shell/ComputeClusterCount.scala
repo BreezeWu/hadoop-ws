@@ -1,3 +1,7 @@
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.rdd.RDD
+
 // ----------------------------------------------------------------------------
 //	计算簇数量
 //	使用方法
@@ -62,7 +66,37 @@ def writeClusterCountInfo2HDFS(clusterInfo:ClusterCountInfo, taskName:String = "
 // ---------------------------------------------------------------------------------------------------------------------------
 // 函数: 计算簇数量
 def ComputeClusterCount_Standalone(data: RDD[Vector], k:Int, maxIterations: Int = 20) = {
-    // ------------------------------------------------------------------------
+  // ****************************************************************************
+  // 对某个K进行KMeans聚类
+  def evalWSSSEOfK(data: RDD[Vector], k:Int, maxIterations: Int = 20, x:Account):Account = {
+    // metric信息
+    val timeBegin = new java.util.Date()
+
+    /*
+    // 随机数模拟
+    val WSSSEOfK = scala.util.Random.nextDouble //% 9999    // 模拟随机数
+    val modelOfK: org.apache.spark.mllib.clustering.KMeansModel = null
+    */
+    // 执行KMeans算法
+    val clusteringKM = new KMeans()
+    clusteringKM.setK(k)
+    val model = clusteringKM.run(data)
+    val WSSSEOfK = model.computeCost(data)
+    //val modelOfK = KMeans.train(data, k, maxIterations)
+    //val WSSSEOfK = modelOfK.computeCost(data)
+
+    // metric信息
+    val timeEnd = new java.util.Date()
+
+    // metric对象
+    val newMetric = Metric(k, maxIterations, WSSSEOfK, 0.0, 0.0, timeBegin, timeEnd, model)
+    // 添加到 metricList
+    val newMetricList = newMetric :: x.metricList
+    // 函数返回值
+    new Account(x.counter + 1, x.tryCounter + 1, newMetricList)
+  }
+
+  // ------------------------------------------------------------------------
     // 执行聚类
     val parKTriangle = new KTriangle(k,k+1)
     val resultAccount = evalWSSSEOfK(data, parKTriangle.low, maxIterations, Account(0,0,Nil))
@@ -136,25 +170,25 @@ def writeClusterCountInfo2LocalFile(clusterInfo:ClusterCountInfo, taskName:Strin
 
   // 文件路径
   val rootpath = if (dir != null) dir else System.getenv().get("PWD")
-  val filename = taskName + "_kmeans_" + perfectK + "_clusterCenters_Count"
-  val hdfsClusterCountInfoPath = rootpath + "/" + filename
+  val filename = taskName + "_kmeans_" + perfectK + "_clusterCenters_Count.csv"
+  val fullname = rootpath + "/" + filename
 
   // ------------------------------------------------------------------------
   // 执行写
   //distData.saveAsTextFile(hdfsClusterCountInfoPath)
-  val file = new java.io.File(hdfsClusterCountInfoPath)
+  val file = new java.io.File(fullname)
   val newfile = file.createNewFile()  // 创建文件
   val filewriter = new java.io.FileWriter(file)
 
   //执行写
-  distData.foreach(x => filewriter.write("\n" +x))
+  distData.foreach(x => filewriter.write(x+"\n"))
 
   filewriter.flush()
   filewriter.close()
 
   // ------------------------------------------------------------------------
   // 函数返回值
-  Tuple2(hdfsClusterCountInfoPath, clusterInfo)
+  Tuple2(fullname, clusterInfo)
 }
 
 

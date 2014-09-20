@@ -14,7 +14,7 @@
 :load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/load-data-from-parquet.scala
 
 // 聚类函数
-:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/tryKMeansSmart.scala
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/tryKMeansSmart-v3.scala
 // 根据聚类模型计算ClusterCount
-:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/MLlib/userinfo-mining/ComputeClusterCount.scala
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/ComputeClusterCount.scala
 
