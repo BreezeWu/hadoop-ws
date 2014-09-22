@@ -133,7 +133,8 @@ def ConvertAttributesHashCode2Vector(point:(IndexHashCode, Int)):Vector = {
 // 获取属性特征值Vector的distinct,计数,以及CategoricalFeaturesInfo
 import org.apache.spark.rdd.RDD
 def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVolume_percent]
-                                    ):Array[_ >: (Int, (Int, Int), Array[(String, Int)])] = {
+                                    //):Array[_ >: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])] = {
+                                    ):Array[_ >: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])] = {
   // 获得各个属性信息
   val tmpRDDRef = attributesRdd.map(x => x.index)
   // ----------------------------------------------------------------------------
@@ -173,54 +174,76 @@ def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVo
   val featureValue_runnedDays = attributesRdd.map(x => x.runnedDays).distinct().collect().map(x => (x, x.hashCode())) // 运行时长/14
 
   // ----------------------------------------------------------------------------
-  // 获取属性特征值Vector的 distinct: Array[(String, Int)]
+  // 获取属性特征值Vector的 distinct: true 代表是 分类属性, false 代表是连续属性
   val arrayOf_hashCodeDistinct = Array(
     // left
-    //featureValue_mp_id,
-    //featureValue_mp_no,
-    //featureValue_mp_name,
-    //featureValue_mp_addr,
-    featureValue_volt_code,
-    //featureValue_app_date,
-    //featureValue_run_date,
-    featureValue_org_no,
-    featureValue_mr_sect_no,
-    featureValue_line_id,
-    //featureValue_tg_id,
-    featureValue_status_code,
-    //featureValue_cons_id,
-    featureValue_mp_cap,
-    //featureValue_cons_no,
-    featureValue_zxzb,
-    //featureValue_cons_name,
-    //featureValue_elec_addr,
-    featureValue_trade_code,
-    featureValue_elec_type_code,
+    //(featureValue_mp_id, true),
+    //(featureValue_mp_no, true),
+    //(featureValue_mp_name, true),
+    //(featureValue_mp_addr, true),
+    (featureValue_volt_code, true),
+    //(featureValue_app_date, true),
+    //(featureValue_run_date, true),
+    (featureValue_org_no, true),
+    (featureValue_mr_sect_no, true),
+    (featureValue_line_id, true),
+    //(featureValue_tg_id, true),
+    (featureValue_status_code, true),
+    //(featureValue_cons_id, true),
+    (featureValue_mp_cap, true),
+    //(featureValue_cons_no, true),
+    (featureValue_zxzb, true),
+    //(featureValue_cons_name, true),
+    //(featureValue_elec_addr, true),
+    (featureValue_trade_code, true),
+    (featureValue_elec_type_code, true),
 
     // right
-    featureValue_contract_cap,
-    featureValue_run_cap
-    //featureValue_build_date,
-    //featureValue_ps_date,
-    //featureValue_cancel_date,
-    //featureValue_due_date,
+    (featureValue_contract_cap, true),
+    (featureValue_run_cap, true),
+    //(featureValue_build_date, true),
+    //(featureValue_ps_date, true),
+    //(featureValue_cancel_date, true),
+    //(featureValue_due_date, true),
 
     // 其他
-    //featureValue_runnedDays // runnedDays 这个是连续的
+    (featureValue_runnedDays, false) // runnedDays 这个是连续的
   )
 
   // ----------------------------------------------------------------------------
   // 获取属性特征值hashCode的 categoricalFeaturesInfo
-  // Array[(String, Int)] => Array[(String, Int)]
   val zipWithIndex = arrayOf_hashCodeDistinct.zipWithIndex
   val arrayOf_categoricalFeaturesInfo = zipWithIndex.map(x => {
-    val index = x._2
-    val subArray = x._1
+    val index = x._2    // 特征编号/属性编号 如0
+    val featureValuesArrayAndFlag = x._1 // 特征值数组和特征值属性 如((Array((AC00101,-477842160), (AC03802,-477746059), (AC02202,-477781616)),true),0)
 
-    (index, index -> subArray.size, subArray)
+    // 特征值数组
+    val featureValuesArray = featureValuesArrayAndFlag._1
+    val categoricalFlag = featureValuesArrayAndFlag._2
+
+    // 特征编码 -> 特征值数量,即特征值数组的大小
+    val index2size = index -> featureValuesArray.size // 如 0->3
+
+    // 对 特征值数组 转换为 map, 特征值的分类值定义为原数组的索引.后续对数据处理时也基于此规则处理
+    val zipWithIndex_featureValues = featureValuesArray.zipWithIndex
+    val featureValuesMap = zipWithIndex_featureValues.map(fv => {
+      val i = fv._2  // 特征值编号/某属性的取值的编号
+      val featureValueAndHashCode = fv._1 // 特征值及其hashCode (AC00101,-477842160)
+
+      // 特征值 -> 特征值的分类值
+      //val featureValue2CategoricalId = featureValueAndHashCode._1 -> i
+      // 特征值的hashCode -> (特征值的分类值, 原始值)
+      val featureValue2CategoricalId = featureValueAndHashCode._2 -> (i, featureValueAndHashCode._1)
+
+      // 结果
+      featureValue2CategoricalId
+    }).toMap
+
+    // 将 subArray转换为
+    (index, categoricalFlag, index2size, featureValuesArray, featureValuesMap)
   })
 
-  // 此时  arrayOf_categoricalFeaturesInfo: (Int, (Int, Int), Array[_7]) forSome { type _7 >: (Int, Int) with (String, Int) <: (Any, Int) }
+  // 此时  arrayOf_categoricalFeaturesInfo: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])
   arrayOf_categoricalFeaturesInfo
 }
 

@@ -16,7 +16,7 @@ val mappedRddData = rddFromHive.map(r => row2MPVolumeItem(r))
 // ----------------------------------------------------------------------------
 // 求每年的月用电量平均值, 并将其转换为平均值的百分比
 // 注意: 不是 convertMPVolumeItem2Percent() !
-val mappedRddData_percent = mappedRddData.map(r => convertMPVolumeItem2AveragePercent(r)).cache()
+val mappedRddData_percent = mappedRddData.map(r => convertMPVolumeItem2AveragePercent(r))
 
 val first = mappedRddData_percent.first
 // ----------------------------------------------------------------------------

@@ -4,9 +4,12 @@
 运行spark脚本
 ----------
 1. 运行spark-shell
-    // spark-shell的启动
+### yarn-client
     //  [集群]   SPARK_EXECUTOR_INSTANCES=7 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
     //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
+### local[*]
+export MASTER=local[*]
+SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
 
 2. 在spark-shell中运行
 :load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/transformations-01-hive2rowitem.scala
@@ -31,7 +34,26 @@
 // 2.执行聚类(k=50),决策树分析
 :load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree.scala
 
-// 错误信息
+// 错误信息:
+原因在于分类特征为将值与categoricalFeaturesInfo匹配
+14/09/22 21:22:48 INFO BlockManagerInfo: Added broadcast_135_piece0 in memory on master-hadoop:53374 (size: 7.4 KB, free: 516.3 MB)
+14/09/22 21:22:48 INFO BlockManagerInfo: Added rdd_9_0 in memory on master-hadoop:53374 (size: 574.6 KB, free: 515.7 MB)
+14/09/22 21:22:48 INFO BlockManagerInfo: Added broadcast_139_piece1 in memory on master-hadoop:53374 (size: 4.0 MB, free: 511.7 MB)
+org.apache.spark.SparkException: Job aborted due to stage failure: Task 2 in stage 110.0 failed 4 times, most recent failure: Lost task 2.3 in stage 110.0 (TID 526, master-hadoop): java.lang.IllegalArgumentException: DecisionTree given invalid data: Feature 1 is categorical with values in {0,...,22, but a data point gives it value -1.417096326E9.
+  Bad data point: (12.0,[-4.7784216E8,-1.417096326E9,1.318696835E9,-1.082620502E9,1540.0,4.8611737E7,50.0,1603554.0,51510.0,4.8611737E7,4.8611737E7,1708.0])
+
+categoricalFeaturesInfo_array: Array[(Int, Int)] = Array((0,3), (1,23), (2,2105), (3,1863), (4,4), (5,350), (6,3), (7,313), (8,12), (9,347), (10,338))
+categoricalFeaturesInfo: scala.collection.immutable.Map[Int,Int] = Map(0 -> 3, 5 -> 350, 10 -> 338, 1 -> 23, 6 -> 3, 9 -> 347, 2 -> 2105, 7 -> 313, 3 -> 1863, 8 -> 12, 4 -> 4)
+impurity: String = gini
+
+*/
+
+// 错误信息: local
+增加内存可解决该问题,如下:
+export MASTER=local[*]
+SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+
+原始错误信息:
 14/09/22 20:25:19 INFO DAGScheduler: Submitting 5 missing tasks from Stage 110 (MapPartitionsRDD[162] at mapPartitionsWithIndex at RDDFunctions.scala:107)
 14/09/22 20:25:19 INFO TaskSchedulerImpl: Adding task set 110.0 with 5 tasks
 14/09/22 20:25:19 INFO TaskSetManager: Starting task 0.0 in stage 110.0 (TID 513, localhost, ANY, 8256 bytes)
