@@ -1,5 +1,15 @@
-#sudo ntfs-3g /dev/sda6 /mnt/win-d
+# -----------------------------------------------------------------
+# 映射 Windows的 分区
+#sudo mkdir /mnt/win-desktop
+#sudo mkdir /mnt/win-d
+#sudo mkdir /mnt/win-f
+
+#sudo ntfs-3g /dev/sda5 /mnt/win-desktop
+#sudo ntfs-3g /dev/sda5 /mnt/win-d
 sudo ntfs-3g /dev/sda7 /mnt/win-f
+
+# -----------------------------------------------------------------
+# 使用 goagent 代理
 #cd ~/link-goagent/local
 #python ~/link-goagent/local/proxy.py &
 #python ~/link-goagent/local/proxy.py &
@@ -11,10 +21,6 @@ sudo ntfs-3g /dev/sda7 /mnt/win-f
 #	sudo ifconfig wlan0 inet up 192.168.0.8 netmask 255.255.255.0
 # 禁用eth0
 # sudo ifconfig eth0 inet down
-
-# -----------------------------------------------------------------
-# 在linux下面访问魅族3手机
-
 
 # -----------------------------------------------------------------
 # 初始化脚本,便于编辑后可通过git直接同步到github
