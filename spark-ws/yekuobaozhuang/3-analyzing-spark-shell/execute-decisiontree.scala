@@ -39,14 +39,14 @@ val predictRdd_Clustering = resultClusterCountInfo_Standalone.predict
 
 val first0 = rddFromHive.first
 val first1 = mappedRddData.first
-val first2 = mappedRddData_percent.first  // dataForClustering
-val first3 = averageRdd_percent.first
+val first2 = mappedRddData_percent.first
+val first3 = averageRdd_percent.first  // dataForClustering
 val first4 = predictRdd_Clustering.first
 
 rddFromHive // org.apache.spark.sql.SchemaRDD
 mappedRddData // org.apache.spark.rdd.RDD[MPVolumeItem]
-mappedRddData_percent // org.apache.spark.rdd.RDD[MPVolumeItem_AverageMonthVolume_percent] // dataForClustering
-averageRdd_percent // org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]
+mappedRddData_percent // org.apache.spark.rdd.RDD[MPVolumeItem_AverageMonthVolume_percent]
+averageRdd_percent // org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector] // dataForClustering
 predictRdd_Clustering // org.apache.spark.rdd.RDD[Int]
 
 first0
@@ -115,7 +115,9 @@ val featureValue_ps_date = sqlContext.sql("SELECT distinct ps_date FROM indexRig
 
 // ----------------------------------------------------------------------------
 // 获得各个属性信息hashCode化,这个hash值就作为特征值
-val attributesRdd_hashCode = mappedRddData_percent.map(x => (ConvertIndex2IndexHashCode(x.index), x.runnedDays))
+val attributesRdd_hashCode = mappedRddData_percent.map(x => (
+  ConvertIndex2IndexHashCode(x.index),
+  OtherFeatures(x.runnedDays.toDouble)))
 
 // 将属性特征值转换为Vector
 val featuresRdd = attributesRdd_hashCode.map(x => ConvertAttributesHashCode2Vector(x))
@@ -125,9 +127,17 @@ import org.apache.spark.mllib.regression.LabeledPoint
 
 val zipRDD = featuresRdd.zip(predictRdd_Clustering)
 val labeledPointRdd = zipRDD.map(x => new LabeledPoint(x._2, x._1)).cache()
+
+val a = attributesRdd_hashCode.first
+val f = featuresRdd.first
+val p = predictRdd_Clustering.first
+val l = labeledPointRdd.first
+
+f
+p
+l
 // ----------------------------------------------------------------------------
 // 执行决策树算法
-import org.apache.spark.mllib.tree.DecisionTree
 import org.apache.spark.mllib.util.MLUtils
 
 // Load and parse the data file.
@@ -179,49 +189,37 @@ val dataForDecisionTree = labeledPointRdd
 // Train a DecisionTree model.
 //  Empty categoricalFeaturesInfo indicates all features are continuous.
 val numClasses = perfectK // 50 //2
-//val categoricalFeaturesInfo = Map[Int, Int]()
+//val categoricalFeaturesInfo = Map[Int, Int]() // 后面定义
 
 val impurity = "gini"
 val maxDepth = 5
-// val maxBins = 100
+// val maxBins = 100    // 后面定义
 // java.lang.IllegalArgumentException: requirement failed: maxBins (= 100) should be greater than max categories in categorical features (>= 350)
-val maxCategories = categoricalFeaturesInfo.values.reduce((a,b) => scala.math.max(a,b))
-val maxBins = maxCategories + 1
-// maxBins 太大导致 java.lang.OutOfMemoryError: Java heap space
-// 调整 categoricalFeaturesInfo, 进而调整 maxBins
+
 
 // ============================================
 // 获得各个属性信息转换为特征值的分类值
 
 // 获得各个属性信息
 val attributesRdd = mappedRddData_percent
-val categoricalFeaturesInfo_attributes = ComputeCategoricalFeaturesInfo(attributesRdd)
+val featuresDistinctInfo = ComputeFeaturesDistinctInfo(attributesRdd)
 
 // 得到 categoricalFeaturesInfo
-/*val categoricalFeaturesInfo = categoricalFeaturesInfo_attributes.map(x => {
-    val newInstance = x.asInstanceOf[(Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])]
-
-    newInstance._3  // 未判断 newInstance._2 是否为真
-  })*/
 val categoricalFeaturesInfo_array = for{
-  x <- categoricalFeaturesInfo_attributes;
+  x <- featuresDistinctInfo;
 
-  val newInstance = x.asInstanceOf[(Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])]
-  val flag = newInstance._2
-  val index2size = newInstance._3
-
-  if(flag)
-} yield {index2size}
+  if(x.isCategorical)  // 只有 是分类属性时 才生成
+} yield {x.id2size}
 val categoricalFeaturesInfo = categoricalFeaturesInfo_array.toMap
 
-// 特征值的分类值, 其数组编号就是特征编号: 与 categoricalFeaturesInfo 匹配
-//val distinctFeatureValues = categoricalFeaturesInfo_attributes.map(x => x._5)
-//val distinctFeatureValues = categoricalFeaturesInfo_attributes.asInstanceOf[].map(x => (x._1, x._2, x._5)
-val distinctFeatureValues = categoricalFeaturesInfo_attributes.map(x => {
-  val newInstance = x.asInstanceOf[(Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])]
+// 决策树参数
+val maxCategories = categoricalFeaturesInfo.values.reduce((a,b) => scala.math.max(a,b))
+val maxBins = maxCategories + 1
+// maxBins 太大导致 java.lang.OutOfMemoryError: Java heap space
+// 调整 categoricalFeaturesInfo, 进而调整 maxBins
 
-  (newInstance._1, newInstance._2, newInstance._5)
-})
+// 特征值的分类值, 其数组编号就是特征编号: 与 categoricalFeaturesInfo 匹配
+val distinctFeatureValues = featuresDistinctInfo.map(x => (x.featureID, x.isCategorical, x.featureValuesMap))
 // 说明 distinctFeatureValues 和 categoricalFeaturesInfo 的大小相同, 代表的是参与决策树分析的特征数量
 // categoricalFeaturesInfo 存储的是 各个特征的distinct数量: 特征ID -> 不重复的特征值数量. 若某个特征不是分类的,则找不到该数据
 // distinctFeatureValues 存储的是 (特征索引, 是否分类属性, 各个特征的distinct value的map)
@@ -236,25 +234,38 @@ val dataForDecisionTree = labeledPointRdd.map(x => {
   val features = x.features
 
   // 此时 features.size 一定等于 distinctFeatureValues.size, 且顺序相同
-  val zip = features.toArray.zip(distinctFeatureValues)
-
   val zipWithIndex = features.toArray.zipWithIndex
 
-  val dd = zipWithIndex.map(y => {
-    // 此时y, 如 val y = zipWithIndex(0)  实例如: (-4.77746059E8,0)
-    val featureID = y._2
+  val newFeatures = zipWithIndex.map(y => {
+    // 此时y, 如 val y = zipWithIndex(0)  实例如: (-4.77746059E8, (特征索引, 是否分类属性, 各个特征的distinct value的map))
     val featureHashCode = y._1
+    val featureID = y._2
 
-    // 在 categoricalFeaturesInfo_featureValuesMap 中寻找
-    if (featureID == 11) {
+    // 在 distinctFeatureValues 中查找看 featureID 是否分类属性
+    val isCategorical = distinctFeatureValues(featureID)._2
 
+    val newValue = if (isCategorical) { // 分类属性
+      val featureValuesMap = distinctFeatureValues(featureID)._3
+
+      // 得到其 分类值
+      val mapValue = featureValuesMap.get(featureHashCode).get
+      val categoricalID = mapValue._1
+      //val originValue = mapValue._2
+      categoricalID
+    } else {  // 连续属性,保持原来的值
+      featureHashCode
     }
 
+    // 返回值
+    newValue
   })
+
+  // 结果
+  new LabeledPoint(label, Vectors.dense(newFeatures))
 })
 
-
 // ----------------------------------------------------------------------------
+import org.apache.spark.mllib.tree.DecisionTree
 val model = DecisionTree.trainClassifier(dataForDecisionTree, numClasses, categoricalFeaturesInfo, impurity,
   maxDepth, maxBins)
 

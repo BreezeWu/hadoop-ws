@@ -10,37 +10,39 @@
 
 // case class 成员最多22个，所以要拆分
 case class IndexLeftHashCode(
-                             mp_id:Int,
-                             mp_no:Int,
-                             mp_name:Int,
-                             mp_addr:Int,
-                             volt_code:Int,
-                             app_date:Int,
-                             run_date:Int,
-                             org_no:Int,
-                             mr_sect_no:Int,
-                             line_id:Int,
-                             tg_id:Int,
-                             status_code:Int,
-                             cons_id:Int,
-                             mp_cap:Int,
-                             cons_no:Int,
-                             zxzb:Int,
-                             cons_name:Int,
-                             elec_addr:Int,
-                             trade_code:Int,
-                             elec_type_code:Int
-                             )
+                              mp_id:Double,
+                              mp_no:Double,
+                              mp_name:Double,
+                              mp_addr:Double,
+                              volt_code:Double,
+                              app_date:Double,
+                              run_date:Double,
+                              org_no:Double,
+                              mr_sect_no:Double,
+                              line_id:Double,
+                              tg_id:Double,
+                              status_code:Double,
+                              cons_id:Double,
+                              mp_cap:Double,
+                              cons_no:Double,
+                              zxzb:Double,
+                              cons_name:Double,
+                              elec_addr:Double,
+                              trade_code:Double,
+                              elec_type_code:Double
+                              )
 case class IndexRightHashCode(
-                               contract_cap:Int,
-                               run_cap:Int,
-                               build_date:Int,
-                               ps_date:Int,
-                               cancel_date:Int,
-                               due_date:Int
+                               contract_cap:Double,
+                               run_cap:Double,
+                               build_date:Double,
+                               ps_date:Double,
+                               cancel_date:Double,
+                               due_date:Double
                                )
 // 索引
 case class IndexHashCode(id:String, left:IndexLeftHashCode, right:IndexRightHashCode)
+// 其他特征
+case class OtherFeatures(runnedDays:Double)
 
 // 将 Index 转换为 IndexHashCode
 def ConvertIndex2IndexHashCode(index:Index):IndexHashCode = {
@@ -50,34 +52,34 @@ def ConvertIndex2IndexHashCode(index:Index):IndexHashCode = {
   IndexHashCode(
     index.id,
     IndexLeftHashCode(
-      l.mp_id.hashCode(),
-      l.mp_no.hashCode(),
-      l.mp_name.hashCode(),
-      l.mp_addr.hashCode(),
-      l.volt_code.hashCode(),
-      l.app_date.hashCode(),
-      l.run_date.hashCode(),
-      l.org_no.hashCode(),
-      l.mr_sect_no.hashCode(),
-      l.line_id.hashCode(),
-      l.tg_id.hashCode(),
-      l.status_code.hashCode(),
-      l.cons_id.hashCode(),
-      l.mp_cap.hashCode(),
-      l.cons_no.hashCode(),
-      l.zxzb.hashCode(),
-      l.cons_name.hashCode(),
-      l.elec_addr.hashCode(),
-      l.trade_code.hashCode(),
-      l.elec_type_code.hashCode()
+      l.mp_id.hashCode().toDouble,
+      l.mp_no.hashCode().toDouble,
+      l.mp_name.hashCode().toDouble,
+      l.mp_addr.hashCode().toDouble,
+      l.volt_code.hashCode().toDouble,
+      l.app_date.hashCode().toDouble,
+      l.run_date.hashCode().toDouble,
+      l.org_no.hashCode().toDouble,
+      l.mr_sect_no.hashCode().toDouble,
+      l.line_id.hashCode().toDouble,
+      l.tg_id.hashCode().toDouble,
+      l.status_code.hashCode().toDouble,
+      l.cons_id.hashCode().toDouble,
+      l.mp_cap.hashCode().toDouble,
+      l.cons_no.hashCode().toDouble,
+      l.zxzb.hashCode().toDouble,
+      l.cons_name.hashCode().toDouble,
+      l.elec_addr.hashCode().toDouble,
+      l.trade_code.hashCode().toDouble,
+      l.elec_type_code.hashCode().toDouble
     ),
     IndexRightHashCode(
-      r.contract_cap.hashCode(),
-      r.run_cap.hashCode(),
-      r.build_date.hashCode(),
-      r.ps_date.hashCode(),
-      r.cancel_date.hashCode(),
-      r.due_date.hashCode()
+      r.contract_cap.hashCode().toDouble,
+      r.run_cap.hashCode().toDouble,
+      r.build_date.hashCode().toDouble,
+      r.ps_date.hashCode().toDouble,
+      r.cancel_date.hashCode().toDouble,
+      r.due_date.hashCode().toDouble
     )
   )
 }
@@ -86,10 +88,10 @@ def ConvertIndex2IndexHashCode(index:Index):IndexHashCode = {
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.linalg.Vectors
-def ConvertAttributesHashCode2Vector(point:(IndexHashCode, Int)):Vector = {
+def ConvertAttributesHashCode2Vector(point:(IndexHashCode, OtherFeatures)):Vector = {
   val l = point._1.left
   val r = point._1.right
-  val runnedDays = point._2
+  val runnedDays = point._2.runnedDays
 
   val arrayOfDouble = Array(
     // left
@@ -131,10 +133,19 @@ def ConvertAttributesHashCode2Vector(point:(IndexHashCode, Int)):Vector = {
 
 // ----------------------------------------------------------------------------
 // 获取属性特征值Vector的distinct,计数,以及CategoricalFeaturesInfo
+
+case class FeaturesDistinctInfo(
+                                   featureID:Int, // 特征ID
+                                   isCategorical:Boolean, // 是否分类属性
+                                   id2size:(Int, Int),  // 特征ID -> 分类属性值个数
+                                   featureValues:Array[(String, Double)], // 特征值: (原始值, hashCode)
+                                   featureValuesMap:scala.collection.immutable.Map[Double,(Int, String)]  // hashCode -> (特征ID,原始值)
+                                   )
+
 import org.apache.spark.rdd.RDD
-def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVolume_percent]
-                                    //):Array[_ >: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])] = {
-                                    ):Array[_ >: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])] = {
+def ComputeFeaturesDistinctInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVolume_percent]
+                                    //):Array[_ >: (Int, Boolean, (Int, Int), Array[(String, Double)], scala.collection.immutable.Map[Double,(Int, String)])] = {
+                                    ):Array[FeaturesDistinctInfo] = {
   // 获得各个属性信息
   val tmpRDDRef = attributesRdd.map(x => x.index)
   // ----------------------------------------------------------------------------
@@ -142,36 +153,37 @@ def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVo
   // mp_id
   // mp_no
   // mp_name
-  val featureValue_mp_addr = tmpRDDRef.map(x => x.left.mp_addr).distinct().collect().map(x => (x, x.hashCode())) // 计量点地址/8968
-  val featureValue_volt_code = tmpRDDRef.map(x => x.left.volt_code).distinct().collect().map(x => (x, x.hashCode())) // 电压等级/3
+  //val featureValue_mp_addr = tmpRDDRef.map(x => x.left.mp_addr).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 计量点地址/8968
+  val featureValue_volt_code = tmpRDDRef.map(x => x.left.volt_code).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 电压等级/3
   // app_date
   // run_date
-  val featureValue_org_no = tmpRDDRef.map(x => x.left.org_no).distinct().collect().map(x => (x, x.hashCode())) // 供电电位编号/23
-  val featureValue_mr_sect_no = tmpRDDRef.map(x => x.left.mr_sect_no).distinct().collect().map(x => (x, x.hashCode())) // 抄表段编号/2105
-  val featureValue_line_id = tmpRDDRef.map(x => x.left.line_id).distinct().collect().map(x => (x, x.hashCode())) // 线路标识/1863
-  val featureValue_tg_id = tmpRDDRef.map(x => x.left.tg_id).distinct().collect().map(x => (x, x.hashCode())) // 台区标识/14308
-  val featureValue_status_code = tmpRDDRef.map(x => x.left.status_code).distinct().collect().map(x => (x, x.hashCode())) // 用户状态:正常,当前新装,当前变更,已销户/4
-  val featureValue_cons_id = tmpRDDRef.map(x => x.left.cons_id).distinct().collect().map(x => (x, x.hashCode())) // 用户内部索引/12993
-  val featureValue_mp_cap = tmpRDDRef.map(x => x.left.mp_cap).distinct().collect().map(x => (x, x.hashCode())) // 计量点容量/350
-  val featureValue_cons_no = tmpRDDRef.map(x => x.left.cons_no).distinct().collect().map(x => (x, x.hashCode())) // 用户号/12993
-  val featureValue_zxzb = tmpRDDRef.map(x => x.left.zxzb).distinct().collect().map(x => (x, x.hashCode())) // 专线转变:1转变,2专线,/3
+  val featureValue_org_no = tmpRDDRef.map(x => x.left.org_no).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 供电电位编号/23
+  val featureValue_mr_sect_no = tmpRDDRef.map(x => x.left.mr_sect_no).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 抄表段编号/2105
+  val featureValue_line_id = tmpRDDRef.map(x => x.left.line_id).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 线路标识/1863
+  val featureValue_tg_id = tmpRDDRef.map(x => x.left.tg_id).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 台区标识/14308
+  val featureValue_status_code = tmpRDDRef.map(x => x.left.status_code).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 用户状态:正常,当前新装,当前变更,已销户/4
+  val featureValue_cons_id = tmpRDDRef.map(x => x.left.cons_id).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 用户内部索引/12993
+  val featureValue_mp_cap = tmpRDDRef.map(x => x.left.mp_cap).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 计量点容量/350
+  val featureValue_cons_no = tmpRDDRef.map(x => x.left.cons_no).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 用户号/12993
+  val featureValue_zxzb = tmpRDDRef.map(x => x.left.zxzb).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 专线转变:1转变,2专线,/3
   //cons_name
-  val featureValue_elec_addr = tmpRDDRef.map(x => x.left.elec_addr).distinct().collect().map(x => (x, x.hashCode())) // 用电客户的用电地址/8909
-  val featureValue_trade_code = tmpRDDRef.map(x => x.left.trade_code).distinct().collect().map(x => (x, x.hashCode())) // 行业代码/313
-  val featureValue_elec_type_code = tmpRDDRef.map(x => x.left.elec_type_code).distinct().collect().map(x => (x, x.hashCode())) // 营销系统中的用电类别/12
+  val featureValue_elec_addr = tmpRDDRef.map(x => x.left.elec_addr).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 用电客户的用电地址/8909
+  val featureValue_trade_code = tmpRDDRef.map(x => x.left.trade_code).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 行业代码/313
+  val featureValue_elec_type_code = tmpRDDRef.map(x => x.left.elec_type_code).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 营销系统中的用电类别/12
 
   // ----------------------------------------------------------------------------
   // right
-  val featureValue_contract_cap = tmpRDDRef.map(x => x.right.contract_cap).distinct().collect().map(x => (x, x.hashCode())) // 合同容量/347
-  val featureValue_run_cap = tmpRDDRef.map(x => x.right.run_cap).distinct().collect().map(x => (x, x.hashCode())) // 运行容量/338
-  //val featureValue_build_date = tmpRDDRef.map(x => x.right.build_date).distinct().collect().map(x => (x, x.hashCode())) // 安装日期/12790
-  val featureValue_ps_date = tmpRDDRef.map(x => x.right.ps_date).distinct().collect().map(x => (x, x.hashCode())) // 首次送电日期/
-  //val featureValue_cancel_date = tmpRDDRef.map(x => x.right.cancel_date).distinct().collect().map(x => (x, x.hashCode())) // 销户归档日期/
-  //val featureValue_due_date = tmpRDDRef.map(x => x.right.due_date).distinct().collect().map(x => (x, x.hashCode())) // 临时用电客户约定的用电到期日期/1963
+  val featureValue_contract_cap = tmpRDDRef.map(x => x.right.contract_cap).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 合同容量/347
+  val featureValue_run_cap = tmpRDDRef.map(x => x.right.run_cap).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 运行容量/338
+  //val featureValue_build_date = tmpRDDRef.map(x => x.right.build_date).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 安装日期/12790
+  val featureValue_ps_date = tmpRDDRef.map(x => x.right.ps_date).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 首次送电日期/
+  //val featureValue_cancel_date = tmpRDDRef.map(x => x.right.cancel_date).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 销户归档日期/
+  //val featureValue_due_date = tmpRDDRef.map(x => x.right.due_date).distinct().collect().map(x => (x, x.hashCode().toDouble)) // 临时用电客户约定的用电到期日期/1963
 
   // ----------------------------------------------------------------------------
   // 其他
-  val featureValue_runnedDays = attributesRdd.map(x => x.runnedDays).distinct().collect().map(x => (x, x.hashCode())) // 运行时长/14
+  // x => (x.toString, x.hashCode().toDouble) : 添加一个 toString 的目的是为了保持对象一致性
+  val featureValue_runnedDays = attributesRdd.map(x => x.runnedDays).distinct().collect().map(x => (x.toString, x.hashCode().toDouble)) // 运行时长/14
 
   // ----------------------------------------------------------------------------
   // 获取属性特征值Vector的 distinct: true 代表是 分类属性, false 代表是连续属性
@@ -214,21 +226,24 @@ def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVo
   // 获取属性特征值hashCode的 categoricalFeaturesInfo
   val zipWithIndex = arrayOf_hashCodeDistinct.zipWithIndex
   val arrayOf_categoricalFeaturesInfo = zipWithIndex.map(x => {
-    val index = x._2    // 特征编号/属性编号 如0
-    val featureValuesArrayAndFlag = x._1 // 特征值数组和特征值属性 如((Array((AC00101,-477842160), (AC03802,-477746059), (AC02202,-477781616)),true),0)
+    // val x = zipWithIndex(0)
+    val id = x._2    // 特征编号/属性编号 如0
+    val featureValuesArrayAndFlag = x._1 // 特征值数组和特征值属性
+    // 如 (Array((AC00101,-4.7784216E8), (AC03802,-4.77746059E8), (AC02202,-4.77781616E8)),true)
 
     // 特征值数组
     val featureValuesArray = featureValuesArrayAndFlag._1
     val categoricalFlag = featureValuesArrayAndFlag._2
 
     // 特征编码 -> 特征值数量,即特征值数组的大小
-    val index2size = index -> featureValuesArray.size // 如 0->3
+    val id2size = id -> featureValuesArray.size // 如 0->3
 
     // 对 特征值数组 转换为 map, 特征值的分类值定义为原数组的索引.后续对数据处理时也基于此规则处理
     val zipWithIndex_featureValues = featureValuesArray.zipWithIndex
     val featureValuesMap = zipWithIndex_featureValues.map(fv => {
+      // val fv = zipWithIndex_featureValues(0)
       val i = fv._2  // 特征值编号/某属性的取值的编号
-      val featureValueAndHashCode = fv._1 // 特征值及其hashCode (AC00101,-477842160)
+      val featureValueAndHashCode = fv._1 // 特征值及其hashCode 如: (AC00101,-4.7784216E8)
 
       // 特征值 -> 特征值的分类值
       //val featureValue2CategoricalId = featureValueAndHashCode._1 -> i
@@ -240,10 +255,10 @@ def ComputeCategoricalFeaturesInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVo
     }).toMap
 
     // 将 subArray转换为
-    (index, categoricalFlag, index2size, featureValuesArray, featureValuesMap)
+    FeaturesDistinctInfo(id, categoricalFlag, id2size, featureValuesArray, featureValuesMap)
   })
 
-  // 此时  arrayOf_categoricalFeaturesInfo: (Int, Boolean, (Int, Int), Array[(String, Int)], scala.collection.immutable.Map[Int,(Int, String)])
+  // 此时  arrayOf_categoricalFeaturesInfo: (Int, Boolean, (Int, Int), Array[(String, Double)], scala.collection.immutable.Map[Double,(Int, String)])
   arrayOf_categoricalFeaturesInfo
 }
 
