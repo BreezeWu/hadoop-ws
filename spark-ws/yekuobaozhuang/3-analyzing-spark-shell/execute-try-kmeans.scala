@@ -25,15 +25,13 @@ val resultWClusterCountInfo2HDFS = writeClusterCountInfo2LocalFile(resultCluster
 // ----------------------------------------------------------------------------
 // 任务2： 计算簇数量（方式二，手工指定最佳K，重新计算模型，然后...）
 // --------------------------
-val perfectK = 20;
+val perfectK = 50;
 val maxIterations = 20 // 当前没有生效
-
-var taskNamePre_perfect = s"${taskNamePre}_perfectK" + perfectK
 
 // 1. 有效数据
 // (1) 单月数据
 val resultClusterCountInfo_Standalone = ComputeClusterCount_Standalone(data, perfectK, maxIterations)
-val resultWClusterCountInfo2HDFS_Standalone = writeClusterCountInfo2HDFS(resultClusterCountInfo_Standalone, "yekuobaozhuang")
+val resultWClusterCountInfo2HDFS_Standalone = writeClusterCountInfo2LocalFile(resultClusterCountInfo_Standalone, "yekuobaozhuang")
 // ----------------------------------------------------------------------------
 //  统一显示一下结果变量
 // 任务1
