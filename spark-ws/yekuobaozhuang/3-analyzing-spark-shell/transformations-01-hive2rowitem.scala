@@ -36,7 +36,7 @@ case class IndexRight(
 	due_date:String
 )
 // 索引
-case class Index(left:IndexLeft, right:IndexRight)
+case class Index(id:String, left:IndexLeft, right:IndexRight)
 // 一年各月用电量
 //case class MonthVolume(m1:Double, m2:Double, m3:Double, m4:Double, m5:Double, m6:Double, m7:Double, m8:Double, m9:Double, m10:Double, m11:Double, m12:Double)
 // 一年各月用电量(Array)
@@ -89,6 +89,7 @@ def row2MPVolumeItem(r:org.apache.spark.sql.Row):MPVolumeItem = {
 	val value = for(j <- rangeRight) yield Any2Double(r(j)) // scala.collection.immutable.IndexedSeq[Double]
 	
 	// ------------------------------------
+  val id = index(0)
 	// 转换index 为 IndexInfo
 	val indexLeft = IndexLeft(index(0), index(1), index(2), index(3), index(4), index(5), index(6),
     index(7), index(8), index(9), index(10), index(11), index(12), index(13), index(14), index(15),
@@ -108,6 +109,6 @@ def row2MPVolumeItem(r:org.apache.spark.sql.Row):MPVolumeItem = {
 	
 	// ------------------------------------
 	// 返回值
-	val result = MPVolumeItem(Index(indexLeft, indexRight), yearsVolumes)
+	val result = MPVolumeItem(Index(id, indexLeft, indexRight), yearsVolumes)
 	return result
 }

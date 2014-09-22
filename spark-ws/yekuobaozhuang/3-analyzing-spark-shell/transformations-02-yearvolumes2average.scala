@@ -102,6 +102,7 @@ def convertMPVolumeItem2AveragePercent(item:MPVolumeItem):MPVolumeItem_AverageMo
 
     return (months, days)
   }
+
   val gap = ComputeGap2Toady(index.left.run_date)
   val runnedMonths = gap._1
   val runnedDays = gap._2
