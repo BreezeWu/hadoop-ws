@@ -32,7 +32,11 @@ SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
 //:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-try-kmeans.scala
 
 // 2.执行聚类(k=50),决策树分析
-:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree.scala
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-prepare.scala
+// 假定所有特征都是连续的
+//:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-01-all-are-continuous.scala
+// 并非所有特征都是连续的,设置分类属性性质
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-02-setting-categorical.scala
 
 // 错误信息:
 原因在于分类特征为将值与categoricalFeaturesInfo匹配
