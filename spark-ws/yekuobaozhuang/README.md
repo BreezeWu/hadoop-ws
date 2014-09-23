@@ -9,7 +9,7 @@
     //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
 ### local[*]
 export MASTER=local[*]
-SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
+SPARK_EXECUTOR_MEMORY=4G SPARK_DRIVER_MEMORY=2G spark-shell
 
 2. 在spark-shell中运行
 :load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/transformations-01-hive2rowitem.scala
@@ -32,11 +32,19 @@ SPARK_EXECUTOR_MEMORY=2G SPARK_DRIVER_MEMORY=1G spark-shell
 //:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-try-kmeans.scala
 
 // 2.执行聚类(k=50),决策树分析
-:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-prepare.scala
+// =============================
+//方式一: 一个数据集
+// step 1
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-v1-01prepare.scala
+
+// step 2
 // 假定所有特征都是连续的
-//:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-01-all-are-continuous.scala
+//:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-v1-01-all-are-continuous.scala
 // 并非所有特征都是连续的,设置分类属性性质
-:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-02-setting-categorical.scala
+:load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/execute-decisiontree-v1-02-setting-categorical.scala
+// =============================
+//方式二: 多个数据集,对数据处理封装为函数
+
 
 // 错误信息:
 原因在于分类特征为将值与categoricalFeaturesInfo匹配
