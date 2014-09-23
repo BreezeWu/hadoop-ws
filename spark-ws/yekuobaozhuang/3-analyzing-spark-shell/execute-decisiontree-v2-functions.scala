@@ -47,7 +47,7 @@ def BuildClusteringData(data:RDD[MPVolumeItem_AverageMonthVolume_percent]):RDD[V
 // 封装聚类操作过程
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.Vector
-def ClusteringData(data:RDD[Vector], k:Int, maxIterations:Int = 20):RDD[Int] = {
+def ClusteringData(data:RDD[Vector], k:Int, maxIterations:Int = 20, taskname:String = "yekuobaozhuang"):RDD[Int] = {
   val k = 50;
   //val maxIterations = 20 // 当前没有生效
 
@@ -57,9 +57,9 @@ def ClusteringData(data:RDD[Vector], k:Int, maxIterations:Int = 20):RDD[Int] = {
   // 聚类结果统计信息
   val resultClusterCountInfo_Standalone = ComputeClusterCount_Standalone(data, k, maxIterations)
   // 中心点和metric信息
-  val resultW2LocalFile_Standalone = writeAccount2LocalFile(resultClusterCountInfo_Standalone.account, "yekuobaozhuang", pwd)
+  val resultW2LocalFile_Standalone = writeAccount2LocalFile(resultClusterCountInfo_Standalone.account, taskname, pwd)
   // 统计信息
-  val resultWClusterCountInfo2HDFS_Standalone = writeClusterCountInfo2LocalFile(resultClusterCountInfo_Standalone, "yekuobaozhuang", pwd)
+  val resultWClusterCountInfo2HDFS_Standalone = writeClusterCountInfo2LocalFile(resultClusterCountInfo_Standalone, taskname, pwd)
 
   // ----------------------------------------------------------------------------
   // 分类后的数据
@@ -73,7 +73,8 @@ def ClusteringData(data:RDD[Vector], k:Int, maxIterations:Int = 20):RDD[Int] = {
 // ----------------------------------------------------------------------------
 // 封装"将分类特征数据转换为Vector"
 // 将分类特征数据转换为Vector (1)将属性信息转换为hashCode (2) 使用hashCode转换为Vector
-def BuildClassificationData(data:RDD[MPVolumeItem_AverageMonthVolume_percent], predictData:RDD[Int]) = {
+import org.apache.spark.mllib.regression.LabeledPoint
+def BuildClassificationData(data:RDD[MPVolumeItem_AverageMonthVolume_percent], predictData:RDD[Int]):RDD[LabeledPoint] = {
   // 获得各个属性信息hashCode化,这个hash值就作为特征值
   val attributesRdd_hashCode = data.map(x => (
     ConvertIndex2IndexHashCode(x.index),
@@ -88,6 +89,8 @@ def BuildClassificationData(data:RDD[MPVolumeItem_AverageMonthVolume_percent], p
   val zipRDD = featuresRdd.zip(predictData)
   val labeledPointRdd = zipRDD.map(x => new LabeledPoint(x._2, x._1)).cache()
 
+  // 返回值
+  labeledPointRdd 
 /*  val a = attributesRdd_hashCode.first
   val f = featuresRdd.first
   val p = predictRdd_Clustering.first

@@ -106,7 +106,7 @@ def ConvertAttributesHashCode2Vector(point:(IndexHashCode, OtherFeatures)):Vecto
     l.mr_sect_no,
     l.line_id,
     //l.tg_id,  // 台区标识/14308
-    l.status_code,
+    //l.status_code,  // 按照状态区分数据,所以不参与决策树分析
     //l.cons_id,
     l.mp_cap,
     //l.cons_no,
@@ -200,7 +200,7 @@ def ComputeFeaturesDistinctInfo(attributesRdd:RDD[MPVolumeItem_AverageMonthVolum
     (featureValue_mr_sect_no, true),
     (featureValue_line_id, true),
     //(featureValue_tg_id, true),
-    (featureValue_status_code, true),
+    //(featureValue_status_code, true),  // 按照状态区分数据,所以不参与决策树分析
     //(featureValue_cons_id, true),
     (featureValue_mp_cap, true),
     //(featureValue_cons_no, true),
