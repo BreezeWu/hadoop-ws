@@ -76,7 +76,7 @@ val dataForDecisionTree = labeledPointRdd.map(x => {
 
     // 返回值
     newValue
-  })
+  }).cache()
 
   // 结果
   new LabeledPoint(label, Vectors.dense(newFeatures))

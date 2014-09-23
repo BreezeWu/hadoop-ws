@@ -122,7 +122,7 @@ def Process(clusteringParams:ClusteringParams,
 
     // 结果
     new LabeledPoint(label, Vectors.dense(newFeatures))
-  })
+  }).cache()
   // ----------------------------------------------------------------------------
   // 执行决策树算法
   import org.apache.spark.mllib.tree.DecisionTree
@@ -172,17 +172,18 @@ val taskname = "yekuobaozhuang"
 
 // 根据用户状态划分数据集
 val dataRddOf_status01 = mappedRddData_percent.filter( x=> x.index.left.status_code == "01")
-val dataRddOf_status02 = mappedRddData_percent.filter( x=> x.index.left.status_code == "02")
+/*val dataRddOf_status02 = mappedRddData_percent.filter( x=> x.index.left.status_code == "02")
 val dataRddOf_status03 = mappedRddData_percent.filter( x=> x.index.left.status_code == "03")
-val dataRddOf_status04 = mappedRddData_percent.filter( x=> x.index.left.status_code == "04")
+val dataRddOf_status04 = mappedRddData_percent.filter( x=> x.index.left.status_code == "04")*/
 val c1 = dataRddOf_status01.count
-val c2 = dataRddOf_status02.count
+/*val c2 = dataRddOf_status02.count
 val c3 = dataRddOf_status03.count
 val c4 = dataRddOf_status04.count
 c1  // 10752
 c2  // 3535
 c3  // 6
-c4  // 1384
+c4  // 1384*/
+c1
 
 val result_c1 = Process(clusteringParams, classificationParams, dataRddOf_status01, taskname+"_status01")
 //val result_c2 = Process(clusteringParams, classificationParams, dataRddOf_status02, taskname+"_status02")

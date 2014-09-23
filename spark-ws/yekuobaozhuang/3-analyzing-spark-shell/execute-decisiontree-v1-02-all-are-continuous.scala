@@ -47,7 +47,7 @@ val impurity = "gini"
 val maxDepth = 5
 val maxBins = 100
 
-val dataForDecisionTree = labeledPointRdd
+val dataForDecisionTree = labeledPointRdd.cache()
 // ----------------------------------------------------------------------------
 import org.apache.spark.mllib.tree.DecisionTree
 val model = DecisionTree.trainClassifier(dataForDecisionTree, numClasses, categoricalFeaturesInfo, impurity,

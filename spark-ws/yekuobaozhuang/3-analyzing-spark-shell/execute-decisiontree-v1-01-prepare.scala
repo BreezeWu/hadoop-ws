@@ -4,9 +4,9 @@
 import org.apache.spark.mllib.linalg.Vectors
 
 // 取 平均值(年度月用电量)数据
-val averageRdd = mappedRddData_percent.map(x => x.average).map(y => Vectors.dense(y.toArray)).cache()
+//val averageRdd = mappedRddData_percent.map(x => x.average).map(y => Vectors.dense(y.toArray)).cache()
 // 取 平均值(年度月用电量)数据的百分比
-val averageRdd_percent = mappedRddData_percent.map(x => x.averagePercent).map(y => Vectors.dense(y.toArray)).cache()
+val averageRdd_percent = mappedRddData_percent.map(x => x.averagePercent).map(y => Vectors.dense(y.toArray)) //.cache()
 
 val dataForClustering = averageRdd_percent // averageRdd
 
