@@ -14,6 +14,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang/task2-clustering-and-classifying" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang/task1-finding-best-k" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang/task2-clustering-and-classifying/type2-setting-categorical-v1" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang/task2-clustering-and-classifying/type2-setting-categorical-v2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/yekuobaozhuang/task2-clustering-and-classifying/type1-all-are-continuous" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
