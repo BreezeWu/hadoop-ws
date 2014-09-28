@@ -1,4 +1,4 @@
-install.packages("ggplot2")
+#install.packages("ggplot2")
 library(ggplot2)
 
 set.seed(1410) ## 让样本可重复
