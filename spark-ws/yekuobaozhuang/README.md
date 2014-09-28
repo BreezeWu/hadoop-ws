@@ -9,7 +9,8 @@
     //  [单机]	SPARK_EXECUTOR_INSTANCES=4 SPARK_EXECUTOR_MEMORY=1G SPARK_DRIVER_MEMORY=1G spark-shell
 ### local[*]
 export MASTER=local[*]
-SPARK_EXECUTOR_MEMORY=4G SPARK_DRIVER_MEMORY=2G spark-shell
+#SPARK_EXECUTOR_MEMORY=4G SPARK_DRIVER_MEMORY=4G spark-shell
+SPARK_DRIVER_MEMORY=3G spark-shell
 
 2. 在spark-shell中运行
 :load /home/hadoop/workspace_github/hadoop-ws/spark-ws/yekuobaozhuang/3-analyzing-spark-shell/transformations-01-hive2rowitem.scala

@@ -191,6 +191,3 @@ val result_c1 = Process(clusteringParams, classificationParams, dataRddOf_status
 //val result_c4 = Process(clusteringParams, classificationParams, dataRddOf_status04, taskname+"_status04")
 
 
-
-
-
