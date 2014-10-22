@@ -3,7 +3,7 @@ package org.wuhz.spark.sg.yekuobaozhuang.data
 import scala.collection.immutable.Range
 
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 
 case class IndexInfo(id:String, dataType:String, isCategorical:Boolean = false)

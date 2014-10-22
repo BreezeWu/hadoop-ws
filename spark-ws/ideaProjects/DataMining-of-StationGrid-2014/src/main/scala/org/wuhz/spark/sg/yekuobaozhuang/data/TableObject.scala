@@ -1,7 +1,7 @@
 package org.wuhz.spark.sg.yekuobaozhuang.data
 
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 // case class 成员最多22个，所以要拆分
 case class IndexLeft(

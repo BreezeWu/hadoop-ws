@@ -4,7 +4,7 @@ import org.apache.spark.sql.Row
 import org.wuhz.spark.sg.yekuobaozhuang.data.{Mapper, Loader}
 
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 object Executor {
   val parquetFile = "file:///home/hadoop/dm-data/rddFromHive-parquet/"

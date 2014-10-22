@@ -1,7 +1,7 @@
 package org.wuhz.spark.sg.yekuobaozhuang.data
 
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 class Creater(tablename:String) {
   val tableName = "bigdata_mpvolume_onerow"	// 表名
