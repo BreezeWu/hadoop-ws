@@ -1,7 +1,7 @@
 package org.wuhz.spark.demo
 
 /**
- * Created by hadoop on 9/4/14.
+ * Created by HongZe.Wu on 9/4/14.
  */
 import org.apache.spark.SparkContext._
 import org.apache.spark.{SparkConf, SparkContext}

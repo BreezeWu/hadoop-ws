@@ -1,5 +1,5 @@
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 
 // 假定:全部特征都是连续的

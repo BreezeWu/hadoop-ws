@@ -1,7 +1,7 @@
 package org.wuhz.spark.sg.volumetrends
 
 /**
- * Created by hadoop on 9/4/14.
+ * Created by HongZe.Wu on 9/4/14.
  */
 import org.apache.spark.{SparkContext, SparkConf}
 import org.apache.spark.SparkContext._

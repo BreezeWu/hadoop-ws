@@ -4,7 +4,7 @@ import org.apache.spark.mllib.clustering.KMeans
 import org.apache.spark.rdd.RDD
 
 /**
- * Created by hadoop on 9/4/14.
+ * Created by HongZe.Wu on 9/4/14.
  */
 
 // 聚类Metric信息

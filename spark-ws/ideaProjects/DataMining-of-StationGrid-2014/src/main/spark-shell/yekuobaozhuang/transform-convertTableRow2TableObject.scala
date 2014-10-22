@@ -1,6 +1,6 @@
 /**
  * 将数据表中的行 转换为 TableObject
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 
 // 转换函数

@@ -1,5 +1,5 @@
 /**
- * Created by hadoop on 9/28/14.
+ * Created by HongZe.Wu on 9/28/14.
  */
 
 import org.apache.spark.mllib.clustering.KMeans
