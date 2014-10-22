@@ -6,10 +6,12 @@ import au.com.bytecode.opencsv.CSVReader
  * Created by HongZe.Wu on 10/21/14.
  */
 
+val datasetId = 2012 // 2012
+
 // 文件路径
 val inputFile_org = "file:///home/hadoop/dm-data/yekuobaozhuang-maxP/org"
-val inputFile_org_windows = inputFile_org + "/yekuobaozhuang-2012-windows.csv" //"/yekuobaozhuang-windows.csv"
-val inputFile_org_linux = inputFile_org + "/yekuobaozhuang-2012-linux.csv"//"/yekuobaozhuang-linux.csv"
+val inputFile_org_windows = inputFile_org + s"/yekuobaozhuang-${datasetId}-windows.csv" //"/yekuobaozhuang-2010-windows.csv"
+val inputFile_org_linux = inputFile_org + s"/yekuobaozhuang-${datasetId}-linux.csv"//"/yekuobaozhuang-2010-linux.csv"
 val inputFile_percent = "file:///home/hadoop/dm-data/yekuobaozhuang-maxP/convert2percent"
 val inputFile_org_sample = "file:///home/hadoop/dm-data/yekuobaozhuang-maxP/org_sample"
 val inputFile_org_sample_01 = inputFile_org_sample + "_0.01"
