@@ -5,7 +5,7 @@
 #sudo mkdir /mnt/win-f
 
 #sudo ntfs-3g /dev/sda1 /mnt/win-desktop
-#sudo ntfs-3g /dev/sda5 /mnt/win-d
+sudo ntfs-3g /dev/sda5 /mnt/win-d
 sudo ntfs-3g /dev/sda7 /mnt/win-f
 
 # -----------------------------------------------------------------
