@@ -34,10 +34,15 @@ def convertUserCountListList2CSV(L1L2:List[List[Long]], filepath:String, info:St
   //filewriter.write("\n")
 
   // 表内容
-  val indices_L1 = runnedMonthsIntervalList.indices // runnedMonthsList.indices
+  val indices_L1 = runnedMonthsList.indices
   indices_L1.foreach(index_L1 => {
-    val runnedMonthsInterval = runnedMonthsIntervalList(index_L1) // runnedMonthsList(index_L1)
-    filewriter.write(s"\n${runnedMonthsInterval._2},(${runnedMonthsInterval._1}->${runnedMonthsInterval._2}]个月")  // 首例
+    val runnedMonths = runnedMonthsList(index_L1)
+    filewriter.write(s"\n${runnedMonths},(0->${runnedMonths}]个月")  // 首例
+
+//  val indices_L1 = runnedMonthsIntervalList.indices // runnedMonthsList.indices
+//  indices_L1.foreach(index_L1 => {
+//    val runnedMonthsInterval = runnedMonthsIntervalList(index_L1) // runnedMonthsList(index_L1)
+//    filewriter.write(s"\n${runnedMonthsInterval._2},(${runnedMonthsInterval._1}->${runnedMonthsInterval._2}]个月")  // 首例
 
     // 其他列
     L1L2(index_L1).foreach(x => {
@@ -53,10 +58,10 @@ def convertUserCountListList2CSV(L1L2:List[List[Long]], filepath:String, info:St
 // 执行函数
 val filepath = "/home/hadoop/dm-data/yekuobaozhuang-maxP/output_statistic"
 
-convertUserCountListList2CSV(userCountListList, filepath, s"数据集_${datasetId}_所有用电类别")
+convertUserCountListList2CSV(userCountListList, filepath, s"数据集_${datasetId}_累积_所有用电类别")
 val indices_elec_type_code_list = elec_type_code_list.indices
 indices_elec_type_code_list.foreach(index => {
   val elec_type_code = elec_type_code_list(index)
-  val info = s"数据集_${datasetId}_用电类别_${elec_type_code}"
+  val info = s"数据集_${datasetId}_用电类别_累积_${elec_type_code}"
   convertUserCountListList2CSV(ELEC_TYPE_CODE_userCountListList(index), filepath, info)
 })
