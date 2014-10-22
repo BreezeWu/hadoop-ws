@@ -34,15 +34,17 @@ def convertUserCountListList2CSV(L1L2:List[List[Long]], filepath:String, info:St
   //filewriter.write("\n")
 
   // 表内容
-  val indices_L1 = runnedMonthsList.indices
-  indices_L1.foreach(index_L1 => {
-    val runnedMonths = runnedMonthsList(index_L1)
-    filewriter.write(s"\n${runnedMonths},(0->${runnedMonths}]个月")  // 首例
-
-//  val indices_L1 = runnedMonthsIntervalList.indices // runnedMonthsList.indices
+  // 累积统计
+//  val indices_L1 = runnedMonthsList.indices
 //  indices_L1.foreach(index_L1 => {
-//    val runnedMonthsInterval = runnedMonthsIntervalList(index_L1) // runnedMonthsList(index_L1)
-//    filewriter.write(s"\n${runnedMonthsInterval._2},(${runnedMonthsInterval._1}->${runnedMonthsInterval._2}]个月")  // 首例
+//    val runnedMonths = runnedMonthsList(index_L1)
+//    filewriter.write(s"\n${runnedMonths},(0->${runnedMonths}]个月")  // 首例
+
+  // 区间统计
+  val indices_L1 = runnedMonthsIntervalList.indices // runnedMonthsList.indices
+  indices_L1.foreach(index_L1 => {
+    val runnedMonthsInterval = runnedMonthsIntervalList(index_L1) // runnedMonthsList(index_L1)
+    filewriter.write(s"\n${runnedMonthsInterval._2},(${runnedMonthsInterval._1}->${runnedMonthsInterval._2}]个月")  // 首例
 
     // 其他列
     L1L2(index_L1).foreach(x => {
