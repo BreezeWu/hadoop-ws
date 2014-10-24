@@ -57,7 +57,7 @@ def printSubsetUserCountListList(filepath:String, isInterval:Boolean, isPercent:
   val indices_metaList = metaList.indices
   indices_metaList.foreach(index => {
     val elec_type_code = elec_type_code_list(index)
-    val strOfIsInterval = if(isInterval) "区间" else "累计"
+    val strOfIsInterval = if(isInterval) "时长区间" else "累计时长"
     val strOfIsPercent = if(isPercent) "百分比" else "原始值"
     val info = s"数据集_${datasetId}_用电类别_${elec_type_code}_${strOfIsInterval}_${strOfIsPercent}"
     convertUserCountListList2CSV(subsetUserCountListList(index), filepath, info)
