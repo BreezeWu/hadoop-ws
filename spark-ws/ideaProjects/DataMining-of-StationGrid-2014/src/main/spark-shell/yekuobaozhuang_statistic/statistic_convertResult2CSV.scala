@@ -53,12 +53,13 @@ def convertUserCountListList2CSV(L1L2:List[List[Any]], filepath:String, info:Str
 }
 // ----------------------------------------------------------------------------
 // 转换分组下的统计结果: 函数定义
-def printSubsetUserCountListList(filepath:String, isInterval:Boolean, metaList:List[String], subsetUserCountListList:List[List[List[Any]]]) = {
+def printSubsetUserCountListList(filepath:String, isInterval:Boolean, isPercent:Boolean, metaList:List[String], subsetUserCountListList:List[List[List[Any]]]) = {
   val indices_metaList = metaList.indices
   indices_metaList.foreach(index => {
     val elec_type_code = elec_type_code_list(index)
-    val strOfInterval = if(isInterval) "区间" else "累计"
-    val info = s"数据集_${datasetId}_用电类别_区间_${elec_type_code}"
+    val strOfIsInterval = if(isInterval) "区间" else "累计"
+    val strOfIsPercent = if(isPercent) "百分比" else "原始值"
+    val info = s"数据集_${datasetId}_用电类别_${elec_type_code}_${strOfIsInterval}_${strOfIsPercent}"
     convertUserCountListList2CSV(subsetUserCountListList(index), filepath, info)
   })
 }
@@ -68,7 +69,7 @@ val filepath = "/home/hadoop/dm-data/yekuobaozhuang-maxP/output_statistic"
 
 // 原始值
 convertUserCountListList2CSV(userCountListList, filepath, s"数据集_${datasetId}_累积_所有用电类别")
-printSubsetUserCountListList(filepath, true, elec_type_code_list, userCountListList_ELEC_TYPE_CODE)
+printSubsetUserCountListList(filepath, true, false, elec_type_code_list, userCountListList_ELEC_TYPE_CODE)
 // 百分比
 convertUserCountListList2CSV(userCountListList, filepath, s"数据集_${datasetId}_累积_所有用电类别")
-printSubsetUserCountListList(filepath, true, elec_type_code_list, userCountListList_ELEC_TYPE_CODE)
+printSubsetUserCountListList(filepath, true, true,elec_type_code_list, userCountListList_ELEC_TYPE_CODE_percent)
