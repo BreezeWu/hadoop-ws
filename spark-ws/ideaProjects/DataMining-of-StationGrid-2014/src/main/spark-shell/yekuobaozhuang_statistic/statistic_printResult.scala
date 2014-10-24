@@ -17,7 +17,7 @@ def printLevelInfo(s:String) = {
 }
 
 // 打印L1L2
-def printUserCountListList(L1L2:List[List[Long]], info:String = null) {
+def printUserCountListList(L1L2:List[List[Any]], info:String = null) {
   println(splitLineL1)  // 分割线
   if (null == info) printLevelInfo("第一层与第二层") else printLevelInfo(info)
   println(splitLineL2+"\n")
@@ -50,10 +50,21 @@ def printUserCountListList(L1L2:List[List[Long]], info:String = null) {
 }
 // ----------------------------------------------------------------------------
 // 执行打印
+// 打印分组下的统计结果: 函数定义
+def printSubsetUserCountListList(metaList:List[String], subsetUserCountListList:List[List[List[Any]]]) = {
+  val indices_metaList = metaList.indices
+  indices_metaList.foreach(index => {
+    val elec_type_code = elec_type_code_list(index)
+    val info = s"数据集_${datasetId}_用电类别_${elec_type_code}"
+    printUserCountListList(subsetUserCountListList(index),info)
+  })
+}
+
+// 打印所有的统计结果
 printUserCountListList(userCountListList, s"数据集_${datasetId}_所有用电类别")
-val indices_elec_type_code_list = elec_type_code_list.indices
-indices_elec_type_code_list.foreach(index => {
-  val elec_type_code = elec_type_code_list(index)
-  val info = s"数据集_${datasetId}_用电类别_${elec_type_code}"
-  printUserCountListList(ELEC_TYPE_CODE_userCountListList(index),info)
-})
+// 打印分组下的统计结果
+printSubsetUserCountListList(elec_type_code_list, ELEC_TYPE_CODE_userCountListList)
+// ----------------------------------------------------------------------------
+// 打印百分比
+printUserCountListList(userCountListList_percent, s"数据集_${datasetId}_所有用电类别")
+printSubsetUserCountListList(elec_type_code_list, userCountListList_ELEC_TYPE_CODE_percent)

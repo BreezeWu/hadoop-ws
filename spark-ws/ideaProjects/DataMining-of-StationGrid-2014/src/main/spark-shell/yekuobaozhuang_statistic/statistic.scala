@@ -11,9 +11,9 @@ import org.apache.spark.rdd.RDD
 // 按照运行时长进行分组
 // 累积统计
 //val runnedMonthsList = List(0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60) // 累积划分
-// 区间统计
+// 区间统计: 左开右闭区间,第一个代表所有,所以第一个值要小于0, 这里取-1
 val interval = 3  // 三个月一个区间
-val runnedMonthsIntervalList = List(0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60).
+val runnedMonthsIntervalList = List(-1/*0*/,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60).
     map(x => (x, x+interval)) .:+ (63, 900) //(63, Int.MaxValue)
 
 // 最大电力达到合同容量的百分比
@@ -98,8 +98,8 @@ val userCountListList = ComputeUserCountListList(specialRecordRdd_MAXDL2Percent)
 // 数据分组
 // ELEC_TYPE_CODE
 // 其他分组: 按照用电类别 ELEC_TYPE_CODE
-val elec_type_code_list = specialRecordRdd_MAXDL2Percent.map(x => x._5).distinct().collect().sorted
-val ELEC_TYPE_CODE_userCountListList = elec_type_code_list.map(x => {
+val elec_type_code_list = specialRecordRdd_MAXDL2Percent.map(x => x._5).distinct().collect().sorted.toList
+val userCountListList_ELEC_TYPE_CODE = elec_type_code_list.map(x => {
   val this_elec_type_code = x
 
   val this_Rdd = specialRecordRdd_MAXDL2Percent.filter(z => {
@@ -120,19 +120,37 @@ val ELEC_TYPE_CODE_userCountListList = elec_type_code_list.map(x => {
   val this_userCountListList = ComputeUserCountListList(this_Rdd)
   // 返回值
   this_userCountListList
-})
+}).toList
 
-//val longInstance_ELEC_TYPE_CODE_userCountListList = ELEC_TYPE_CODE_userCountListList.map(x=>x.map(y => y.map(z=>z.asInstanceOf[Long])))
+//val longInstance_ELEC_TYPE_CODE_userCountListList = userCountListList_ELEC_TYPE_CODE.map(x=>x.map(y => y.map(z=>z.asInstanceOf[Long])))
 
 // ----------------------------------------------------------------------------
-// 运行结果
-// 第一层与第二层的统计结果
-/*
-List(5, 5, 5, 4, 4, 3, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0)
-List(30, 25, 22, 19, 13, 8, 6, 4, 3, 3, 2, 0, 0, 0, 0, 0)
-List(152, 113, 75, 54, 32, 23, 17, 12, 8, 6, 5, 1, 0, 0, 0, 0)
-List(193, 150, 110, 83, 57, 47, 41, 26, 19, 17, 15, 8, 5, 3, 1, 0)
-List(1433, 1220, 1075, 923, 813, 712, 640, 545, 456, 400, 355, 250, 183, 118, 47, 25)
-List(2157, 1843, 1621, 1399, 1229, 1063, 943, 804, 677, 585, 509, 367, 264, 180, 87, 34)
-List(2560, 2199, 1949, 1688, 1472, 1278, 1117, 953, 800, 686, 594, 426, 293, 202, 93, 35)
-*/
+// 运行结果集
+userCountListList
+userCountListList_ELEC_TYPE_CODE
+// ----------------------------------------------------------------------------
+// 将上面结果集变换为百分比
+def convertCountListList2Percent(countListList:List[List[Long]]):List[List[Any]] = {
+  val countListList_percent = countListList.map(countList => {
+    val (max, otherList) = countList match {
+      case (x::other) => (x, other)
+    }
+
+    // 百分比:不保留百分比小数: (x*100/max)
+    // 百分比:保留2位百分比小数: (x*100*100/max).toDouble/100
+    // 非百分比,两位小数点:  (x*100/max).toFloat/(100)
+    // 非百分比,四位小数点:  (x*100*100/max).toFloat/(100*100)
+    val otherList2Percent = otherList.map(x => {
+      //if (0 != max) (x*100/max)+"%" else 0+"%"
+      if (0 != max) (x*100/max).toFloat/(100) else 0F
+    })
+    max::otherList2Percent
+  })
+
+  // 结果
+  countListList_percent
+}
+
+val userCountListList_percent = convertCountListList2Percent(userCountListList)
+val userCountListList_ELEC_TYPE_CODE_percent = userCountListList_ELEC_TYPE_CODE.map(x => convertCountListList2Percent(x))
+// ----------------------------------------------------------------------------
