@@ -11,15 +11,15 @@ import org.apache.spark.rdd.RDD
 // 1.混合统计: 运行时长小于等于给定时长的所有用户
 // 2.区间统计: 运行时长在等于给定时长区间的所有用户(左开右闭区间,第一个代表所有,所以第一个值要小于0, 这里取-1)
 // 3.分段统计: 找到运行时长大于给定时长的所有用户,但只取其小于给定时长的数据
-val maxRunnedMonthsList = Range(0, 90+1, 3).toList // 按三个月递增
+val minRunnedMonthsList = Range(0, 90+1, 3).toList // 按三个月递增
 
 // ----------------------------------------------------------------------------
 // 根据 (1)运行时长与(2)最大电力达到的百分比 进行统计
 // 方法三: 分段统计
 def ComputeUserCountListList_SEGMENT(specialRecordRdd:RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)],
-                                     maxRunnedMonthsList:List[Int],
+                                     minRunnedMonthsList:List[Int],
                                      percentList:List[Int]): List[List[Long]] = {
-  maxRunnedMonthsList.map(x => {
+  minRunnedMonthsList.map(x => {
     // 第一层是运行时长最小值
     val minRunnedMonths = x
 
