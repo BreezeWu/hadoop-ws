@@ -12,26 +12,34 @@ import org.apache.spark.rdd.RDD
 // 用电类别列表
 val elec_type_code_list = specialRecordRdd_MAXDL2Percent.map(x => x._5).distinct().collect().sorted.toList
 // 其他分组: 按照用电类别 ELEC_TYPE_CODE
-val specialRecordRddList_MAXDL2Percent_of_ELEC_TYPE_CODE = elec_type_code_list.map(x => {
-  val this_elec_type_code = x
+def splitRddBy_ELEC_TYPE_CODE(orgRdd:RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)],
+                              elec_type_code_list:List[String]) = {
 
-  val this_Rdd = specialRecordRdd_MAXDL2Percent.filter(z => {
-    //      val mp_id = z._1
-    //      val run_date = z._2
-    //      val contract_cap = z._3
-    //      val zip = z._4
-    val elec_type_code = z._5
+  val rddList = elec_type_code_list.map(x => {
+    val this_elec_type_code = x
 
-    // 是这个用电类别的吗?
-    val flag = if (elec_type_code == this_elec_type_code) true else false
+    val this_Rdd = orgRdd.filter(z => {
+      //      val mp_id = z._1
+      //      val run_date = z._2
+      //      val contract_cap = z._3
+      //      val zip = z._4
+      val elec_type_code = z._5
 
-    // 保留的内容
-    flag
-  })
+      // 是这个用电类别的吗?
+      val flag = if (elec_type_code == this_elec_type_code) true else false
 
-  // 返回值
-  this_Rdd
-}).toList
+      // 保留的内容
+      flag
+    })
+
+    // 返回值
+    this_Rdd
+  }).toList
+
+  rddList
+}
+// 执行
+val specialRecordRddList_MAXDL2Percent_of_ELEC_TYPE_CODE = splitRddBy_ELEC_TYPE_CODE(specialRecordRdd_MAXDL2Percent, elec_type_code_list)
 
 // ------------------------------------
 def executerOf_statistic(orgRdd:RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)],
@@ -111,9 +119,9 @@ def findInstance(id:String) = {
   val orgInstance = orgRdd.filter(x => x._1.contentEquals(id))
 
   // 直接打印: 中间可能掺杂spark的信息
-  strRaw = rawInstance.foreach(x => {x.foreach(y => print(y + "\t")); print("\n")})
+  rawInstance.foreach(x => {x.foreach(y => print(y + "\t")); print("\n")})
   orgInstance.collect()
 }
 
-findInstance("800573101")
-
+findInstance("800573101") // 2010
+findInstance("804021334") // 2012
