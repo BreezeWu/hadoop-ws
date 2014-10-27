@@ -23,23 +23,24 @@ def ComputeUserCountListList_INTERVAL(specialRecordRdd:RDD[(String, String, Floa
   runnedMonthsIntervalList.map(x => {
     // 第一层是运行时长区间
     val runnedMonthsInterval = x
+    val curRdd_L01 = specialRecordRdd.filter(z => { // 运行时长过滤
+      val zip = z._4
+
+      // zip中的最后一个,其"第几月份"信息在当前runnedMonthsInterval区间吗?
+      val maxMonthNo = zip(zip.size - 1)._1 // zip中的最后一个元素中的"第几个月份"信息
+      val filterFlag = if (maxMonthNo > runnedMonthsInterval._1 &&
+          maxMonthNo <= runnedMonthsInterval._2) true else false
+
+      // 保留的内容
+      filterFlag
+    })
 
     val userCountList = percentList.map(y => {
       // 第二层是百分比
       val percentThreshold = y
 
       // 数据集筛选
-      val curRdd = specialRecordRdd.filter(z => { // 运行时长过滤
-        val zip = z._4
-
-        // zip中的最后一个,其"第几月份"信息在当前runnedMonthsInterval区间吗?
-        val maxMonthNo = zip(zip.size - 1)._1 // zip中的最后一个元素中的"第几个月份"信息
-        val filterFlag = if (maxMonthNo > runnedMonthsInterval._1 &&
-            maxMonthNo <= runnedMonthsInterval._2) true else false
-
-        // 保留的内容
-        filterFlag
-      }).filter(z => {  // 百分比检测过滤
+      val curRdd_L02 = curRdd_L01.filter(z => {  // 百分比检测过滤
         val zip = z._4
         // 最大电力list
         val maxdl_list = zip.map(x => x._2)
@@ -55,7 +56,7 @@ def ComputeUserCountListList_INTERVAL(specialRecordRdd:RDD[(String, String, Floa
       })
 
       // 数据集数量
-      val curCount = curRdd.count
+      val curCount = curRdd_L02.count
       curCount
     })
 

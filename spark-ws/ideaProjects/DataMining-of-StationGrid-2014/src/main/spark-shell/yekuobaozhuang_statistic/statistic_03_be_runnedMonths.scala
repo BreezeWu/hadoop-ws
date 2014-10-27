@@ -19,29 +19,44 @@ val minRunnedMonthsList = Range(0, 90+1, 3).toList // 按三个月递增
 def ComputeUserCountListList_SEGMENT(specialRecordRdd:RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)],
                                      minRunnedMonthsList:List[Int],
                                      percentList:List[Int]): List[List[Long]] = {
+  // ----------------------------------
+  // 第一层是运行时长最小值
   minRunnedMonthsList.map(x => {
-    // 第一层是运行时长最小值
-    val minRunnedMonths = x
 
+    val minRunnedMonths = x
+    val curRdd_L01 = specialRecordRdd.filter(z => { // 运行时长过滤
+      val zip = z._4
+
+      // zip中的最后一个,其"第几月份"信息
+      val maxMonthNo = zip(zip.size - 1)._1 // zip中的最后一个元素中的"第几个月份"信息
+      val filterFlag = if (maxMonthNo >= minRunnedMonths) true else false
+
+      // 保留的内容
+      filterFlag
+    }).filter(x => {  // 所有月的最大电力都有效
+      val percentThreshold  = 0 // 大于等于0表示最大电力值有效
+
+      val zip = x._4
+      // 所有月的最大电力都有效
+      val listOf_MAXDL = zip.map(x => x._2)
+      val filterFlag = listOf_MAXDL.forall(one => {
+        if(one >= percentThreshold) true else false
+      })
+      // 保留的内容
+      filterFlag
+    }).map(z => { // 前面找到了运行时长大于给定时长的所有用户(maxMonthNo >= minRunnedMonths),这里只取其小于给定时长的数据
+      val zip = z._4
+      val newZip = zip.slice(0, minRunnedMonths)
+      (z._1,z._2,z._3,newZip, z._5)
+    })
+
+    // ----------------------------------
+    // 第二层是百分比
     val userCountList = percentList.map(y => {
-      // 第二层是百分比
       val percentThreshold = y
 
       // 数据集筛选
-      val curRdd = specialRecordRdd.filter(z => { // 运行时长过滤
-        val zip = z._4
-
-        // zip中的最后一个,其"第几月份"信息
-        val maxMonthNo = zip(zip.size - 1)._1 // zip中的最后一个元素中的"第几个月份"信息
-        val filterFlag = if (maxMonthNo >= minRunnedMonths) true else false
-
-        // 保留的内容
-        filterFlag
-      }).map(z => { // 前面找到了运行时长大于给定时长的所有用户(maxMonthNo >= minRunnedMonths),这里只取其小于给定时长的数据
-        val zip = z._4
-        val newZip = zip.slice(0, minRunnedMonths)
-        (z._1,z._2,z._3,newZip, z._5)
-      }).filter(z => {  // 百分比检测过滤
+      val curRdd_L02 = curRdd_L01.filter(z => {  // 百分比检测过滤
         val zip = z._4
         // 最大电力list
         val maxdl_list = zip.map(x => x._2)
@@ -57,7 +72,7 @@ def ComputeUserCountListList_SEGMENT(specialRecordRdd:RDD[(String, String, Float
       })
 
       // 数据集数量
-      val curCount = curRdd.count
+      val curCount = curRdd_L02.count
       curCount
     })
 

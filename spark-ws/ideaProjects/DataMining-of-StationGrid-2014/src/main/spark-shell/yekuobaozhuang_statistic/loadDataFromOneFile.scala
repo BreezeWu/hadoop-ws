@@ -6,7 +6,7 @@ import au.com.bytecode.opencsv.CSVReader
  * Created by HongZe.Wu on 10/21/14.
  */
 
-val datasetId = 2010 // 2012
+val datasetId = 2012 // 2010 //2012
 
 // 文件路径
 val inputFile_org = "file:///home/hadoop/dm-data/yekuobaozhuang-maxP/org"

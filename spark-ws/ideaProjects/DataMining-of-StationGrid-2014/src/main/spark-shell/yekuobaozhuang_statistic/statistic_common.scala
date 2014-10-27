@@ -9,7 +9,9 @@ import org.apache.spark.rdd.RDD
 // 基于 specialRecordRdd_MAXDL2Percent 这个RDD对象进行统计分析
 
 // 最大电力达到合同容量的百分比
-val percentList = List(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 200, 400, 1000)
+val percentList_withoutFix = List(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 200, 400, 1000)
+val percentList_fixed =  -1000 :: percentList_withoutFix // 某些用户前几月没有最大电力,填补值是合同容量的负值
+val percentList = percentList_fixed
 // 运行时长+百分比的用户数量百分比: 第一层是运行时长,第二层是百分比
 //val userCountList:List[List[Int]]
 

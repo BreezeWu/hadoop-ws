@@ -36,7 +36,8 @@ val specialRecordRddList_MAXDL2Percent_of_ELEC_TYPE_CODE = elec_type_code_list.m
 // ------------------------------------
 def executerOf_statistic(orgRdd:RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)],
                      orgRddList:List[RDD[(String, String, Float, scala.collection.immutable.IndexedSeq[(Int, Double)], String)]],
-                     curApproach:Int) {
+                     elec_type_code_list:List[String],
+                     curApproach:Int):(List[List[Long]],List[List[List[Long]]]) = {
   // 执行统计
   val (userCountListList, userCountListList_ELEC_TYPE_CODE) = curApproach match {
     case APPROACH_CHAOS => {
@@ -60,6 +61,8 @@ def executerOf_statistic(orgRdd:RDD[(String, String, Float, scala.collection.imm
     }
   }
 
+//  val userCountListList = result._1
+//  val userCountListList_ELEC_TYPE_CODE = result._2
   // ------------------------------------
   // 转换为百分比
   val userCountListList_percent = convertCountListList2Percent(userCountListList)
@@ -67,20 +70,20 @@ def executerOf_statistic(orgRdd:RDD[(String, String, Float, scala.collection.imm
   // ------------------------------------
   // 将结果打印在标准输出
   // 原始值
-  printUserCountListList(userCountListList, s"数据集_${datasetId}_所有用电类别_原始值_${curApproach}", curApproach)
+  printUserCountListList(userCountListList, s"数据集_${datasetId}_原始值_所有用电类别_${curApproach}", curApproach)
   printSubsetUserCountListList(elec_type_code_list, userCountListList_ELEC_TYPE_CODE, curApproach)
   // 百分比
-  printUserCountListList(userCountListList_percent, s"数据集_${datasetId}_所有用电类别_百分比_${curApproach}", curApproach)
+  printUserCountListList(userCountListList_percent, s"数据集_${datasetId}_百分比_所有用电类别_${curApproach}", curApproach)
   printSubsetUserCountListList(elec_type_code_list, userCountListList_percent_ELEC_TYPE_CODE, curApproach)
 
   // ------------------------------------
   // 将结果输出到csv文件
   val filepath = "/home/hadoop/dm-data/yekuobaozhuang-maxP/output_statistic"
   // 原始值
-  convertUserCountListList2CSV(userCountListList, s"数据集_${datasetId}_所有用电类别_原始值_${curApproach}", filepath, curApproach)
+  convertUserCountListList2CSV(userCountListList, s"数据集_${datasetId}_原始值_所有用电类别_${curApproach}", filepath, curApproach)
   convertSubsetUserCountListList(filepath, true, false, elec_type_code_list, userCountListList_ELEC_TYPE_CODE, curApproach)
   // 百分比
-  convertUserCountListList2CSV(userCountListList_percent, s"数据集_${datasetId}_所有用电类别_百分比_${curApproach}", filepath, curApproach)
+  convertUserCountListList2CSV(userCountListList_percent, s"数据集_${datasetId}_百分比_所有用电类别_${curApproach}", filepath, curApproach)
   convertSubsetUserCountListList(filepath, true, true,elec_type_code_list, userCountListList_percent_ELEC_TYPE_CODE, curApproach)
 
   // 返回值
@@ -88,7 +91,7 @@ def executerOf_statistic(orgRdd:RDD[(String, String, Float, scala.collection.imm
 }
 
 // ----------------------------------------------------------------------------
-// 按照运行时长进行分组
+// 按照运行时长进行分组统计
 val orgRdd = specialRecordRdd_MAXDL2Percent
 val orgRddList = specialRecordRddList_MAXDL2Percent_of_ELEC_TYPE_CODE
 
@@ -98,10 +101,9 @@ val orgRddList = specialRecordRddList_MAXDL2Percent_of_ELEC_TYPE_CODE
 val curApproach = APPROACH_SEGMENT  // APPROACH_CHAOS // APPROACH_INTERVAL // APPROACH_SEGMENT
 // ----------------------------------------------------------------------------
 // 按照运行时长进行分组
-
-(userCountListList, userCountListList_ELEC_TYPE_CODE) =
-  executerOf_statistic(orgRdd, orgRddList, APPROACH_CHAOS)
-
+val resultOf_Statistic = executerOf_statistic(orgRdd, orgRddList, elec_type_code_list, curApproach)
+val userCountListList = resultOf_Statistic._1
+val userCountListList_ELEC_TYPE_CODE = resultOf_Statistic._2
 // ----------------------------------------------------------------------------
 // 查找特定的样本
 def findInstance(id:String) = {
@@ -114,5 +116,4 @@ def findInstance(id:String) = {
 }
 
 findInstance("800573101")
-
 
