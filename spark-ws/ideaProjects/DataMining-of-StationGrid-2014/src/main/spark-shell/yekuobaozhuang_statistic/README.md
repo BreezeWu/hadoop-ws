@@ -15,9 +15,9 @@
 
 ### 执行命令
 cd ~/workspace_github/hadoop-ws/spark-ws/ideaProjects/DataMining-of-StationGrid-2014/src/main/spark-shell/yekuobaozhuang_statistic
-export MASTER=local[*]
+export MASTER=local
 # export MASTER=spark://master-hadoop:7077
-spark-shell
+spark-shell # SPARK_DRIVER_MEMORY=3G spark-shell
 :load loadDataFromOneFile.scala
 :load statistic_common.scala
 :load statistic_01_le_runnedMonths.scala
