@@ -4,6 +4,7 @@
 #	http://amplab-extras.github.io/SparkR-pkg/
 
 # -------------------------   Installing sparkR   --------------------------- #
+# ------------------------ 方式一: 克隆并编译 sparkR ######
 # 1. clone sparkR from github
 git clone git@github.com:amplab-extras/SparkR-pkg.git
 
@@ -18,8 +19,17 @@ SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
 # 3. 在R中安装"rJava" (若已经安装,可跳过)
 # install.packages("rJava")
 
-# -------------------------    Running sparkR    --------------------------- #
+# ------------------------ 方式二: 在R环境中安装sparkR包 ######
+# If you wish to try out SparkR, you can use install_github from the devtools package to directly install the package.
+library(devtools)
+install_github("amplab-extras/SparkR-pkg", subdir="pkg")
 
+# 后续使用时,需要在R中自己创建sc
+library(SparkR)
+sc <- sparkR.init(master="local")
+
+# -------------------------    Running sparkR    --------------------------- #
+# ------------------------ 方式一: 启动 sparkR ######
 # If you have cloned and built SparkR, you can start using it by launching the SparkR shell with
 ./sparkR
 
@@ -48,7 +58,7 @@ SPARK_MEM=1g ./sparkR
 # run the unit-tests for SparkR by running
 #./run-tests.sh
 
-# -------------------------    explore sparkR    --------------------------- #
+# ------------------------ 方式二: 在R语言中加载SparkR包 ######
 ########## 在sparkR中 ##########
 #	http://amplab-extras.github.io/SparkR-pkg/
 
@@ -64,6 +74,7 @@ sc <- sparkR.init(master="spark://<master>:7077",
 # // sparkR 只支持local模式
 # sc <- sparkR.init(master="yarn-client")
 
+# -------------------------    explore sparkR    --------------------------- #
 # ---------------------------------------
 # 其他样例
 #	http://amplab-extras.github.io/SparkR-pkg/
@@ -71,3 +82,8 @@ sc <- sparkR.init("local")	# 启动R时已经创建
 lines <- textFile(sc, "input/words-data/*")
 wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, " "))) })
 
+#
+sc <- sparkR.init("local")
+lines <- textFile(sc, "hdfs:///user/hadoop/input/README.md")
+wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, " "))) })
+collect(wordsPerLine)
