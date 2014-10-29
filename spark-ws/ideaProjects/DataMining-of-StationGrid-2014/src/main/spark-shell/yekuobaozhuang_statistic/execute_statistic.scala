@@ -123,5 +123,5 @@ def findInstance(id:String) = {
   orgInstance.collect()
 }
 
-findInstance("800573101") // 2010
-findInstance("804021334") // 2012
+//findInstance("800573101") // 2010
+//findInstance("804021334") // 2012

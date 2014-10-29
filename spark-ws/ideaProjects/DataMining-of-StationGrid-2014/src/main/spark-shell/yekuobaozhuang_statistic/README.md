@@ -1,9 +1,11 @@
-### 执行方法
+以电表(MP_ID)为单位进行统计分析
+==============================
 --- 启动spark-shell
 --- 修改 loadDataFromOneFile.scala 文件中的 datasetId 和对应文件路径
 --- 加载执行 loadDataFromOneFile.scala
---- 加载执行 statistic_common.scala
+--- 加载执行 CreateRDD-by-mp_id.scala
 --- 加载执行
+    statistic_common.scala
     statistic_01_le_runnedMonths.scala
     statistic_02_between_runnedMonths.scala
     statistic_03_be_runnedMonths.scala
@@ -13,12 +15,16 @@
 --- 加载执行
     execute_statistic.scala
 
-### 执行命令
+以电表(MP_ID)为单位进行统计分析 (:load方式)
+==============================
 cd ~/workspace_github/hadoop-ws/spark-ws/ideaProjects/DataMining-of-StationGrid-2014/src/main/spark-shell/yekuobaozhuang_statistic
 export MASTER=local
 # export MASTER=spark://master-hadoop:7077
 spark-shell # SPARK_DRIVER_MEMORY=3G spark-shell
+
 :load loadDataFromOneFile.scala
+:load CreateRDD-by-mp_id.scala
+
 :load statistic_common.scala
 :load statistic_01_le_runnedMonths.scala
 :load statistic_02_between_runnedMonths.scala
