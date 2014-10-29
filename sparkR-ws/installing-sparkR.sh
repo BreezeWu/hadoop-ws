@@ -20,6 +20,13 @@ SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
 # install.packages("rJava")
 
 # ------------------------ 方式二: 在R环境中安装sparkR包 ######
+# If you wish to try out SparkR, you can use install_github from the devtools package to directly install the package.
+library(devtools)
+install_github("amplab-extras/SparkR-pkg", subdir="pkg")
+
+# 后续使用时,需要在R中自己创建sc
+library(SparkR)
+sc <- sparkR.init(master="local")
 
 # -------------------------    Running sparkR    --------------------------- #
 # ------------------------ 方式一: 启动 sparkR ######
@@ -52,6 +59,20 @@ SPARK_MEM=1g ./sparkR
 #./run-tests.sh
 
 # ------------------------ 方式二: 在R语言中加载SparkR包 ######
+########## 在sparkR中 ##########
+#	http://amplab-extras.github.io/SparkR-pkg/
+
+# 创建sc对象
+library(SparkR)
+sc <- sparkR.init(master="local")
+
+# 创建sc对象
+library(SparkR)
+sc <- sparkR.init(master="spark://<master>:7077",
+                  sparkEnvir=list(spark.executor.memory="1g"))
+
+# // sparkR 只支持local模式
+# sc <- sparkR.init(master="yarn-client")
 
 # -------------------------    explore sparkR    --------------------------- #
 # ---------------------------------------
