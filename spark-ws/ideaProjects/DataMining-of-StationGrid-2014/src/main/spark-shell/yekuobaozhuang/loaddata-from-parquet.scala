@@ -9,6 +9,7 @@
 import org.apache.spark.sql.SQLContext
 
 val sqlContext = new SQLContext(sc)
+
 val parquet = sqlContext.parquetFile("file:///home/hadoop/dm-data/rddFromHive-parquet/")
 val rddFromHive = parquet
 // ----------------------------------------------------------------------------

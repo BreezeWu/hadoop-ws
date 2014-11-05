@@ -17,6 +17,7 @@ mvn -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
 
 # 编译具有hive功能的
 mvn -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+#mvn -Phive -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -DskipTests clean package
 
 # -----------------------------------------------------------------------------
 # sbt 方式编译
@@ -25,6 +26,7 @@ mvn -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
 
 # 若是编译1.1版本,使用下面语句
 sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 clean assembly
+#sbt/sbt -Phive -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 clean assembly
 # 编译结果 ~/workspace_github/spark/assembly/target/scala-2.10/spark-assembly-1.1.0-SNAPSHOT-hadoop2.2.0.jar
 
 # -----------------------------------------------------------------------------
