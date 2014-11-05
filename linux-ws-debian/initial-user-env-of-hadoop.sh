@@ -26,6 +26,12 @@ sudo ntfs-3g /dev/sda7 /mnt/win-f
 # 初始化脚本,便于编辑后可通过git直接同步到github
 # ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/initial-user-env-of-hadoop.sh ~/initial-user-env-of-hadoop.sh
 # hadoop用户的.bashrc
-# ln -s ~/workspace_github/hadoop-ws/hadoop@debian.bashrc ~/.bashrc
+# ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/hadoop-at-debian.bashrc ~/.bashrc
 # R语言的 .Rprofile
 # ln -s ~/workspace_github/hadoop-ws/r-ws/env-R.Rprofile ~/.Rprofile
+
+# -----------------------------------------------------------------
+# 其他链接
+#~/workspace_github/hadoop-ws/rstudio-ws/PlotBy_ggplot2
+#ln -s /home/hadoop/workspace_github/hadoop-ws/spark-ws/ideaProjects/DataMining-of-StationGrid-2014/src/main/spark-shell/yekuobaozhuang_statistic/visualizing.R yekuobaozhuang_statistic.R
+
