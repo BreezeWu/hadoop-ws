@@ -29,7 +29,9 @@ sudo ntfs-3g /dev/sda7 /mnt/win-f
 # ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/hadoop-at-debian.bashrc ~/.bashrc
 # R语言的 .Rprofile
 # ln -s ~/workspace_github/hadoop-ws/r-ws/env-R.Rprofile ~/.Rprofile
-
+# git 配置
+# ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/git-conf.gitignore ~/workspace_github/hadoop-ws/.gitignore
+# ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/git-conf.gitignore_global ~/workspace_github/hadoop-ws/.gitignore_global
 # -----------------------------------------------------------------
 # 其他链接
 #~/workspace_github/hadoop-ws/rstudio-ws/PlotBy_ggplot2
