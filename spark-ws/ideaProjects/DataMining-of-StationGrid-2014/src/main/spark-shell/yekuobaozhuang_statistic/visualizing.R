@@ -82,7 +82,7 @@ visualizingData <- function(data, filename_pdf, special_columns = g_colnames_spe
   p <- ggplot(data = meltData, mapping = aes(x = 运行时长, y = value, group = variable, colour = variable))
   p <- p + layer(geom = "point", mapping = aes(size = value))
   p <- p + layer(geom = "line")
-  p <- p + xlab("runnedMonths") # x轴的中文不成正确显示
+  p <- p + xlab("runnedMonths") # x轴的中文不能正确显示
   #p
 
   # 转存为PDF文件

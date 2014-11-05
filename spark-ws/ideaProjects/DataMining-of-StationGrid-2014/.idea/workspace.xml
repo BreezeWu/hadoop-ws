@@ -42,7 +42,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/spark-shell/yekuobaozhuang_statistic/visualizing.R">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.64319247" vertical-offset="1574" max-vertical-offset="3718">
-              <caret line="84" column="11" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
+              <caret line="84" column="41" selection-start-line="84" selection-start-column="41" selection-end-line="84" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -1080,7 +1080,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/spark-shell/yekuobaozhuang_statistic/visualizing.R">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.64319247" vertical-offset="1574" max-vertical-offset="3718">
-          <caret line="84" column="11" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
+          <caret line="84" column="41" selection-start-line="84" selection-start-column="41" selection-end-line="84" selection-end-column="41" />
           <folding />
         </state>
       </provider>
