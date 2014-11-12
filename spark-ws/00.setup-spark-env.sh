@@ -8,26 +8,34 @@ cd ${SPARK_HOME}
 cd ${SPARK_HOME}/conf
 ln -s /opt/hive/apache-hive-0.13.1-bin/conf/hive-site.xml hive-site.xml
 
+# export HADOOP_VERSION_MAJOR=2.2
+# export HADOOP_VERSION_MINOR=2.2.0
+# export HADOOP_VERSION_MAJOR=2.5
+# export HADOOP_VERSION_MINOR=2.5.1
+echo ${HADOOP_VERSION}
+export HADOOP_VERSION_MAJOR=2.5
+export HADOOP_VERSION_MINOR=${HADOOP_VERSION}
 # -----------------------------------------------------------------------------
 # maven 方式编译
 export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
-# hadoop-2.2.0 + yarn 功能
-mvn -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+# hadoop-2.x + yarn 功能
+#mvn -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+mvn -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} -DskipTests clean package
 
 # 编译具有hive功能的
-mvn -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
-#mvn -Phive -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -DskipTests clean package
+#mvn -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 -DskipTests clean package
+mvn -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} -DskipTests clean package
 
 # -----------------------------------------------------------------------------
 # sbt 方式编译
 # 若是编译1.0版本,使用下面语句, 否则总是编译默认的hadoop-1.0.4相应版本
-#  SPARK_HIVE=true SPARK_YARN=true SPARK_HADOOP_VERSION=2.2.0 sbt/sbt clean assembly
+#SPARK_HIVE=true SPARK_YARN=true SPARK_HADOOP_VERSION=2.2.0 sbt/sbt clean assembly
 
 # 若是编译1.1版本,使用下面语句
-sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 clean assembly
-#sbt/sbt -Phive -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 clean assembly
+#sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 clean assembly
 # 编译结果 ~/workspace_github/spark/assembly/target/scala-2.10/spark-assembly-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+sbt/sbt -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} clean assembly
 
 # -----------------------------------------------------------------------------
 # 编译docs
@@ -39,9 +47,8 @@ jekyll
 
 # -----------------------------------------------------------------------------
 # 构建 idea 环境
-
-./sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 gen-idea
-# 编译结果 未执行成功!
+#./sbt/sbt -Phive -Pyarn -Phadoop-2.2 -Dhadoop.version=2.2.0 gen-idea
+./sbt/sbt -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} gen-idea
 
 # -----------------------------------------------------------------------------
 # 启动服务	on YARN
@@ -56,7 +63,9 @@ jekyll
 #	Unlike in Spark standalone and Mesos mode, in which the master’s address is specified in the “master” parameter, 
 #	in YARN mode the ResourceManager’s address is picked up from the Hadoop configuration. Thus, the master parameter is simply “yarn-client” or “yarn-cluster”.
 export MASTER=yarn-client
-export MASTER=yarn-cluster
+#export MASTER=yarn-cluster
+
+export SPARK_VERSION=1.1.0
 
 cd ${SPARK_HOME}
 
@@ -69,7 +78,7 @@ cd ${SPARK_HOME}
     --driver-memory 4g \
     --executor-memory 2g \
     --executor-cores 1	\
-    ./examples/target/spark-examples_2.10-1.1.0-SNAPSHOT.jar \
+    ./examples/target/spark-examples_2.10-${SPARK_VERSION}-SNAPSHOT.jar \
     10
 
 # -----------------------------------------
@@ -80,7 +89,7 @@ cd ${SPARK_HOME}
     --driver-memory 4g \
     --executor-memory 2g \
     --executor-cores 1	\
-    ./examples/target/spark-examples_2.10-1.1.0-SNAPSHOT.jar \
+    ./examples/target/spark-examples_2.10-${SPARK_VERSION}-SNAPSHOT.jar \
     10
 
 # -----------------------------------------
@@ -92,7 +101,6 @@ cd ${SPARK_HOME}
 ./bin/spark-shell --master yarn-client
 # 再启动一个 此时,其webui 变为 4041
 ./bin/spark-shell --master yarn-client
-
 
 # -----------------------------------------------------------------------------
 # 启动服务	on mesos

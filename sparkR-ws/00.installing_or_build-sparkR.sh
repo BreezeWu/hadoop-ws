@@ -24,18 +24,20 @@ git clone git@github.com:amplab-extras/SparkR-pkg.git
 
 # 下面语句编译的 sparkr-assembly-0.1.jar 很大! (why?)
 # 访问hdfs时报错: org.apache.hadoop.ipc.RemoteException: Server IPC version 9 cannot communicate with client version 4
-SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+#SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+SPARK_YARN_VERSION=2.5.1 SPARK_HADOOP_VERSION=2.5.1 ./install-dev.sh
 
 # (2)yarn-client
-USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+#USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+    # sbt.ResolveException: unresolved dependency: org.apache.hadoop#hadoop-yarn-server-web-proxy;2.2.0: not found
 #USE_YARN=1 SPARK_YARN_VERSION=2.4.0 SPARK_HADOOP_VERSION=2.4.0 ./install-dev.sh
-#USE_YARN=1 SPARK_YARN_VERSION=2.5.1 SPARK_HADOOP_VERSION=2.5.1 ./install-dev.sh
+USE_YARN=1 SPARK_YARN_VERSION=2.5.1 SPARK_HADOOP_VERSION=2.5.1 ./install-dev.sh
 
 # (二) maven
 # 默认编译是使用sbt, 也可以选择使用maven
 # SPARK_HADOOP_VERSION=2.2.0 USE_MAVEN=1 ./install-dev.sh
 ### {下面语句ok: 非yarn模式}
-USE_MAVEN=1 USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+USE_MAVEN=1 USE_YARN=1 SPARK_YARN_VERSION=2.5.1 SPARK_HADOOP_VERSION=2.5.1 ./install-dev.sh
 ### {下面语句ok: yarn-client}
 USE_MAVEN=1 USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
 
@@ -58,6 +60,8 @@ sc <- sparkR.init(master="local")
 
 # 或者,启动时指定相关参数. 如,指明使用1G内存
 SPARK_MEM=1g ./sparkR
+
+YARN_CONF_DIR=${YARN_CONF_DIR} MASTER=yarn-client ./sparkR
 
 # ------------------------ 遇到的问题 begin >>>>>
 # 1. 若设置环境变量 MASTER=yarn-client ,执行./sparkR遇到下面问题 (why?????)	// sparkR 只支持local模式
