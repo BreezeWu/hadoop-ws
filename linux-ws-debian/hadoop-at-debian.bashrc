@@ -130,8 +130,8 @@ export CLASSPATH=/opt/java_cp/mongo-java-driver-2.6.3.jar:/opt/java_cp/mysql-con
 # 不同的hadoop版本定义
 #export HADOOP_VERSION=0.20.2
 #export HADOOP_VERSION=1.2.1
-export HADOOP_VERSION=2.2.0
-#export HADOOP_VERSION=2.5.1
+#export HADOOP_VERSION=2.2.0
+export HADOOP_VERSION=2.5.1
 export HADOOP_HOME=/opt/hadoop/hadoop-${HADOOP_VERSION}
 export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${PATH}
 export CLASSPATH=${HADOOP_HOME}:${HADOOP_HOME}/lib:${CLASSPATH}
