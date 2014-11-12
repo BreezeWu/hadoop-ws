@@ -29,11 +29,10 @@
 
 # ------------------------------------------------
 # 一个 wordcount 样例
-file <- "hdfs:///user/hadoop/input/README.md"   # failed!
-    # java.io.IOException: Incomplete HDFS URI, no host: hdfs:/user/hadoop/input/README.md
 file <- "file:///home/hadoop/workspace_github/SparkR-pkg/README.md" # ok!
 file <- "/home/hadoop/workspace_github/SparkR-pkg/README.md"    # ok!
-
+file <- "hdfs://master-hadoop:9000/user/hadoop/input/README.md"   # failed!
+    # org.apache.hadoop.ipc.RemoteException: Server IPC version 9 cannot communicate with client version 4
 lines <- textFile(sc,file) # textFile(sc,args[[2]])
 words <- flatMap(lines,
     function(line) {

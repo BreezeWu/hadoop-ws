@@ -36,13 +36,13 @@ g_dataList_fullpath_and_files[[1]][[2]] #该类型数据的数据集文件名列
 # g_dataList_fullpath_and_files[[3]][[2]]
 
 # 2.基本参数：数据集结构 ----------
-g_colnames_raw <- c("运行时长", "运行时长描述", "所有用户数量", #"-1000%"
-                    "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", "120%", "150%", "200%", "400%", "1000%")
-g_colnames_special_percent <- c("运行时长", "运行时长描述", "所有用户数量","20%", "50%", "70%", "90%", "100%")
+#g_colnames_raw <- c("运行时长", "运行时长描述", "所有用户数量", #"-1000%"
+#                    "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", "120%", "150%", "200%", "400%", "1000%")
+#g_colnames_special_percent <- c("运行时长", "运行时长描述", "所有用户数量","20%", "50%", "70%", "90%", "100%")
 
-# g_colnames_raw <- c("运行时长", "运行时长描述", "所有用户数量", #"-1000%"
-#                     "p0", "p10", "p20", "p30", "p40", "p50", "p60", "p70", "p80", "p90", "p100", "p120", "p150", "p200", "p400", "p1000")
-# g_colnames_special_percent <- c("运行时长", "运行时长描述", "所有用户数量","p20", "p50", "p70", "p90", "p100")
+g_colnames_raw <- c("运行时长", "运行时长描述", "所有用户数量", #"-1000%"
+                    "p0", "p10", "p20", "p30", "p40", "p50", "p60", "p70", "p80", "p90", "p100", "p120", "p150", "p200", "p400", "p1000")
+g_colnames_special_percent <- c("运行时长", "运行时长描述", "所有用户数量","p20", "p50", "p70", "p90", "p100")
 # {二、函数定义} ------------------------------
 # 1.读取数据 ----------
 loadCsvData <- function(filename) {
@@ -76,7 +76,7 @@ visualizingData <- function(data, filename_pdf, special_columns = g_colnames_spe
   filterData$运行时长 <- ordered(filterData$运行时长)
   filterData <- subset(filterData, (运行时长 <= 21) & (运行时长 > 0))
   # 将横表转换为纵表
-  meltData <- melt.data.frame(filterData, id = c("运行时长", "运行时长描述", "所有用户数量"))
+  meltData <- melt(filterData, id = c("运行时长", "运行时长描述", "所有用户数量")) # melt.data.frame
 
   # 作图
   p <- ggplot(data = meltData, mapping = aes(x = 运行时长, y = value, group = variable, colour = variable))

@@ -8,13 +8,36 @@
 # 1. clone sparkR from github
 git clone git@github.com:amplab-extras/SparkR-pkg.git
 
-# 2. 编译, 这个要与spark的编译版本匹配!!!
+# 2. 编译
+
+# 注意:
+# (1) 这个要与spark的编译版本匹配!!!
+# (2) 这个要与hadoop的编译版本匹配!!!
+
+# (一) sbt
 # To develop SparkR, you can build the scala package and the R package using
 # 如: SPARK_HADOOP_VERSION=2.0.0-mr1-cdh4.2.0 ./install-dev.sh
-SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
 
+# (1)非yarn模式
+### {下面语句编译后访问HDFS提示"org.apache.hadoop.ipc.RemoteException: Server IPC version 9 cannot communicate with client version 4"}
+#SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+
+# 下面语句编译的 sparkr-assembly-0.1.jar 很大! (why?)
+# 访问hdfs时报错: org.apache.hadoop.ipc.RemoteException: Server IPC version 9 cannot communicate with client version 4
+SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+
+# (2)yarn-client
+USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+#USE_YARN=1 SPARK_YARN_VERSION=2.4.0 SPARK_HADOOP_VERSION=2.4.0 ./install-dev.sh
+#USE_YARN=1 SPARK_YARN_VERSION=2.5.1 SPARK_HADOOP_VERSION=2.5.1 ./install-dev.sh
+
+# (二) maven
 # 默认编译是使用sbt, 也可以选择使用maven
 # SPARK_HADOOP_VERSION=2.2.0 USE_MAVEN=1 ./install-dev.sh
+### {下面语句ok: 非yarn模式}
+USE_MAVEN=1 USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
+### {下面语句ok: yarn-client}
+USE_MAVEN=1 USE_YARN=1 SPARK_YARN_VERSION=2.2.0 SPARK_HADOOP_VERSION=2.2.0 ./install-dev.sh
 
 # 3. 在R中安装"rJava" (若已经安装,可跳过)
 # install.packages("rJava")
@@ -84,6 +107,6 @@ wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, " ")
 
 #
 sc <- sparkR.init("local")
-lines <- textFile(sc, "hdfs:///user/hadoop/input/README.md")
+lines <- textFile(sc, "hdfs://master-hadoop:9000/user/hadoop/input/README.md")
 wordsPerLine <- lapply(lines, function(line) { length(unlist(strsplit(line, " "))) })
 collect(wordsPerLine)

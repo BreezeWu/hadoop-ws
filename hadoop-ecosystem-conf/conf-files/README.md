@@ -5,7 +5,7 @@
 
 # ------------------------------------------------------
 # 准备环境变量
-export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/hadoop-ecosystem-conf/conf-files/
+export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/hadoop-ecosystem-conf/conf-files
 # 目标依赖于各个环境变量
 
 # ------------------------------------------------------
@@ -24,9 +24,11 @@ export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/hadoop-ecosys
 #mv ${HADOOP_HOME}/conf ${HADOOP_HOME}/conf.bak
 #ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-0.20.2-cdh3u3-conf ${HADOOP_HOME}/conf
 
-# hadoop-2.2.0
+# hadoop-2.2.0 hadoop-2.5.1
 #mv ${HADOOP_HOME}/etc/hadoop ${HADOOP_HOME}/etc/hadoop.bak
-ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-2.2.0-etc-hadoop ${HADOOP_HOME}/etc/hadoop
+#ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-2.2.0-conf ${HADOOP_HOME}/etc/hadoop
+#ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-2.5.1-conf ${HADOOP_HOME}/etc/hadoop
+ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-${HADOOP_VERSION}-conf ${HADOOP_HOME}/etc/hadoop
 
 # sqoop-1.4.4.bin__hadoop-2.0.4-alpha
 #mv ${SQOOP_HOME}/conf	${SQOOP_HOME}/conf.bak

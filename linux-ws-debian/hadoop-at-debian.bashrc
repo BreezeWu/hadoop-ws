@@ -119,7 +119,8 @@ export PATH=${ANT_HOME}/bin:${PATH}
 export JAVA_HOME=/opt/java/jdk1.7.0_55
 export JRE_HOME=/opt/java/jdk1.7.0_55/jre
 export PATH=$JAVA_HOME/bin:$JRE_HOME/jre/bin:${PATH}
-export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+#export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
 
 # /opt/JAVACP
 export JAVACP_HOME=/opt/java_cp
@@ -129,7 +130,8 @@ export CLASSPATH=/opt/java_cp/mongo-java-driver-2.6.3.jar:/opt/java_cp/mysql-con
 # 不同的hadoop版本定义
 #export HADOOP_VERSION=0.20.2
 #export HADOOP_VERSION=1.2.1
-export HADOOP_VERSION=2.2.0
+#export HADOOP_VERSION=2.2.0
+export HADOOP_VERSION=2.5.1
 export HADOOP_HOME=/opt/hadoop/hadoop-${HADOOP_VERSION}
 export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${PATH}
 export CLASSPATH=${HADOOP_HOME}:${HADOOP_HOME}/lib:${CLASSPATH}
@@ -140,14 +142,17 @@ export CLASSPATH=${HADOOP_HOME}:${HADOOP_HOME}/lib:${CLASSPATH}
 export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
 
 ### only for hadoop 2.x
+### BEGIN>>>
 export HADOOP_INSTALL=${HADOOP_HOME}  
 export HADOOP_PREFIX=${HADOOP_INSTALL}
 #export PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin 
 export HADOOP_MAPRED_HOME=$HADOOP_INSTALL  
 export HADOOP_COMMON_HOME=$HADOOP_INSTALL  
 export HADOOP_HDFS_HOME=$HADOOP_INSTALL  
-export YARN_HOME=$HADOOP_INSTALL  
-###end of paste  
+export YARN_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_LIB_NATIVE_DIR=${HADOOP_INSTALL}/lib/native
+export HADOOP_OPTS="-Djava.library.path=${HADOOP_INSTALL}/lib"
+### <<<END
 
 # -----------------------------------------------------------------------------
 # zookeeper
@@ -217,7 +222,6 @@ export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-example
 #export SPARK_HOME=/opt/spark/spark-0.9.1-bin-hadoop2
 #export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/spark-examples_2.10-0.9.1.jar
 
-# 
 # ADD_JARS
 export SPARK_CLASSPATH=/opt/java_cp/mysql-connector-java-5.1.27.jar
 
@@ -242,9 +246,11 @@ export MASTER=yarn-client
 # 下面配置需要先执行 ${SPARK_HOME}/sbin/start-all.sh
 #export MASTER=spark://master-hadoop:7077
 
+# -----------------------------------------------------------------------------
 # sparkR
 export SPARKR_HOME=/home/hadoop/workspace_github/SparkR-pkg
 export PATH=${SPARKR_HOME}:${PATH}
+export YARN_CONF_DIR=${HADOOP_CONF_DIR}
 # -----------------------------------------------------------------------------
 # mesos
 export MESOS_HOME=/opt/mesos/mesos-0.19.0/build
@@ -302,7 +308,8 @@ export LC_ALL=en_HK.UTF-8
 
 # RHadoop
 export HADOOP_CMD=${HADOOP_HOME}/bin/hadoop
-export HADOOP_STREAMING=${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-streaming-2.2.0.jar
+#export HADOOP_STREAMING=${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-streaming-2.2.0.jar
+export HADOOP_STREAMING=${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-streaming-${HADOOP_VERSION}.jar
 
 # RHIPE --begin
 #export HADOOP_BIN=${HADOOP_HOME}/bin
