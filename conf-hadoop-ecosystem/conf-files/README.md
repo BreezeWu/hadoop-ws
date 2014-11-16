@@ -5,7 +5,7 @@
 
 # ------------------------------------------------------
 # 准备环境变量
-export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/hadoop-ecosystem-conf/conf-files
+export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/conf-hadoop-ecosystem/conf-files
 # 目标依赖于各个环境变量
 
 # ------------------------------------------------------

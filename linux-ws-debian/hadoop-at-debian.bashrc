@@ -251,6 +251,14 @@ export MASTER=yarn-client
 export SPARKR_HOME=/home/hadoop/workspace_github/SparkR-pkg
 export PATH=${SPARKR_HOME}:${PATH}
 export YARN_CONF_DIR=${HADOOP_CONF_DIR}
+
+# -----------------------------------------------------------------------------
+# cassandra
+export CASSANDRA_HOME=/opt/cassandra/apache-cassandra-2.1.2
+export PATH=${CASSANDRA_HOME}/bin:${PATH}
+
+export CASSANDRA_VERSION=2.1.2
+
 # -----------------------------------------------------------------------------
 # mesos
 export MESOS_HOME=/opt/mesos/mesos-0.19.0/build
@@ -367,7 +375,12 @@ export PATH=${H2O_HOME}/bin:${PATH}
 # AWS
 #export AWS_ACCESS_KEY_ID=
 #export AWS_SECRET_ACCESS_KEY=
-# 
+#
+
+# -----------------------------------------------------------------------------
+# hadoop-ws的配置文件
+export CONF_HADOOP_ECOSYSTEM=/home/hadoop/workspace_github/hadoop-ws/conf-hadoop-ecosystem
+export CONF_SPARK_ECOSYSTEM=/home/hadoop/workspace_github/hadoop-ws/conf-spark-ecosystem
 
 # -----------------------------------------------------------------------------
 # goagent 作为linux代理服务器  
@@ -403,3 +416,4 @@ export PATH=${H2O_HOME}/bin:${PATH}
 # -----------------------------------------------------------------------------
 # 添加当前目录到PATH
 export PATH=.:${PATH}
+

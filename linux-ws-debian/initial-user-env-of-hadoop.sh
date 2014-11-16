@@ -10,8 +10,8 @@ sudo ntfs-3g /dev/sda7 /mnt/win-f
 
 # -----------------------------------------------------------------
 # 使用 goagent 代理
-#cd ~/link-goagent/local
-#python ~/link-goagent/local/proxy.py &
+cd ~/link-goagent/local
+python ~/link-goagent/local/proxy.py &
 #python ~/link-goagent/local/proxy.py &
 
 # -----------------------------------------------------------------
