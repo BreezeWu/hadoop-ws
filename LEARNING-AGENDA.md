@@ -1,3 +1,8 @@
+TODO LIST @ TODAY
+=======================
+Functional Programming in Scala.2013.pdf
+Docker
+
 Things that go together
 =======================
 Cassandra(OLTP Data Center) + Spark(Analytics OLAP Data Center)

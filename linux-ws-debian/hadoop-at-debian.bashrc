@@ -247,6 +247,11 @@ export MASTER=yarn-client
 #export MASTER=spark://master-hadoop:7077
 
 # -----------------------------------------------------------------------------
+# spark jobserver
+export SPARKJOBSERVER_HOME=/home/hadoop/workspace_github/spark-jobserver
+export PATH=${SPARKJOBSERVER_HOME}/bin:${PATH}
+
+# -----------------------------------------------------------------------------
 # sparkR
 export SPARKR_HOME=/home/hadoop/workspace_github/SparkR-pkg
 export PATH=${SPARKR_HOME}:${PATH}
