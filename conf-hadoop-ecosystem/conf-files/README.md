@@ -31,7 +31,7 @@ export TMP_CONF_DIR_SOURCE=/home/hadoop/workspace_github/hadoop-ws/conf-hadoop-e
 ln -s ${TMP_CONF_DIR_SOURCE}/hadoop-${HADOOP_VERSION}-conf ${HADOOP_HOME}/etc/hadoop
 
 # sqoop-1.4.4.bin__hadoop-2.0.4-alpha
-#mv ${SQOOP_HOME}/conf	${SQOOP_HOME}/conf.bak
+#mv ${SQOOP_HOME}/conf ${SQOOP_HOME}/conf.bak
 ln -s ${TMP_CONF_DIR_SOURCE}/sqoop-1.4.4.bin__hadoop-2.0.4-alpha-conf ${SQOOP_HOME}/conf
 
 # hive-0.13.1

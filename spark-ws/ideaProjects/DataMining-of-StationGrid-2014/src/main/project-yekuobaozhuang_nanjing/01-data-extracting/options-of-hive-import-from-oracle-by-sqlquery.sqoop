@@ -1,0 +1,17 @@
+##	用法
+# sqoop --options-file options-of-....sqoop --table XXXX
+
+import
+--connect
+jdbc:oracle:thin:@192.168.1.6:1521/yjzhgl
+--username
+uap
+#--password-file
+#/user/hadoop/passwd/oracle.password
+--password
+uap
+--hive-import
+#--warehouse-dir
+#/user/hadoop/tmp-for-sqoop-hive
+--verbose
+

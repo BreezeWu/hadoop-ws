@@ -24,6 +24,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/sparkR" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/study-spark" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/study-spark/spark-example" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/00-data-exploring" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/01-data-extracting" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/02-data-preprocess" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/03-data-mining-using-spark" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/04-model-evaluating" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/05-result-visualizing" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

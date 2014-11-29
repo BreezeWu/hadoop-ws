@@ -1,0 +1,26 @@
+hive> select count(*) from ykbz_detail;
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1417159882262_0002, Tracking URL = http://master-hadoop:8088/proxy/application_1417159882262_0002/
+Kill Command = /opt/hadoop/hadoop-2.5.1/bin/hadoop job  -kill job_1417159882262_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2014-11-28 16:17:29,946 Stage-1 map = 0%,  reduce = 0%
+2014-11-28 16:17:36,225 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.39 sec
+2014-11-28 16:17:43,530 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.92 sec
+MapReduce Total cumulative CPU time: 3 seconds 920 msec
+Ended Job = job_1417159882262_0002
+MapReduce Jobs Launched:
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 3.92 sec   HDFS Read: 112626773 HDFS Write: 7 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 920 msec
+OK
+158424
+Time taken: 24.033 seconds, Fetched: 1 row(s)
+
+hive> select * from ykbz_detail limit 10;

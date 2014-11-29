@@ -1,0 +1,16 @@
+## 方式一: 不指定sql语句,直接抽取全部内容
+#sqoop --options-file options-of-hive-import-from-oracle.sqoop --table YKBZ_DETAIL --split-by YONGDIANLB
+# 失败了!!! 错误信息如下:
+#14/11/28 16:04:18 DEBUG manager.SqlManager: Using fetchSize for next query: 1000
+#14/11/28 16:04:18 INFO manager.SqlManager: Executing SQL statement: SELECT t.* FROM YKBZ_DETAIL t WHERE 1=0
+#14/11/28 16:04:19 DEBUG manager.OracleManager$ConnCache: Caching released connection for jdbc:oracle:thin:@192.168.1.6:1521/yjzhgl/uap
+#14/11/28 16:04:19 DEBUG orm.ClassWriter: selected columns:
+#14/11/28 16:04:19 ERROR tool.ImportTool: Imported Failed: Attempted to generate class with no columns!
+
+## 方式二: 指定sql语句方式来抽取
+sqoop --options-file options-of-hive-import-from-oracle-by-sqlquery.sqoop --query '
+    select *
+    from YKBZ_DETAIL
+    WHERE $CONDITIONS ' --split-by YONGDIANLB --boundary-query "
+    select min(YONGDIANLB),max(YONGDIANLB) from YKBZ_DETAIL
+" --target-dir /user/hadoop/tmp-for-sqoop-hive/YKBZ_DETAIL --hive-table YKBZ_DETAIL --mapreduce-job-name sqoop-importing-YKBZ_DETAIL
