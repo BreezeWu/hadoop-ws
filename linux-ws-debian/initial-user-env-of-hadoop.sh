@@ -1,12 +1,12 @@
 # -----------------------------------------------------------------
 # 映射 Windows的 分区
 #sudo mkdir /mnt/win-desktop
-#sudo mkdir /mnt/win-d
+#sudo mkdir /mnt/win-e
 #sudo mkdir /mnt/win-f
 
 #sudo ntfs-3g /dev/sda1 /mnt/win-desktop
-#sudo ntfs-3g /dev/sda5 /mnt/win-d
-#sudo ntfs-3g /dev/sda7 /mnt/win-f
+#sudo ntfs-3g /dev/sda5 /mnt/win-e
+#sudo ntfs-3g /dev/sda6 /mnt/win-f
 
 # -----------------------------------------------------------------
 # 使用 goagent 代理
