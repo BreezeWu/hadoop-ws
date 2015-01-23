@@ -1,0 +1,12 @@
+[credential]
+	helper = cache --timeout=3600000
+[user]
+	name = Breeze Wu
+	email = dawningbreezee@gmail.com
+[core]
+	autocrlf = false
+	excludesfile = /home/hadoop/.gitignore_global
+[color]
+	ui = true
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit

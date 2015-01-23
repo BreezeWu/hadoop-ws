@@ -24,11 +24,11 @@
     <property>
         <name>dfs.namenode.name.dir</name>
         <!-- file:/usr/local/hadoop/yarn_data/hdfs/namenode -->
-        <value>/home/hadoop/data-hadoop-2.5.1/dfs/name</value>
+        <value>/home/hadoop/workspace_data/data-hadoop-2.5.1/dfs/name</value>
     </property>
     <property>
         <name>dfs.datanode.data.dir</name>
         <!-- file:/usr/local/hadoop/yarn_data/hdfs/datanode -->
-        <value>/home/hadoop/data-hadoop-2.5.1/dfs/data</value>
+        <value>/home/hadoop/workspace_data/data-hadoop-2.5.1/dfs/data</value>
     </property>
 </configuration>

@@ -5,19 +5,18 @@
 #sudo mkdir /mnt/win-f
 
 #sudo ntfs-3g /dev/sda1 /mnt/win-desktop
-sudo ntfs-3g /dev/sda5 /mnt/win-d
-sudo ntfs-3g /dev/sda7 /mnt/win-f
+#sudo ntfs-3g /dev/sda5 /mnt/win-d
+#sudo ntfs-3g /dev/sda7 /mnt/win-f
 
 # -----------------------------------------------------------------
 # 使用 goagent 代理
-#cd ~/link-goagent/local
-#python ~/link-goagent/local/proxy.py &
-#python ~/link-goagent/local/proxy.py &
+cd ~/link-goagent/local
+python ~/link-goagent/local/proxy.py &
 
 # -----------------------------------------------------------------
 # 手动设置以太网
 # 	sudo ifconfig eth0 inet up 192.0.2.1 netmask 255.255.255.0
- 	sudo ifconfig eth0 inet up 192.168.1.115 netmask 255.255.255.0
+ 	sudo ifconfig eth0 inet up 192.168.1.100 netmask 255.255.255.0
 # 手动设置无线网络
 #	sudo ifconfig wlan0 inet up 192.168.0.8 netmask 255.255.255.0
 # 禁用eth0

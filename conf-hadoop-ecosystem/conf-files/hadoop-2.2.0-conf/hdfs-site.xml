@@ -24,13 +24,13 @@
 
 	<property>
 		 <name>dfs.namenode.name.dir</name>
-	      	 <value>/home/hadoop/data-hadoop-2.2.0/dfs/name</value>
+	      	 <value>/home/hadoop/workspace_data/data-hadoop-2.2.0/dfs/name</value>
 		 <final>true</final>
 	</property>
                  
 	<property>
 		<name>dfs.datanode.data.dir</name>
-		<value>/home/hadoop/data-hadoop-2.2.0/dfs/data</value>
+		<value>/home/hadoop/workspace_data/data-hadoop-2.2.0/dfs/data</value>
 		<final>true</final>
 	</property>
 

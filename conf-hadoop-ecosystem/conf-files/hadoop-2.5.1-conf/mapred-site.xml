@@ -25,13 +25,13 @@
     <!-- 下面是从 hadoop-2.2.0 拷贝过来的,修改"2.2.0"为"2.5.1" -->
     <property>
         <name>mapred.system.dir</name>
-        <value>/home/hadoop/data-hadoop-2.5.1/mapred/system</value>
+        <value>/home/hadoop/workspace_data/data-hadoop-2.5.1/mapred/system</value>
         <final>true</final>
     </property>
 
     <property>
         <name>mapred.local.dir</name>
-        <value>/home/hadoop/data-hadoop-2.5.1/mapred/local</value>
+        <value>/home/hadoop/workspace_data/data-hadoop-2.5.1/mapred/local</value>
         <final>true</final>
     </property>
 

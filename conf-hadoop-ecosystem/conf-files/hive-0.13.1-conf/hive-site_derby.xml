@@ -129,7 +129,7 @@
 
 <property>
   <name>javax.jdo.option.ConnectionURL</name>
-  <value>jdbc:derby:;databaseName=/home/hadoop/data-hive-0.13/metastore_db;create=true</value>
+  <value>jdbc:derby:;databaseName=/home/hadoop/workspace_data/data-hive-0.13/metastore_db;create=true</value>
   <description>JDBC connect string for a JDBC metastore</description>
 </property>
 

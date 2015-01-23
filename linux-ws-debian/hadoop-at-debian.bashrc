@@ -192,9 +192,9 @@ export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
 # -----------------------------------------------------------------------------
 # scala
-export SCALA_HOME=/opt/scala/scala-2.10.4
+#export SCALA_HOME=/opt/scala/scala-2.10.4
 #export SCALA_HOME=/opt/scala/scala-2.11.0
-#export SCALA_HOME=/opt/scala/scala-2.11.2
+export SCALA_HOME=/opt/scala/scala-2.11.2
 export PATH=${SCALA_HOME}/bin:${PATH}
 
 # -----------------------------------------------------------------------------
@@ -239,12 +239,15 @@ export PATH=${SPARK_HOME}/bin:${PATH}
 #export MASTER=local[*]
 	# 如果不使用MASTER,可以使用类似下面的命令
 	# ${SPARK_HOME}/./bin/spark-shell --master local[2]
+export MASTER=local
 
 # 下面配置需要先执行 hadoop的 start-yarn.sh
-export MASTER=yarn-client
+#export MASTER=yarn-client
 
 # 下面配置需要先执行 ${SPARK_HOME}/sbin/start-all.sh
 #export MASTER=spark://master-hadoop:7077
+
+export SPARK_SCALA_VERSION=2.11
 
 # -----------------------------------------------------------------------------
 # spark jobserver
@@ -418,6 +421,12 @@ export CONF_SPARK_ECOSYSTEM=/home/hadoop/workspace_github/hadoop-ws/conf-spark-e
 # 	branch.master.remote=origin
 # 	branch.master.merge=refs/heads/master
 #
+
+# -----------------------------------------------------------------------------
+# wine
+export WINEPREFIX=$HOME/wine32
+export WINEARCH=win32
+
 # -----------------------------------------------------------------------------
 # 添加当前目录到PATH
 export PATH=.:${PATH}

@@ -80,7 +80,7 @@
 
 <property>
   <name>hive.exec.scratchdir</name>
-  <value>/home/hadoop/data-hive-0.13/tmp/hive-${user.name}</value>
+  <value>/home/hadoop/workspace_data/data-hive-0.13/tmp/hive-${user.name}</value>
   <description>Scratch space for Hive jobs</description>
 </property>
 
