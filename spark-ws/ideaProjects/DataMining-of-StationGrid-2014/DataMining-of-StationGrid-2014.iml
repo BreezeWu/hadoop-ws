@@ -31,11 +31,94 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/03-data-mining-using-spark" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/04-model-evaluating" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/project-yekuobaozhuang_nanjing/05-result-visualizing" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/ElectricityEnergyQuality_BeiJing" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/spark-shell/ElectricityEnergyQuality_BeiJing/01-QualityEvaluating" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="scala-library" level="project" />
-    <orderEntry type="library" name="spark-assembly-1.1.0-SNAPSHOT-hadoop2.2.0" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/scala-2.10/spark-assembly-1.2.1-SNAPSHOT-hadoop2.5.1.jar!/" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/scala-2.10/spark-assembly-1.2.1-SNAPSHOT-hadoop2.5.1.jar!/" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/docs/api/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/target/javaunidoc" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/streams/$global/assemblyOption/$global/streams/assembly/932316dc142be204058a1828a5f7b4b8606dbc81_25578e9e5ef275ed225686cfe035ac2cef6badc1" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/target/streams/$global/assemblyOption/$global/streams/assembly/932316dc142be204058a1828a5f7b4b8606dbc81_25578e9e5ef275ed225686cfe035ac2cef6badc1" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/scala-2.10/spark-assembly-1.2.1-SNAPSHOT-hadoop2.5.1.jar!/" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/dev/audit-release/maven_app_core/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/core/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/core/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/core/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/hive/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/hive/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/hive/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/catalyst/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/catalyst/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/sql/hive-thriftserver/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/core/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/core/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/core/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/core/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/repl/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/yarn/stable/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/bagel/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/bagel/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/mllib/src/main/scala/org/apache/spark/ml" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/mllib/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/mllib/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/mllib/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/tools/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/extras/java8-tests/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/extras/kinesis-asl/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/extras/kinesis-asl/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/extras/kinesis-asl/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/graphx/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/graphx/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/network/yarn/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/network/common/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/network/common/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/network/shuffle/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/network/shuffle/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/streams/$global/assemblyOption/$global/streams/assembly/04f694f0ec7a92f4a92e0984481b7e10a35f4dc2_9ba8df332b5db95ce7f3b7a83e44d796c3d014d3" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/streams/$global/assemblyOption/$global/streams/assembly/229a6aec7a7ea859ec4859bbd2ddf5e63a302a82_40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/assembly/target/streams/$global/assemblyOption/$global/streams/assembly/4f1dae1f5ae4a2ce0b8cb92994558bba0da47e80_50fdbef9ca4775d2d2311db79f3f4d873d6db3d8/parquet" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/target/streams/$global/assemblyOption/$global/streams/assembly/04f694f0ec7a92f4a92e0984481b7e10a35f4dc2_9ba8df332b5db95ce7f3b7a83e44d796c3d014d3" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/target/streams/$global/assemblyOption/$global/streams/assembly/229a6aec7a7ea859ec4859bbd2ddf5e63a302a82_40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/target/streams/$global/assemblyOption/$global/streams/assembly/4f1dae1f5ae4a2ce0b8cb92994558bba0da47e80_50fdbef9ca4775d2d2311db79f3f4d873d6db3d8/parquet" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/examples/scala-2.10/src/main/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/mqtt/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/mqtt/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/mqtt/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/kafka/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/kafka/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/kafka/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/zeromq/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/zeromq/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/zeromq/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/twitter/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/twitter/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/twitter/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume-sink/target/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume-sink/target/scala-2.10/src_managed/main/compiled_avro" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/external/flume-sink/target/scala-2.11/src_managed/main/compiled_avro" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/streaming/src/main/scala" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/streaming/src/test/java" />
+          <root url="file://$USER_HOME$/workspace_github/spark-master-sbt/streaming/target/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 

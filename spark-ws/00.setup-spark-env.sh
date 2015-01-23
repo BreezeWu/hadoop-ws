@@ -37,6 +37,12 @@ mvn -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VER
 # 编译结果 ~/workspace_github/spark/assembly/target/scala-2.10/spark-assembly-1.1.0-SNAPSHOT-hadoop2.2.0.jar
 sbt/sbt -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} clean assembly
 
+# 使用scala-2.11
+# sbt.ResolveException: unresolved dependency: org.apache.kafka#kafka_2.11;0.8.0: not found
+./dev/change-version-to-2.11.sh
+sbt/sbt -Dscala-2.11  -Phive -Pyarn -Phadoop-${HADOOP_VERSION_MAJOR} -Dhadoop.version=${HADOOP_VERSION_MINOR} clean assembly
+
+
 # -----------------------------------------------------------------------------
 # 编译docs
 

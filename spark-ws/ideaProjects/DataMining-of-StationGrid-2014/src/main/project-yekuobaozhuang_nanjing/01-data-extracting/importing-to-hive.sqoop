@@ -1,6 +1,6 @@
 ## 方式一: 不指定sql语句,直接抽取全部内容
 #sqoop --options-file options-of-hive-import-from-oracle.sqoop --table YKBZ_DETAIL --split-by YONGDIANLB
-# 失败了!!! 错误信息如下:
+# 失败了!!! 错误信息如下:    ---- 将登陆oracle的用户名改为大写解决该问题!!
 #14/11/28 16:04:18 DEBUG manager.SqlManager: Using fetchSize for next query: 1000
 #14/11/28 16:04:18 INFO manager.SqlManager: Executing SQL statement: SELECT t.* FROM YKBZ_DETAIL t WHERE 1=0
 #14/11/28 16:04:19 DEBUG manager.OracleManager$ConnCache: Caching released connection for jdbc:oracle:thin:@192.168.1.6:1521/yjzhgl/uap
