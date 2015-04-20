@@ -131,7 +131,7 @@ export CLASSPATH=/opt/java_cp/mongo-java-driver-2.6.3.jar:/opt/java_cp/mysql-con
 #export HADOOP_VERSION=0.20.2
 #export HADOOP_VERSION=1.2.1
 #export HADOOP_VERSION=2.2.0
-export HADOOP_VERSION=2.5.1
+export HADOOP_VERSION=2.6.0
 export HADOOP_HOME=/opt/hadoop/hadoop-${HADOOP_VERSION}
 export PATH=${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${PATH}
 export CLASSPATH=${HADOOP_HOME}:${HADOOP_HOME}/lib:${CLASSPATH}
@@ -194,16 +194,25 @@ export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 # scala
 #export SCALA_HOME=/opt/scala/scala-2.10.4
 #export SCALA_HOME=/opt/scala/scala-2.11.0
-export SCALA_HOME=/opt/scala/scala-2.11.2
+export SCALA_HOME=/opt/scala/scala-2.11.6
 export PATH=${SCALA_HOME}/bin:${PATH}
 
 # -----------------------------------------------------------------------------
 # spark
+
+# spark-1.3.1 [pre-built]
+export SPARK_HOME=/opt/spark/spark-1.3.1
+export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+
+# spark-1.3.1 [src]
+#export SPARK_HOME=/home/hadoop/workspace_src/spark-1.3.1
+#export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+
 # spark-1.1
 # hive yarn hadoop-2.2.0
-export SPARK_HOME=/home/hadoop/workspace_github/spark-master-sbt
+#export SPARK_HOME=/home/hadoop/workspace_github/spark-master-sbt
 #export SPARK_HOME=/home/hadoop/workspace_github/spark-master-maven
-export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
+#export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
 
 # spark-1.1.0-SNAPSHOT-20140718
 #export SPARK_HOME=/home/hadoop/workspace_github/spark-1.0.0-SNAPSHOT-20140718
@@ -430,4 +439,3 @@ export WINEARCH=win32
 # -----------------------------------------------------------------------------
 # 添加当前目录到PATH
 export PATH=.:${PATH}
-
