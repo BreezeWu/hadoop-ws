@@ -13,7 +13,7 @@ ln -s /opt/hive/apache-hive-0.13.1-bin/conf/hive-site.xml hive-site.xml
 # export HADOOP_VERSION_MAJOR=2.5
 # export HADOOP_VERSION_MINOR=2.5.1
 echo ${HADOOP_VERSION}
-export HADOOP_VERSION_MAJOR=2.5
+export HADOOP_VERSION_MAJOR=2.6
 export HADOOP_VERSION_MINOR=${HADOOP_VERSION}
 # -----------------------------------------------------------------------------
 # maven 方式编译

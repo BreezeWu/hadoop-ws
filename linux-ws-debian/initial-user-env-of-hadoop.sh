@@ -32,8 +32,9 @@ python ~/link-goagent/local/proxy.py &
 # git 配置
 # ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/git-conf.gitignore ~/workspace_github/hadoop-ws/.gitignore
 # ln -s ~/workspace_github/hadoop-ws/linux-ws-debian/git-conf.gitignore_global ~/workspace_github/hadoop-ws/.gitignore_global
+# git config --global core.excludesfile ~/.gitignore_global
 # -----------------------------------------------------------------
 # 其他链接
-#~/workspace_github/hadoop-ws/rstudio-ws/PlotBy_ggplot2
+#cd ~/workspace_github/hadoop-ws/rstudio-ws/PlotBy_ggplot2
 #ln -s ~/workspace_github/hadoop-ws/spark-ws/ideaProjects/DataMining-of-StationGrid-2014/src/main/spark-shell/yekuobaozhuang_statistic/visualizing.R yekuobaozhuang_statistic.R
 

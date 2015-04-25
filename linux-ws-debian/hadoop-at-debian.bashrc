@@ -116,8 +116,8 @@ export PATH=${ANT_HOME}/bin:${PATH}
 
 # -----------------------------------------------------------------------------
 # User specific aliases and functions
-export JAVA_HOME=/opt/java/jdk1.7.0_55
-export JRE_HOME=/opt/java/jdk1.7.0_55/jre
+export JAVA_HOME=/opt/java/jdk1.8.0_45
+export JRE_HOME=/opt/java/jdk1.8.0_45/jre
 export PATH=$JAVA_HOME/bin:$JRE_HOME/jre/bin:${PATH}
 #export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
 export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
@@ -162,15 +162,15 @@ export PATH=${ZOOKEEPER_HOME}/bin:${PATH}
 # -----------------------------------------------------------------------------
 # hbase
 #export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop1
-export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop2
+#export HBASE_HOME=/opt/hbase/hbase-0.98.3-hadoop2
+export HBASE_HOME=/opt/hbase/hbase-1.0.0
 export PATH=${HBASE_HOME}/bin:${PATH}
 
 #export HBASE_MANAGES_ZK=false  #不使用HBase自带的Zookeeper,这个必须在hbase-env.sh中配置
 
 # -----------------------------------------------------------------------------
 # hive
-#export HIVE_HOME=/opt/hive/hive-0.7.1
-export HIVE_HOME=/opt/hive/apache-hive-0.13.1-bin
+export HIVE_HOME=/opt/hive/apache-hive-1.1.0-bin
 export PATH=${HIVE_HOME}/bin:${HIVE_HOME}/hcatalog/sbin:${PATH}
 
 # hive web interface
@@ -186,7 +186,7 @@ export CLASSPATH=$CLASSPATH:$PIG_HOME/lib
 
 # -----------------------------------------------------------------------------
 # maven
-export M2_HOME=/opt/maven/apache-maven-3.2.1
+export M2_HOME=/opt/maven/apache-maven-3.3.1/
 export PATH=${M2_HOME}/bin:${PATH}
 export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
 
@@ -201,7 +201,8 @@ export PATH=${SCALA_HOME}/bin:${PATH}
 # spark
 
 # spark-1.3.1 [pre-built]
-export SPARK_HOME=/opt/spark/spark-1.3.1
+#export SPARK_HOME=/opt/spark/spark-1.3.1-bin-hadoop2.6
+export SPARK_HOME=/home/hduser/workspace_src/spark-1.3.1
 export SPARK_EXAMPLES_JAR=${SPARK_HOME}/examples/target/scala-2.10/spark-examples-1.1.0-SNAPSHOT-hadoop2.2.0.jar
 
 # spark-1.3.1 [src]
